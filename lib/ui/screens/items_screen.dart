@@ -14,7 +14,7 @@ class ItemsScreen extends StatelessWidget implements TabScreen {
   IconData get tabIcon => Icons.notes_outlined;
 
   @override
-  String get tabLabel => "Статьи";
+  String get tabLabel => 'Статьи';
 
   @override
   AppBar get appBar =>

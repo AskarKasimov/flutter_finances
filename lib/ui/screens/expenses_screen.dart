@@ -13,7 +13,7 @@ class ExpensesScreen extends StatelessWidget implements TabScreen {
   IconData get tabIcon => Icons.trending_down_outlined;
 
   @override
-  String get tabLabel => "Расходы";
+  String get tabLabel => 'Расходы';
 
   @override
   AppBar get appBar =>

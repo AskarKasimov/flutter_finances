@@ -13,7 +13,7 @@ class IncomeScreen extends StatelessWidget implements TabScreen {
   IconData get tabIcon => Icons.trending_up_outlined;
 
   @override
-  String get tabLabel => "Доходы";
+  String get tabLabel => 'Доходы';
 
   @override
   AppBar get appBar =>

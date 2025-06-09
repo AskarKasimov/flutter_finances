@@ -13,7 +13,7 @@ class SettingsScreen extends StatelessWidget implements TabScreen {
   IconData get tabIcon => Icons.settings_outlined;
 
   @override
-  String get tabLabel => "Настройки";
+  String get tabLabel => 'Настройки';
 
   @override
   AppBar get appBar =>
