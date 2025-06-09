@@ -6,7 +6,7 @@ class SettingsScreen extends StatelessWidget implements TabScreen {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Настройки'));
+    return const Center(child: Text('экран с настройками'));
   }
 
   @override

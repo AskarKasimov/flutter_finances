@@ -7,7 +7,7 @@ class AccountScreen extends StatelessWidget implements TabScreen {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Счёт'));
+    return const Center(child: Text('экран со счетом'));
   }
 
   @override

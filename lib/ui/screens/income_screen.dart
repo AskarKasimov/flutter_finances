@@ -6,7 +6,7 @@ class IncomeScreen extends StatelessWidget implements TabScreen {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Доходы'));
+    return const Center(child: Text('экран с доходами'));
   }
 
   @override

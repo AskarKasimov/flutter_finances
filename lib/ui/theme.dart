@@ -1,26 +1,53 @@
 import 'package:flutter/material.dart';
 
+const _primaryColor = Color(0xFF2AE881);
+
 final lightTheme = ThemeData(
   brightness: Brightness.light,
-  primarySwatch: Colors.indigo,
-  scaffoldBackgroundColor: Colors.white,
+  splashColor: Color(0x3300D68F),
+  highlightColor: Color(0x1A00D68F),
+  scaffoldBackgroundColor: const Color(0xFFFEF7FF),
+  primaryColor: _primaryColor,
+  appBarTheme: const AppBarTheme(
+    backgroundColor: _primaryColor,
+    foregroundColor: Colors.white,
+    elevation: 0,
+  ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-    backgroundColor: Colors.white,
-    selectedItemColor: Colors.indigo,
-    unselectedItemColor: Colors.grey,
+    backgroundColor: Color(0xFFF3EDF7),
+    selectedItemColor: _primaryColor,
+    unselectedItemColor: Color(0xFF49454F),
     type: BottomNavigationBarType.fixed,
     elevation: 8,
+  ),
+  colorScheme: const ColorScheme.light(
+    primary: _primaryColor,
+    secondary: Color(0xFFD4FAE6),
+    error: Color(0xFFE46962),
   ),
 );
 
 final darkTheme = ThemeData(
   brightness: Brightness.dark,
-  scaffoldBackgroundColor: Colors.black,
+  splashColor: Color(0x3300D68F),
+  highlightColor: Color(0x1A00D68F),
+  scaffoldBackgroundColor: const Color(0xFF121212),
+  primaryColor: _primaryColor,
+  appBarTheme: const AppBarTheme(
+    backgroundColor: _primaryColor,
+    foregroundColor: Colors.black,
+    elevation: 0,
+  ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-    backgroundColor: Colors.black,
-    selectedItemColor: Colors.white,
-    unselectedItemColor: Colors.grey,
+    backgroundColor: Color(0xFF1E1E1E),
+    selectedItemColor: _primaryColor,
+    unselectedItemColor: Color(0xFF49454F),
     type: BottomNavigationBarType.fixed,
     elevation: 8,
+  ),
+  colorScheme: const ColorScheme.dark(
+    primary: _primaryColor,
+    secondary: Color(0xFFD4FAE6),
+    error: Color(0xFFE46962),
   ),
 );

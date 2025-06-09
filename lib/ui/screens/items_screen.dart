@@ -7,7 +7,7 @@ class ItemsScreen extends StatelessWidget implements TabScreen {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Статьи'));
+    return const Center(child: Text('экран со статьями'));
   }
 
   @override
