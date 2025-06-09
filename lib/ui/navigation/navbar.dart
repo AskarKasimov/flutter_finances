@@ -28,10 +28,7 @@ class _MainTabBarState extends State<MainTabBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_screens[_currentIndex].tabLabel),
-        centerTitle: true,
-      ),
+      appBar: _screens[_currentIndex].appBar,
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,

@@ -15,4 +15,7 @@ class AccountScreen extends StatelessWidget implements TabScreen {
 
   @override
   String get tabLabel => "Счет";
+
+  @override
+  AppBar get appBar => AppBar(title: const Text('Мой счет'), centerTitle: true);
 }

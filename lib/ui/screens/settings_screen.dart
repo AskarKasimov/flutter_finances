@@ -14,4 +14,8 @@ class SettingsScreen extends StatelessWidget implements TabScreen {
 
   @override
   String get tabLabel => "Настройки";
+
+  @override
+  AppBar get appBar =>
+      AppBar(title: const Text('Настройки'), centerTitle: true);
 }

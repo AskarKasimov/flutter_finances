@@ -15,4 +15,8 @@ class ItemsScreen extends StatelessWidget implements TabScreen {
 
   @override
   String get tabLabel => "Статьи";
+
+  @override
+  AppBar get appBar =>
+      AppBar(title: const Text('Мои статьи'), centerTitle: true);
 }

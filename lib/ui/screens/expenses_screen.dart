@@ -14,4 +14,8 @@ class ExpensesScreen extends StatelessWidget implements TabScreen {
 
   @override
   String get tabLabel => "Расходы";
+
+  @override
+  AppBar get appBar =>
+      AppBar(title: const Text('Расходы сегодня'), centerTitle: true);
 }
