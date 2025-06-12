@@ -1,0 +1,19 @@
+import 'value_objects/money_details.dart';
+import 'account_history_item.dart';
+
+class AccountHistory {
+  final int _accountId;
+  final String _accountName;
+  final MoneyDetails _moneyDetails;
+  final List<AccountHistoryItem> _history;
+
+  AccountHistory({
+    required int accountId,
+    required String accountName,
+    required MoneyDetails moneyDetails,
+    required List<AccountHistoryItem> history,
+  }) : _accountId = accountId,
+       _accountName = accountName,
+       _moneyDetails = moneyDetails,
+       _history = history;
+}
