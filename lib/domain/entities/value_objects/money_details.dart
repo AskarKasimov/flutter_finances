@@ -5,4 +5,8 @@ class MoneyDetails {
   MoneyDetails({required double balance, required String currency})
     : _balance = balance,
       _currency = currency;
+
+  double get balance => _balance;
+
+  String get currency => _currency;
 }

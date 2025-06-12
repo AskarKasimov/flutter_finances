@@ -9,10 +9,10 @@ part of 'transaction_request.dart';
 _TransactionRequestDTO _$TransactionRequestDTOFromJson(
   Map<String, dynamic> json,
 ) => _TransactionRequestDTO(
-  accountId: (json['accountId'] as num).toInt(),
-  categoryId: (json['categoryId'] as num).toInt(),
-  amount: json['amount'] as String,
-  transactionDate: json['transactionDate'] as String,
+  accountId: (json['accountId'] as num?)?.toInt(),
+  categoryId: (json['categoryId'] as num?)?.toInt(),
+  amount: json['amount'] as String?,
+  transactionDate: json['transactionDate'] as String?,
   comment: json['comment'] as String?,
 );
 

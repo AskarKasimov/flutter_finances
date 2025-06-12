@@ -7,4 +7,8 @@ class AccountForm {
   AccountForm({required String? name, required MoneyDetails? moneyDetails})
     : _name = name,
       _moneyDetails = moneyDetails;
+
+  String? get name => _name;
+
+  MoneyDetails? get moneyDetails => _moneyDetails;
 }

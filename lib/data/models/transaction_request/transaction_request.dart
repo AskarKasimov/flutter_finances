@@ -6,10 +6,10 @@ part 'transaction_request.g.dart';
 @freezed
 abstract class TransactionRequestDTO with _$TransactionRequestDTO {
   const factory TransactionRequestDTO({
-    required int accountId,
-    required int categoryId,
-    required String amount,
-    required String transactionDate,
+    required int? accountId,
+    required int? categoryId,
+    required String? amount,
+    required String? transactionDate,
     required String? comment,
   }) = _TransactionRequestDTO;
 

@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TransactionRequestDTO {
 
- int get accountId; int get categoryId; String get amount; String get transactionDate; String? get comment;
+ int? get accountId; int? get categoryId; String? get amount; String? get transactionDate; String? get comment;
 /// Create a copy of TransactionRequestDTO
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -49,7 +49,7 @@ abstract mixin class $TransactionRequestDTOCopyWith<$Res>  {
   factory $TransactionRequestDTOCopyWith(TransactionRequestDTO value, $Res Function(TransactionRequestDTO) _then) = _$TransactionRequestDTOCopyWithImpl;
 @useResult
 $Res call({
- int accountId, int categoryId, String amount, String transactionDate, String? comment
+ int? accountId, int? categoryId, String? amount, String? transactionDate, String? comment
 });
 
 
@@ -66,13 +66,13 @@ class _$TransactionRequestDTOCopyWithImpl<$Res>
 
 /// Create a copy of TransactionRequestDTO
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? accountId = null,Object? categoryId = null,Object? amount = null,Object? transactionDate = null,Object? comment = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? accountId = freezed,Object? categoryId = freezed,Object? amount = freezed,Object? transactionDate = freezed,Object? comment = freezed,}) {
   return _then(_self.copyWith(
-accountId: null == accountId ? _self.accountId : accountId // ignore: cast_nullable_to_non_nullable
-as int,categoryId: null == categoryId ? _self.categoryId : categoryId // ignore: cast_nullable_to_non_nullable
-as int,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
-as String,transactionDate: null == transactionDate ? _self.transactionDate : transactionDate // ignore: cast_nullable_to_non_nullable
-as String,comment: freezed == comment ? _self.comment : comment // ignore: cast_nullable_to_non_nullable
+accountId: freezed == accountId ? _self.accountId : accountId // ignore: cast_nullable_to_non_nullable
+as int?,categoryId: freezed == categoryId ? _self.categoryId : categoryId // ignore: cast_nullable_to_non_nullable
+as int?,amount: freezed == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
+as String?,transactionDate: freezed == transactionDate ? _self.transactionDate : transactionDate // ignore: cast_nullable_to_non_nullable
+as String?,comment: freezed == comment ? _self.comment : comment // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -87,10 +87,10 @@ class _TransactionRequestDTO implements TransactionRequestDTO {
   const _TransactionRequestDTO({required this.accountId, required this.categoryId, required this.amount, required this.transactionDate, required this.comment});
   factory _TransactionRequestDTO.fromJson(Map<String, dynamic> json) => _$TransactionRequestDTOFromJson(json);
 
-@override final  int accountId;
-@override final  int categoryId;
-@override final  String amount;
-@override final  String transactionDate;
+@override final  int? accountId;
+@override final  int? categoryId;
+@override final  String? amount;
+@override final  String? transactionDate;
 @override final  String? comment;
 
 /// Create a copy of TransactionRequestDTO
@@ -126,7 +126,7 @@ abstract mixin class _$TransactionRequestDTOCopyWith<$Res> implements $Transacti
   factory _$TransactionRequestDTOCopyWith(_TransactionRequestDTO value, $Res Function(_TransactionRequestDTO) _then) = __$TransactionRequestDTOCopyWithImpl;
 @override @useResult
 $Res call({
- int accountId, int categoryId, String amount, String transactionDate, String? comment
+ int? accountId, int? categoryId, String? amount, String? transactionDate, String? comment
 });
 
 
@@ -143,13 +143,13 @@ class __$TransactionRequestDTOCopyWithImpl<$Res>
 
 /// Create a copy of TransactionRequestDTO
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? accountId = null,Object? categoryId = null,Object? amount = null,Object? transactionDate = null,Object? comment = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? accountId = freezed,Object? categoryId = freezed,Object? amount = freezed,Object? transactionDate = freezed,Object? comment = freezed,}) {
   return _then(_TransactionRequestDTO(
-accountId: null == accountId ? _self.accountId : accountId // ignore: cast_nullable_to_non_nullable
-as int,categoryId: null == categoryId ? _self.categoryId : categoryId // ignore: cast_nullable_to_non_nullable
-as int,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
-as String,transactionDate: null == transactionDate ? _self.transactionDate : transactionDate // ignore: cast_nullable_to_non_nullable
-as String,comment: freezed == comment ? _self.comment : comment // ignore: cast_nullable_to_non_nullable
+accountId: freezed == accountId ? _self.accountId : accountId // ignore: cast_nullable_to_non_nullable
+as int?,categoryId: freezed == categoryId ? _self.categoryId : categoryId // ignore: cast_nullable_to_non_nullable
+as int?,amount: freezed == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
+as String?,transactionDate: freezed == transactionDate ? _self.transactionDate : transactionDate // ignore: cast_nullable_to_non_nullable
+as String?,comment: freezed == comment ? _self.comment : comment // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

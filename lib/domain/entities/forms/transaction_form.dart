@@ -16,4 +16,14 @@ class TransactionForm {
        _amount = amount,
        _timestamp = timestamp,
        _comment = comment;
+
+  String? get comment => _comment;
+
+  DateTime? get timestamp => _timestamp;
+
+  double? get amount => _amount;
+
+  int? get categoryId => _categoryId;
+
+  int? get accountId => _accountId;
 }

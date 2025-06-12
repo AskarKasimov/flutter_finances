@@ -1,19 +1,19 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'account_create.dart';
+part of 'account_request.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_AccountCreateDTO _$AccountCreateDTOFromJson(Map<String, dynamic> json) =>
-    _AccountCreateDTO(
-      name: json['name'] as String,
-      balance: json['balance'] as String,
-      currency: json['currency'] as String,
+_AccountRequestDTO _$AccountRequestDTOFromJson(Map<String, dynamic> json) =>
+    _AccountRequestDTO(
+      name: json['name'] as String?,
+      balance: json['balance'] as String?,
+      currency: json['currency'] as String?,
     );
 
-Map<String, dynamic> _$AccountCreateDTOToJson(_AccountCreateDTO instance) =>
+Map<String, dynamic> _$AccountRequestDTOToJson(_AccountRequestDTO instance) =>
     <String, dynamic>{
       'name': instance.name,
       'balance': instance.balance,
