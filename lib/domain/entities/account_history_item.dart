@@ -1,5 +1,5 @@
-import 'enums/change_type.dart';
 import 'account_state.dart';
+import 'enums/change_type.dart';
 import 'value_objects/time_interval.dart';
 
 class AccountHistoryItem {

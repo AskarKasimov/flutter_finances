@@ -3,7 +3,6 @@ import 'package:flutter_finances/data/models/category/category.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'transaction_response.freezed.dart';
-
 part 'transaction_response.g.dart';
 
 @freezed

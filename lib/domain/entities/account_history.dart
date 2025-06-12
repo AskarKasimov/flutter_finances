@@ -1,5 +1,5 @@
-import 'value_objects/money_details.dart';
 import 'account_history_item.dart';
+import 'value_objects/money_details.dart';
 
 class AccountHistory {
   final int _accountId;

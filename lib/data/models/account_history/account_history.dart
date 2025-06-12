@@ -2,7 +2,6 @@ import 'package:flutter_finances/data/models/accout_state/account_state.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'account_history.freezed.dart';
-
 part 'account_history.g.dart';
 
 @freezed

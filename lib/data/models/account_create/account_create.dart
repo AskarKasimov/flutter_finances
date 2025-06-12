@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'account_create.freezed.dart';
-
 part 'account_create.g.dart';
 
 @freezed

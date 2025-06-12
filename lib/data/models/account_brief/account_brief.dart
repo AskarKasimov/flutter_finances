@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'account_brief.freezed.dart';
-
 part 'account_brief.g.dart';
 
 @freezed

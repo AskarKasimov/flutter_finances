@@ -1,5 +1,5 @@
-import 'value_objects/money_details.dart';
 import 'stat_item.dart';
+import 'value_objects/money_details.dart';
 import 'value_objects/time_interval.dart';
 
 class AccountResponse {

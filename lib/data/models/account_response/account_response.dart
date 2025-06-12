@@ -1,8 +1,7 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter_finances/data/models/stat_item/stat_item.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'account_response.freezed.dart';
-
 part 'account_response.g.dart';
 
 @freezed
