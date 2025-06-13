@@ -1,7 +1,7 @@
 import '../entities/category.dart';
 
-abstract class CategoryRepository {
+abstract interface class CategoryRepository {
   Future<List<Category>> getAllCategories();
 
-  Future<void> addCategory(Category category);
+  Future<List<Category>> getCategoriesByIsIncome(bool isIncome);
 }
