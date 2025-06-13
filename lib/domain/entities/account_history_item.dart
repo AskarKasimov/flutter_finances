@@ -23,4 +23,16 @@ class AccountHistoryItem {
        _previousState = previousState,
        _newState = newState,
        _timeInterval = timeInterval;
+
+  TimeInterval get timeInterval => _timeInterval;
+
+  AccountState get newState => _newState;
+
+  AccountState? get previousState => _previousState;
+
+  ChangeType get changeType => _changeType;
+
+  int get accountId => _accountId;
+
+  int get id => _id;
 }

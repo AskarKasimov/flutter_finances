@@ -23,4 +23,16 @@ class AccountResponse {
        _incomeStats = incomeStats,
        _expenseStats = expenseStats,
        _timeInterval = timeInterval;
+
+  TimeInterval get timeInterval => _timeInterval;
+
+  List<StatItem> get expenseStats => _expenseStats;
+
+  List<StatItem> get incomeStats => _incomeStats;
+
+  MoneyDetails get moneyDetails => _moneyDetails;
+
+  String get name => _name;
+
+  int get id => _id;
 }

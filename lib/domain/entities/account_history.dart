@@ -16,4 +16,12 @@ class AccountHistory {
        _accountName = accountName,
        _moneyDetails = moneyDetails,
        _history = history;
+
+  List<AccountHistoryItem> get history => _history;
+
+  MoneyDetails get moneyDetails => _moneyDetails;
+
+  String get accountName => _accountName;
+
+  int get accountId => _accountId;
 }

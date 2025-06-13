@@ -19,4 +19,14 @@ class Account {
        _name = name,
        _moneyDetails = moneyDetails,
        _timeInterval = timeInterval;
+
+  TimeInterval get timeInterval => _timeInterval;
+
+  MoneyDetails get moneyDetails => _moneyDetails;
+
+  String get name => _name;
+
+  int get userId => _userId;
+
+  int get id => _id;
 }

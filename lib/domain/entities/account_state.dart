@@ -12,4 +12,10 @@ class AccountState {
   }) : _id = id,
        _name = name,
        _moneyDetails = moneyDetails;
+
+  MoneyDetails get moneyDetails => _moneyDetails;
+
+  String get name => _name;
+
+  int get id => _id;
 }

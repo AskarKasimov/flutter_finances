@@ -24,4 +24,18 @@ class Transaction {
        _timestamp = timestamp,
        _comment = comment,
        _timeInterval = timeInterval;
+
+  TimeInterval get timeInterval => _timeInterval;
+
+  String? get comment => _comment;
+
+  DateTime get timestamp => _timestamp;
+
+  double get amount => _amount;
+
+  int? get categoryId => _categoryId;
+
+  int get accountId => _accountId;
+
+  int get id => _id;
 }

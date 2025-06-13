@@ -13,4 +13,12 @@ class Category {
        _name = name,
        _emoji = emoji,
        _isIncome = isIncome;
+
+  bool get isIncome => _isIncome;
+
+  String get emoji => _emoji;
+
+  String get name => _name;
+
+  int get id => _id;
 }
