@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../navigation/tab.dart';
+import '../navigation/tab_screen_interface.dart';
 
 class ItemsScreen extends StatelessWidget implements TabScreen {
   const ItemsScreen({super.key});

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_finances/ui/navigation/tab.dart';
+import 'package:flutter_finances/ui/navigation/tab_screen_interface.dart';
 
 class ExpensesScreen extends StatelessWidget implements TabScreen {
   const ExpensesScreen({super.key});
