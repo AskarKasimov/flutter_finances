@@ -31,7 +31,7 @@ extension AccountHistoryItemMapper on AccountHistoryDTO {
                 changeType: parsedChangeType,
                 previousState: parsedPreviousState,
                 newState: parsedNewState,
-                timeInterval: TimeInterval(
+                timeInterval: AuditInfoTime(
                   createdAt: parsedCreatedAt,
                   updatedAt: parsedUpdatedAt,
                 ),

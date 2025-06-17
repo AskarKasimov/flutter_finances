@@ -8,7 +8,7 @@ class AccountResponse {
   final MoneyDetails _moneyDetails;
   final List<StatItem> _incomeStats;
   final List<StatItem> _expenseStats;
-  final TimeInterval _timeInterval;
+  final AuditInfoTime _timeInterval;
 
   AccountResponse({
     required int id,
@@ -16,7 +16,7 @@ class AccountResponse {
     required MoneyDetails moneyDetails,
     required List<StatItem> incomeStats,
     required List<StatItem> expenseStats,
-    required TimeInterval timeInterval,
+    required AuditInfoTime timeInterval,
   }) : _id = id,
        _name = name,
        _moneyDetails = moneyDetails,
@@ -24,7 +24,7 @@ class AccountResponse {
        _expenseStats = expenseStats,
        _timeInterval = timeInterval;
 
-  TimeInterval get timeInterval => _timeInterval;
+  AuditInfoTime get timeInterval => _timeInterval;
 
   List<StatItem> get expenseStats => _expenseStats;
 

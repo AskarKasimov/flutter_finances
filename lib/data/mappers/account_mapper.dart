@@ -24,7 +24,7 @@ extension AccountMapper on AccountDTO {
               balance: parsedBalance,
               currency: currency,
             ),
-            timeInterval: TimeInterval(
+            timeInterval: AuditInfoTime(
               createdAt: parsedCreatedAt,
               updatedAt: parsedUpdatedAt,
             ),

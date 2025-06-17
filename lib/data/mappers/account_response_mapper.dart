@@ -35,7 +35,7 @@ extension AccountResponseMapper on AccountResponseDTO {
                 ),
                 incomeStats: parsedIncomeStats,
                 expenseStats: parsedExpenseStats,
-                timeInterval: TimeInterval(
+                timeInterval: AuditInfoTime(
                   createdAt: parsedCreatedAt,
                   updatedAt: parsedUpdatedAt,
                 ),

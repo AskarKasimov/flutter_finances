@@ -6,21 +6,21 @@ class Account {
   final int _userId;
   final String _name;
   final MoneyDetails _moneyDetails;
-  final TimeInterval _timeInterval;
+  final AuditInfoTime _timeInterval;
 
   Account({
     required int id,
     required int userId,
     required String name,
     required MoneyDetails moneyDetails,
-    required TimeInterval timeInterval,
+    required AuditInfoTime timeInterval,
   }) : _id = id,
        _userId = userId,
        _name = name,
        _moneyDetails = moneyDetails,
        _timeInterval = timeInterval;
 
-  TimeInterval get timeInterval => _timeInterval;
+  AuditInfoTime get timeInterval => _timeInterval;
 
   MoneyDetails get moneyDetails => _moneyDetails;
 

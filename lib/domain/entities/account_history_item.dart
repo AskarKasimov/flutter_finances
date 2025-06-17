@@ -8,7 +8,7 @@ class AccountHistoryItem {
   final ChangeType _changeType;
   final AccountState? _previousState;
   final AccountState _newState;
-  final TimeInterval _timeInterval;
+  final AuditInfoTime _timeInterval;
 
   AccountHistoryItem({
     required int id,
@@ -16,7 +16,7 @@ class AccountHistoryItem {
     required ChangeType changeType,
     required AccountState? previousState,
     required AccountState newState,
-    required TimeInterval timeInterval,
+    required AuditInfoTime timeInterval,
   }) : _id = id,
        _accountId = accountId,
        _changeType = changeType,
@@ -24,7 +24,7 @@ class AccountHistoryItem {
        _newState = newState,
        _timeInterval = timeInterval;
 
-  TimeInterval get timeInterval => _timeInterval;
+  AuditInfoTime get timeInterval => _timeInterval;
 
   AccountState get newState => _newState;
 

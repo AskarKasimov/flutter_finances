@@ -16,7 +16,7 @@ class MockedAccountRepository implements AccountRepository {
       userId: 1,
       name: 'Mocked Account',
       moneyDetails: MoneyDetails(balance: 114, currency: 'RUB'),
-      timeInterval: TimeInterval(
+      timeInterval: AuditInfoTime(
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       ),
@@ -41,7 +41,7 @@ class MockedAccountRepository implements AccountRepository {
         name: form.name ?? 'Mocked Account',
         moneyDetails:
             form.moneyDetails ?? MoneyDetails(balance: 0, currency: 'RUB'),
-        timeInterval: TimeInterval(
+        timeInterval: AuditInfoTime(
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         ),
@@ -107,7 +107,7 @@ class MockedAccountRepository implements AccountRepository {
       userId: _accounts[index].userId,
       name: form.name ?? _accounts[index].name,
       moneyDetails: form.moneyDetails ?? _accounts[index].moneyDetails,
-      timeInterval: TimeInterval(
+      timeInterval: AuditInfoTime(
         createdAt: _accounts[index].timeInterval.createdAt,
         updatedAt: DateTime.now(),
       ),

@@ -15,7 +15,7 @@ class MockedTransactionRepository implements TransactionRepository {
       amount: 412,
       timestamp: DateTime.now(),
       comment: 'Mocked Transaction',
-      timeInterval: TimeInterval(
+      timeInterval: AuditInfoTime(
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       ),
@@ -43,7 +43,7 @@ class MockedTransactionRepository implements TransactionRepository {
         comment: form.comment ?? '',
         amount: form.amount ?? 0.0,
         timestamp: DateTime.now(),
-        timeInterval: TimeInterval(
+        timeInterval: AuditInfoTime(
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         ),
@@ -110,7 +110,7 @@ class MockedTransactionRepository implements TransactionRepository {
       comment: form.comment ?? existing.comment,
       amount: form.amount ?? existing.amount,
       timestamp: DateTime.now(),
-      timeInterval: TimeInterval(
+      timeInterval: AuditInfoTime(
         createdAt: existing.timeInterval.createdAt,
         updatedAt: DateTime.now(),
       ),

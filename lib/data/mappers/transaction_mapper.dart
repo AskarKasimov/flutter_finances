@@ -29,7 +29,7 @@ extension TransactionMapper on TransactionDTO {
               amount: parsedAmount,
               timestamp: parsedTransactionDate,
               comment: comment,
-              timeInterval: TimeInterval(
+              timeInterval: AuditInfoTime(
                 createdAt: parsedCreatedAt,
                 updatedAt: parsedUpdatedAt,
               ),
@@ -64,7 +64,7 @@ extension TransactionResponseMapper on TransactionResponseDTO {
               amount: parsedAmount,
               timestamp: parsedTransactionDate,
               comment: comment,
-              timeInterval: TimeInterval(
+              timeInterval: AuditInfoTime(
                 createdAt: parsedCreatedAt,
                 updatedAt: parsedUpdatedAt,
               ),

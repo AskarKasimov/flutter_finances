@@ -7,7 +7,7 @@ class Transaction {
   final double _amount;
   final DateTime _timestamp;
   final String? _comment;
-  final TimeInterval _timeInterval;
+  final AuditInfoTime _timeInterval;
 
   Transaction({
     required int id,
@@ -16,7 +16,7 @@ class Transaction {
     required double amount,
     required DateTime timestamp,
     required String? comment,
-    required TimeInterval timeInterval,
+    required AuditInfoTime timeInterval,
   }) : _id = id,
        _accountId = accountId,
        _categoryId = categoryId,
@@ -25,7 +25,7 @@ class Transaction {
        _comment = comment,
        _timeInterval = timeInterval;
 
-  TimeInterval get timeInterval => _timeInterval;
+  AuditInfoTime get timeInterval => _timeInterval;
 
   String? get comment => _comment;
 
