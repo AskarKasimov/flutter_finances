@@ -18,4 +18,7 @@ class ExpensesScreen extends StatelessWidget implements TabScreen {
   @override
   AppBar get appBar =>
       AppBar(title: const Text('Расходы сегодня'), centerTitle: true);
+
+  @override
+  String get routePath => '/expenses';
 }

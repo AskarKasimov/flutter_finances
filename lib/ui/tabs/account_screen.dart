@@ -18,4 +18,7 @@ class AccountScreen extends StatelessWidget implements TabScreen {
 
   @override
   AppBar get appBar => AppBar(title: const Text('Мой счет'), centerTitle: true);
+
+  @override
+  String get routePath => '/account';
 }

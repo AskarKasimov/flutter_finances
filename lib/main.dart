@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_finances/ui/navigation/navbar.dart';
+import 'package:flutter_finances/ui/router.dart';
 import 'package:flutter_finances/ui/theme.dart';
 
 void main() {
@@ -11,13 +11,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Finance',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
       theme: lightTheme,
       darkTheme: darkTheme,
-      home: MainTabBar(),
+      routerConfig: router,
     );
   }
 }

@@ -18,4 +18,7 @@ class IncomeScreen extends StatelessWidget implements TabScreen {
   @override
   AppBar get appBar =>
       AppBar(title: const Text('Доходы сегодня'), centerTitle: true);
+
+  @override
+  String get routePath => '/income';
 }

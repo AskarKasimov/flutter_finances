@@ -19,4 +19,7 @@ class ItemsScreen extends StatelessWidget implements TabScreen {
   @override
   AppBar get appBar =>
       AppBar(title: const Text('Мои статьи'), centerTitle: true);
+
+  @override
+  String get routePath => '/items';
 }

@@ -18,4 +18,7 @@ class SettingsScreen extends StatelessWidget implements TabScreen {
   @override
   AppBar get appBar =>
       AppBar(title: const Text('Настройки'), centerTitle: true);
+
+  @override
+  String get routePath => '/settings';
 }
