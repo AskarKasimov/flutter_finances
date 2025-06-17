@@ -77,15 +77,18 @@ class MockedTransactionRepository implements TransactionRepository {
   @override
   Future<Either<Failure, List<Transaction>>> getTransactionsByPeriod(
     int accountId,
-    DateTime startDate,
-    DateTime endDate,
+    DateTime? startDate,
+    DateTime? endDate,
   ) async {
     final filtered =
         _transactions.where((t) {
-          return t.accountId == accountId &&
-              t.timestamp.isAfter(startDate) &&
-              t.timestamp.isBefore(endDate);
+          final matchesAccount = t.accountId == accountId;
+          final matchesStart =
+              startDate == null || t.timestamp.isAfter(startDate);
+          final matchesEnd = endDate == null || t.timestamp.isBefore(endDate);
+          return matchesAccount && matchesStart && matchesEnd;
         }).toList();
+
     return right(filtered);
   }
 

@@ -19,7 +19,7 @@ abstract interface class TransactionRepository {
 
   Future<Either<Failure, List<Transaction>>> getTransactionsByPeriod(
     int accountId,
-    DateTime startDate,
-    DateTime endDate,
+    DateTime? startDate,
+    DateTime? endDate,
   );
 }
