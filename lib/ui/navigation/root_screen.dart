@@ -18,6 +18,7 @@ class RootScreen extends StatelessWidget {
     return Scaffold(
       appBar: currentTab.appBar,
       body: navigationShell,
+      floatingActionButton: currentTab.floatingActionButton,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: navigationShell.currentIndex,
         onTap: _onTap,

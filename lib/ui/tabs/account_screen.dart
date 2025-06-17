@@ -21,4 +21,7 @@ class AccountScreen extends StatelessWidget implements TabScreen {
 
   @override
   String get routePath => '/account';
+
+  @override
+  Widget? get floatingActionButton => null;
 }

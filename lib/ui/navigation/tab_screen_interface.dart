@@ -8,4 +8,6 @@ abstract interface class TabScreen implements Widget {
   IconData get tabIcon;
 
   AppBar get appBar;
+
+  Widget? get floatingActionButton => null;
 }

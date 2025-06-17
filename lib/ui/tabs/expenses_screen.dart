@@ -29,13 +29,19 @@ class ExpensesScreen extends StatelessWidget implements TabScreen {
         final expenses = snapshot.data ?? [];
 
         if (expenses.isEmpty) {
-          return const Column(
+          return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('Здесь будут расходы за день'),
-              SizedBox(height: 8),
-              Text('Добавь нажатием на плюсик :)'),
+              Text(
+                'Здесь будут твои расходы',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              SizedBox(height: 4),
+              Text(
+                'Добавь нажатием на плюсик :)',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
             ],
           );
         }
@@ -89,6 +95,14 @@ class ExpensesScreen extends StatelessWidget implements TabScreen {
       },
     );
   }
+
+  @override
+  Widget? get floatingActionButton => FloatingActionButton(
+    onPressed: () {
+      // TODO: route to add transaction screen
+    },
+    child: const Icon(Icons.add),
+  );
 
   @override
   IconData get tabIcon => Icons.trending_down_outlined;

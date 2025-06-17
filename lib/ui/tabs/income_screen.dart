@@ -21,4 +21,7 @@ class IncomeScreen extends StatelessWidget implements TabScreen {
 
   @override
   String get routePath => '/income';
+
+  @override
+  Widget? get floatingActionButton => null;
 }
