@@ -30,9 +30,11 @@ final lightTheme = ThemeData(
     bodySmall: TextStyle(color: Color(0xFF1D1B20), fontSize: 12),
   ),
   iconTheme: const IconThemeData(color: Color(0x3C3C434D)),
+  dividerColor: const Color(0x3C3C434D),
 );
 
 final darkTheme = ThemeData(
+  // TODO: fully implement dark theme
   brightness: Brightness.dark,
   splashColor: Color(0x3300D68F),
   highlightColor: Color(0x1A00D68F),

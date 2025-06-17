@@ -40,10 +40,8 @@ class ExpensesScreen extends StatelessWidget implements TabScreen {
           );
         }
 
-        return ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+        return ListView.builder(
           itemCount: expenses.length,
-          separatorBuilder: (_, __) => const Divider(height: 1),
           itemBuilder: (context, index) {
             final item = expenses[index];
 
@@ -55,9 +53,16 @@ class ExpensesScreen extends StatelessWidget implements TabScreen {
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
-                  vertical: 12,
+                  vertical: 20,
                 ),
-                color: Colors.transparent,
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Theme.of(context).dividerColor,
+                      width: 1,
+                    ),
+                  ),
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -72,7 +77,7 @@ class ExpensesScreen extends StatelessWidget implements TabScreen {
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const SizedBox(width: 24),
-                        const Icon(Icons.arrow_forward_ios_outlined, size: 15),
+                        const Icon(Icons.arrow_forward_ios_outlined, size: 16),
                       ],
                     ),
                   ],
@@ -83,10 +88,6 @@ class ExpensesScreen extends StatelessWidget implements TabScreen {
         );
       },
     );
-  }
-
-  String _formatDate(DateTime dateTime) {
-    return '${dateTime.day.toString().padLeft(2, '0')}.${dateTime.month.toString().padLeft(2, '0')}.${dateTime.year}';
   }
 
   @override
