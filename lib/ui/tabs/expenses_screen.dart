@@ -66,89 +66,113 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
         }
 
         final expenses = snapshot.data ?? [];
-
-        if (expenses.isEmpty) {
-          return RefreshIndicator(
-            // forcibly made scrollable to enable pull-to-refresh
-            onRefresh: _refresh,
-            child: ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height / 2,
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Здесь будут твои расходы',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Добавь нажатием на плюсик :)',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
+        final totalSum = expenses.fold<double>(0, (sum, tx) => sum + tx.amount);
 
         return RefreshIndicator(
           onRefresh: _refresh,
-          child: ListView.builder(
-            itemCount: expenses.length,
-            itemBuilder: (context, index) {
-              final item = expenses[index];
-
-              return InkWell(
-                onTap: () {
-                  // TODO: route to transaction screen
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 20,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Theme.of(context).dividerColor,
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child:
+              expenses.isEmpty
+                  ? ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [Text(item.comment ?? '')],
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height / 2,
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Здесь будут твои расходы',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Добавь нажатием на плюсик :)',
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                      Row(
-                        children: [
-                          Text(
-                            '${item.amount.toStringAsFixed(2)} ₽',
-                            style: Theme.of(context).textTheme.bodyMedium,
+                    ],
+                  )
+                  : Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
                           ),
-                          const SizedBox(width: 24),
-                          const Icon(
-                            Icons.arrow_forward_ios_outlined,
-                            size: 16,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Всего'),
+                              Text(
+                                '$totalSum ₽',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: expenses.length,
+                          itemBuilder: (context, index) {
+                            final item = expenses[index];
+
+                            return InkWell(
+                              onTap: () {
+                                // TODO: route to transaction screen
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 20,
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: Theme.of(context).dividerColor,
+                                      width: 1,
+                                    ),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(item.comment ?? ''),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          '${item.amount.toStringAsFixed(2)} ₽',
+                                          style:
+                                              Theme.of(
+                                                context,
+                                              ).textTheme.bodyMedium,
+                                        ),
+                                        const SizedBox(width: 24),
+                                        const Icon(
+                                          Icons.arrow_forward_ios_outlined,
+                                          size: 16,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ],
                   ),
-                ),
-              );
-            },
-          ),
         );
       },
     );
