@@ -25,6 +25,11 @@ final lightTheme = ThemeData(
     secondary: Color(0xFFD4FAE6),
     error: Color(0xFFE46962),
   ),
+  textTheme: const TextTheme(
+    bodyMedium: TextStyle(color: Color(0xFF1D1B20), fontSize: 16),
+    bodySmall: TextStyle(color: Color(0xFF1D1B20), fontSize: 12),
+  ),
+  iconTheme: const IconThemeData(color: Color(0x3C3C434D)),
 );
 
 final darkTheme = ThemeData(
