@@ -11,6 +11,7 @@ final lightTheme = ThemeData(
   appBarTheme: const AppBarTheme(
     backgroundColor: _primaryColor,
     foregroundColor: Colors.white,
+    titleTextStyle: TextStyle(color: Colors.black, fontSize: 22),
     elevation: 0,
   ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
