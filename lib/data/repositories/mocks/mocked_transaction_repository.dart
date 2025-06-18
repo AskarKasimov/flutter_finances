@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter_finances/domain/entities/category.dart';
 import 'package:flutter_finances/domain/entities/forms/transaction_form.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
 import 'package:flutter_finances/domain/entities/value_objects/time_interval.dart';
@@ -12,6 +13,7 @@ class MockedTransactionRepository implements TransactionRepository {
       id: 1,
       accountId: 1,
       categoryId: 1,
+      category: Category(id: 1, name: 'хз', emoji: '🐘', isIncome: true),
       amount: 412,
       timestamp: DateTime.now(),
       comment: 'Mocked Transaction',
@@ -40,6 +42,7 @@ class MockedTransactionRepository implements TransactionRepository {
         id: _nextId(),
         accountId: form.accountId!,
         categoryId: form.categoryId!,
+        category: null,
         comment: form.comment ?? '',
         amount: form.amount ?? 0.0,
         timestamp: DateTime.now(),
@@ -107,6 +110,7 @@ class MockedTransactionRepository implements TransactionRepository {
       id: id,
       accountId: form.accountId ?? existing.accountId,
       categoryId: form.categoryId ?? existing.categoryId,
+      category: null,
       comment: form.comment ?? existing.comment,
       amount: form.amount ?? existing.amount,
       timestamp: DateTime.now(),

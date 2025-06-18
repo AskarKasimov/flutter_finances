@@ -3,24 +3,36 @@ import 'package:flutter_finances/data/repositories/mocks/mocked_transaction_repo
 import 'package:flutter_finances/domain/entities/transaction.dart';
 import 'package:flutter_finances/ui/navigation/tab_screen_interface.dart';
 
-class ExpensesScreen extends StatefulWidget implements TabScreen {
-  const ExpensesScreen({super.key});
+enum TransactionType { income, expense }
+
+class TransactionsScreen extends StatefulWidget implements TabScreen {
+  final TransactionType type;
+
+  const TransactionsScreen({super.key, required this.type});
 
   @override
-  State<ExpensesScreen> createState() => _ExpensesScreenState();
+  State<TransactionsScreen> createState() => _TransactionsScreenState();
 
   @override
-  IconData get tabIcon => Icons.trending_down_outlined;
+  IconData get tabIcon =>
+      type == TransactionType.income
+          ? Icons.trending_up_outlined
+          : Icons.trending_down_outlined;
 
   @override
-  String get tabLabel => 'Расходы';
+  String get tabLabel => type == TransactionType.income ? 'Доходы' : 'Расходы';
 
   @override
-  AppBar get appBar =>
-      AppBar(title: const Text('Расходы сегодня'), centerTitle: true);
+  AppBar get appBar => AppBar(
+    title: Text(
+      type == TransactionType.income ? 'Доходы сегодня' : 'Расходы сегодня',
+    ),
+    centerTitle: true,
+  );
 
   @override
-  String get routePath => '/expenses';
+  String get routePath =>
+      type == TransactionType.income ? '/incomes' : '/expenses';
 
   @override
   Widget? get floatingActionButton => FloatingActionButton(
@@ -31,7 +43,7 @@ class ExpensesScreen extends StatefulWidget implements TabScreen {
   );
 }
 
-class _ExpensesScreenState extends State<ExpensesScreen> {
+class _TransactionsScreenState extends State<TransactionsScreen> {
   late Future<List<Transaction>> _futureExpenses;
 
   @override
@@ -48,7 +60,17 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
       DateTime(now.year, now.month, now.day + 1), // the end of the day
     );
 
-    return result.fold((failure) => [], (transactions) => transactions);
+    return result.fold(
+      (failure) => [],
+      (transactions) =>
+          transactions
+              .where(
+                (tx) =>
+                    tx.category?.isIncome ==
+                    (widget.type == TransactionType.income),
+              )
+              .toList(),
+    );
   }
 
   Future<void> _refresh() async {
@@ -83,7 +105,9 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'Здесь будут твои расходы',
+                                widget.type == TransactionType.income
+                                    ? 'Здесь будут твои доходы'
+                                    : 'Здесь будут твои расходы',
                                 style: Theme.of(context).textTheme.bodyMedium,
                               ),
                               const SizedBox(height: 4),

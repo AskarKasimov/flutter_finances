@@ -14,10 +14,7 @@ final GoRouter router = GoRouter(
           rootTabs.map((tab) {
             return StatefulShellBranch(
               routes: [
-                GoRoute(
-                  path: tab.routePath,
-                  pageBuilder: (context, state) => NoTransitionPage(child: tab),
-                ),
+                GoRoute(path: tab.routePath, builder: (context, state) => tab),
               ],
             );
           }).toList(),
