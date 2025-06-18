@@ -41,10 +41,11 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   }
 
   Future<List<Transaction>> _loadTransactions() async {
+    final now = DateTime.now();
     final result = await MockedTransactionRepository().getTransactionsByPeriod(
       1,
-      null,
-      null,
+      DateTime(now.year, now.month, now.day), // the start of the day
+      DateTime(now.year, now.month, now.day + 1), // the end of the day
     );
 
     return result.fold((failure) => [], (transactions) => transactions);
