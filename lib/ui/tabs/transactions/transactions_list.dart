@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
-import 'package:flutter_finances/ui/tabs/transactions/transactions_screen.dart';
 
-class TransactionList extends StatelessWidget {
+class TransactionsList extends StatelessWidget {
   final List<Transaction> transactions;
-  final TransactionType type;
   final void Function(Transaction) onTapTransaction;
+  final bool showTime;
 
-  const TransactionList({
+  const TransactionsList({
     super.key,
     required this.transactions,
-    required this.type,
     required this.onTapTransaction,
+    this.showTime = false,
   });
 
   @override
@@ -27,9 +26,7 @@ class TransactionList extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    type == TransactionType.income
-                        ? 'Здесь будут твои доходы'
-                        : 'Здесь будут твои расходы',
+                    'Здесь будут твои транзакции',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 4),
@@ -76,9 +73,9 @@ class TransactionList extends StatelessWidget {
                 onTap: () => onTapTransaction(item),
                 child: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
+                  padding: EdgeInsets.symmetric(
                     horizontal: 16,
-                    vertical: 20,
+                    vertical: showTime ? 14 : 20,
                   ),
                   decoration: BoxDecoration(
                     border: Border(
@@ -94,10 +91,26 @@ class TransactionList extends StatelessWidget {
                       Text(item.comment ?? ''),
                       Row(
                         children: [
-                          Text(
-                            '${item.amount.toStringAsFixed(2)} ₽',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
+                          showTime
+                              ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    '${item.amount.toStringAsFixed(2)} ₽',
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
+                                  ),
+                                  Text(
+                                    '${item.timestamp.hour.toString().padLeft(2, '0')}:${item.timestamp.minute.toString().padLeft(2, '0')}',
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
+                                  ),
+                                ],
+                              )
+                              : Text(
+                                '${item.amount.toStringAsFixed(2)} ₽',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
                           const SizedBox(width: 24),
                           const Icon(
                             Icons.arrow_forward_ios_outlined,

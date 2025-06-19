@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_finances/ui/tabs/account_screen.dart';
 import 'package:flutter_finances/ui/tabs/items_screen.dart';
 import 'package:flutter_finances/ui/tabs/settings_screen.dart';
-import 'package:flutter_finances/ui/tabs/transactions/transaction_history_screen.dart';
+import 'package:flutter_finances/ui/tabs/transactions/transactions_history_screen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -59,7 +59,9 @@ final GoRouter router = GoRouter(
                 GoRoute(
                   path: 'history',
                   builder:
-                      (context, state) => const TransactionsHistoryScreen(),
+                      (context, state) => const TransactionsHistoryScreen(
+                        type: TransactionType.expense,
+                      ),
                 ),
               ],
             ),
@@ -76,7 +78,9 @@ final GoRouter router = GoRouter(
                 GoRoute(
                   path: 'history',
                   builder:
-                      (context, state) => const TransactionsHistoryScreen(),
+                      (context, state) => const TransactionsHistoryScreen(
+                        type: TransactionType.income,
+                      ),
                 ),
               ],
             ),

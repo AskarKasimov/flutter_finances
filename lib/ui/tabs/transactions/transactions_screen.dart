@@ -120,9 +120,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                         ),
                       ],
                     )
-                    : TransactionList(
+                    : TransactionsList(
                       transactions: expenses,
-                      type: widget.type,
                       onTapTransaction: (transaction) {
                         // TODO: route to transaction screen
                       },
