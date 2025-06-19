@@ -29,11 +29,6 @@ class TransactionsList extends StatelessWidget {
                     'Здесь будут твои транзакции',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Добавь нажатием на плюсик :)',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
                 ],
               ),
             ),

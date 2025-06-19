@@ -66,7 +66,7 @@ class _TransactionsHistoryScreenState extends State<TransactionsHistoryScreen> {
         final transactions = snapshot.data ?? [];
         return Scaffold(
           appBar: AppBar(
-            title: Text('История'),
+            title: Text('Моя история'),
             centerTitle: true,
             actions: [
               IconButton(
