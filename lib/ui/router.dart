@@ -53,15 +53,13 @@ final GoRouter router = GoRouter(
             GoRoute(
               path: '/expenses',
               builder:
-                  (context, state) =>
-                      const TransactionsScreen(type: TransactionType.expense),
+                  (context, state) => const TransactionsScreen(isIncome: false),
               routes: [
                 GoRoute(
                   path: 'history',
                   builder:
-                      (context, state) => const TransactionsHistoryScreen(
-                        type: TransactionType.expense,
-                      ),
+                      (context, state) =>
+                          const TransactionsHistoryScreen(isIncome: false),
                 ),
               ],
             ),
@@ -72,15 +70,13 @@ final GoRouter router = GoRouter(
             GoRoute(
               path: '/income',
               builder:
-                  (context, state) =>
-                      const TransactionsScreen(type: TransactionType.income),
+                  (context, state) => const TransactionsScreen(isIncome: true),
               routes: [
                 GoRoute(
                   path: 'history',
                   builder:
-                      (context, state) => const TransactionsHistoryScreen(
-                        type: TransactionType.income,
-                      ),
+                      (context, state) =>
+                          const TransactionsHistoryScreen(isIncome: true),
                 ),
               ],
             ),

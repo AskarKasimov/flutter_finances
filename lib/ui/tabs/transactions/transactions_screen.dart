@@ -4,12 +4,10 @@ import 'package:flutter_finances/domain/entities/transaction.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_list.dart';
 import 'package:go_router/go_router.dart';
 
-enum TransactionType { income, expense }
-
 class TransactionsScreen extends StatefulWidget {
-  final TransactionType type;
+  final bool isIncome;
 
-  const TransactionsScreen({super.key, required this.type});
+  const TransactionsScreen({super.key, required this.isIncome});
 
   @override
   State<TransactionsScreen> createState() => _TransactionsScreenState();
@@ -36,11 +34,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       (failure) => [],
       (transactions) =>
           transactions
-              .where(
-                (tx) =>
-                    tx.category?.isIncome ==
-                    (widget.type == TransactionType.income),
-              )
+              .where((tx) => tx.category?.isIncome == widget.isIncome)
               .toList(),
     );
   }
@@ -64,19 +58,13 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            title: Text(
-              widget.type == TransactionType.income
-                  ? 'Доходы сегодня'
-                  : 'Расходы сегодня',
-            ),
+            title: Text(widget.isIncome ? 'Доходы сегодня' : 'Расходы сегодня'),
             centerTitle: true,
             actions: [
               IconButton(
                 onPressed: () {
                   context.go(
-                    widget.type == TransactionType.income
-                        ? '/income/history'
-                        : '/expenses/history',
+                    widget.isIncome ? '/income/history' : '/expenses/history',
                   );
                 },
                 icon: const Icon(Icons.history_outlined),
@@ -104,7 +92,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  widget.type == TransactionType.income
+                                  widget.isIncome
                                       ? 'Здесь будут твои доходы'
                                       : 'Здесь будут твои расходы',
                                   style: Theme.of(context).textTheme.bodyMedium,
