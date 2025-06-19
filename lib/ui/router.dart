@@ -15,7 +15,13 @@ final GoRouter router = GoRouter(
           body: shell,
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: shell.currentIndex,
-            onTap: (index) => shell.goBranch(index),
+            onTap: (index) {
+              if (index == shell.currentIndex) {
+                shell.goBranch(index, initialLocation: true);
+              } else {
+                shell.goBranch(index);
+              }
+            },
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.trending_down_outlined),
