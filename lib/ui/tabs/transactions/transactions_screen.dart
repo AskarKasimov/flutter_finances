@@ -73,7 +73,11 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             actions: [
               IconButton(
                 onPressed: () {
-                  context.go('/expenses/history');
+                  context.go(
+                    widget.type == TransactionType.income
+                        ? '/income/history'
+                        : '/expenses/history',
+                  );
                 },
                 icon: const Icon(Icons.history_outlined),
               ),

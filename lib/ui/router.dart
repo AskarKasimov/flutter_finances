@@ -66,6 +66,13 @@ final GoRouter router = GoRouter(
               builder:
                   (context, state) =>
                       const TransactionsScreen(type: TransactionType.income),
+              routes: [
+                GoRoute(
+                  path: 'history',
+                  builder:
+                      (context, state) => const TransactionsHistoryScreen(),
+                ),
+              ],
             ),
           ],
         ),
