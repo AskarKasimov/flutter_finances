@@ -1,27 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../navigation/tab_screen_interface.dart';
-
-class AccountScreen extends StatelessWidget implements TabScreen {
+class AccountScreen extends StatelessWidget {
   const AccountScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const Center(child: Text('экран со счетом'));
   }
-
-  @override
-  IconData get tabIcon => Icons.calculate_outlined;
-
-  @override
-  String get tabLabel => 'Счет';
-
-  @override
-  AppBar get appBar => AppBar(title: const Text('Мой счет'), centerTitle: true);
-
-  @override
-  String get routePath => '/account';
-
-  @override
-  Widget? get floatingActionButton => null;
 }
