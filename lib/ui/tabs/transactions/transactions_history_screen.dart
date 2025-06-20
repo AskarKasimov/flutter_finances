@@ -6,6 +6,7 @@ import 'package:flutter_finances/application/blocs/transactions_history_state.da
 import 'package:flutter_finances/data/repositories/mocks/mocked_transaction_repository.dart';
 import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_list.dart';
+import 'package:flutter_finances/utils/date_utils.dart';
 
 class TransactionsHistoryScreen extends StatelessWidget {
   final bool isIncome;
@@ -116,7 +117,7 @@ class _TransactionsHistoryView extends StatelessWidget {
             color: Theme.of(context).colorScheme.secondary,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [const Text('Начало'), Text(_formatDate(start))],
+              children: [const Text('Начало'), Text(formatDate(start))],
             ),
           ),
         ),
@@ -142,7 +143,7 @@ class _TransactionsHistoryView extends StatelessWidget {
             color: Theme.of(context).colorScheme.secondary,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [const Text('Конец'), Text(_formatDate(end))],
+              children: [const Text('Конец'), Text(formatDate(end))],
             ),
           ),
         ),
@@ -183,9 +184,5 @@ class _TransactionsHistoryView extends StatelessWidget {
     }
 
     return (newStart, newEnd);
-  }
-
-  String _formatDate(DateTime dt) {
-    return '${dt.day.toString().padLeft(2, '0')}.${dt.month.toString().padLeft(2, '0')}.${dt.year}';
   }
 }

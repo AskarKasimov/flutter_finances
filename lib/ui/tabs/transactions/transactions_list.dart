@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
+import 'package:flutter_finances/utils/date_utils.dart';
 
 enum SortMode {
   dateDesc('Сначала новые'),
@@ -167,7 +168,7 @@ class _TransactionsListState extends State<TransactionsList> {
                                         Theme.of(context).textTheme.bodyMedium,
                                   ),
                                   Text(
-                                    '${item.timestamp.hour.toString().padLeft(2, '0')}:${item.timestamp.minute.toString().padLeft(2, '0')}',
+                                    formatDateTime(item.timestamp),
                                     style:
                                         Theme.of(context).textTheme.bodyMedium,
                                   ),
