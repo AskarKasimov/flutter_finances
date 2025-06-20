@@ -1,21 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
 
-class TransactionsList extends StatelessWidget {
+enum SortMode {
+  dateDesc('Сначала новые'),
+  dateAsc('Сначала старые'),
+  amountDesc('Сначала большие суммы'),
+  amountAsc('Сначала меньшие суммы');
+
+  final String label;
+
+  const SortMode(this.label);
+}
+
+extension SortModeInfo on SortMode {}
+
+class TransactionsList extends StatefulWidget {
   final List<Transaction> transactions;
   final void Function(Transaction) onTapTransaction;
   final bool showTime;
+  final bool showSortMethods;
 
   const TransactionsList({
     super.key,
     required this.transactions,
     required this.onTapTransaction,
     this.showTime = false,
+    this.showSortMethods = false,
   });
 
   @override
+  State<TransactionsList> createState() => _TransactionsListState();
+}
+
+class _TransactionsListState extends State<TransactionsList> {
+  SortMode _sortMode = SortMode.dateDesc;
+
+  List<Transaction> get sortedTransactions {
+    final sorted = [...widget.transactions];
+    sorted.sort((a, b) {
+      switch (_sortMode) {
+        case SortMode.dateDesc:
+          return b.timestamp.compareTo(a.timestamp);
+        case SortMode.dateAsc:
+          return a.timestamp.compareTo(b.timestamp);
+        case SortMode.amountDesc:
+          return b.amount.compareTo(a.amount);
+        case SortMode.amountAsc:
+          return a.amount.compareTo(b.amount);
+      }
+    });
+    return sorted;
+  }
+
+  String get sortLabel => _sortMode.label;
+
+  @override
   Widget build(BuildContext context) {
-    if (transactions.isEmpty) {
+    if (widget.transactions.isEmpty) {
       return ListView(
         physics: const AlwaysScrollableScrollPhysics(),
         children: [
@@ -37,10 +78,41 @@ class TransactionsList extends StatelessWidget {
       );
     }
 
+    final transactions = sortedTransactions;
     final totalSum = transactions.fold<double>(0, (sum, tx) => sum + tx.amount);
 
     return Column(
       children: [
+        if (widget.showSortMethods)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: PopupMenuButton<SortMode>(
+                onSelected: (value) => setState(() => _sortMode = value),
+                itemBuilder:
+                    (context) =>
+                        SortMode.values.map((mode) {
+                          return PopupMenuItem(
+                            value: mode,
+                            child: Text(mode.label),
+                          );
+                        }).toList(),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.sort, size: 20),
+                    const SizedBox(width: 4),
+                    Text(
+                      sortLabel,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const Icon(Icons.arrow_drop_down),
+                  ],
+                ),
+              ),
+            ),
+          ),
         Container(
           width: double.infinity,
           decoration: BoxDecoration(
@@ -50,7 +122,7 @@ class TransactionsList extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Всего'),
+              const Text('Всего'),
               Text(
                 '$totalSum ₽',
                 style: Theme.of(context).textTheme.bodyMedium,
@@ -63,14 +135,13 @@ class TransactionsList extends StatelessWidget {
             itemCount: transactions.length,
             itemBuilder: (context, index) {
               final item = transactions[index];
-
               return InkWell(
-                onTap: () => onTapTransaction(item),
+                onTap: () => widget.onTapTransaction(item),
                 child: Container(
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(
                     horizontal: 16,
-                    vertical: showTime ? 14 : 20,
+                    vertical: widget.showTime ? 14 : 20,
                   ),
                   decoration: BoxDecoration(
                     border: Border(
@@ -86,7 +157,7 @@ class TransactionsList extends StatelessWidget {
                       Text(item.comment ?? ''),
                       Row(
                         children: [
-                          showTime
+                          widget.showTime
                               ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [

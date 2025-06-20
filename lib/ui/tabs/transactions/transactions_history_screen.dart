@@ -72,6 +72,7 @@ class _TransactionsHistoryView extends StatelessWidget {
                     child: TransactionsList(
                       transactions: state.transactions,
                       showTime: true,
+                      showSortMethods: true,
                       onTapTransaction: (tx) {},
                     ),
                   ),
