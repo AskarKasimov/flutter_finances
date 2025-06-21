@@ -15,12 +15,8 @@ final lightTheme = ThemeData(
     elevation: 0,
     iconTheme: IconThemeData(color: Color(0xFF49454F)),
   ),
-  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+  navigationBarTheme: const NavigationBarThemeData(
     backgroundColor: Color(0xFFF3EDF7),
-    selectedItemColor: _primaryColor,
-    unselectedItemColor: Color(0xFF49454F),
-    type: BottomNavigationBarType.fixed,
-    elevation: 8,
   ),
   colorScheme: const ColorScheme.light(
     primary: _primaryColor,

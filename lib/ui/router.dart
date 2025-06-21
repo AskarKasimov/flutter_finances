@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_finances/gen/assets.gen.dart';
 import 'package:flutter_finances/ui/tabs/account_screen.dart';
 import 'package:flutter_finances/ui/tabs/items_screen.dart';
 import 'package:flutter_finances/ui/tabs/settings_screen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_history_screen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_screen.dart';
 import 'package:go_router/go_router.dart';
+
+ColorFilter? _navIconColor(BuildContext context, bool isSelected) {
+  return isSelected
+      ? ColorFilter.mode(Theme.of(context).colorScheme.primary, BlendMode.srcIn)
+      : null;
+}
 
 final GoRouter router = GoRouter(
   initialLocation: '/expenses',
@@ -13,34 +20,54 @@ final GoRouter router = GoRouter(
       builder: (context, state, shell) {
         return Scaffold(
           body: shell,
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: shell.currentIndex,
-            onTap: (index) {
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: shell.currentIndex,
+            onDestinationSelected: (index) {
               if (index == shell.currentIndex) {
                 shell.goBranch(index, initialLocation: true);
               } else {
                 shell.goBranch(index);
               }
             },
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.trending_down_outlined),
+            destinations: [
+              NavigationDestination(
+                icon: Assets.icons.expenses.svg(
+                  width: 24,
+                  height: 24,
+                  colorFilter: _navIconColor(context, shell.currentIndex == 0),
+                ),
                 label: 'Расходы',
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.trending_up_outlined),
+              NavigationDestination(
+                icon: Assets.icons.income.svg(
+                  width: 24,
+                  height: 24,
+                  colorFilter: _navIconColor(context, shell.currentIndex == 1),
+                ),
                 label: 'Доходы',
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.calculate_outlined),
+              NavigationDestination(
+                icon: Assets.icons.account.svg(
+                  width: 24,
+                  height: 24,
+                  colorFilter: _navIconColor(context, shell.currentIndex == 2),
+                ),
                 label: 'Счета',
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.notes_outlined),
+              NavigationDestination(
+                icon: Assets.icons.items.svg(
+                  width: 24,
+                  height: 24,
+                  colorFilter: _navIconColor(context, shell.currentIndex == 3),
+                ),
                 label: 'Статьи',
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.settings),
+              NavigationDestination(
+                icon: Assets.icons.settings.svg(
+                  width: 24,
+                  height: 24,
+                  colorFilter: _navIconColor(context, shell.currentIndex == 4),
+                ),
                 label: 'Настройки',
               ),
             ],
