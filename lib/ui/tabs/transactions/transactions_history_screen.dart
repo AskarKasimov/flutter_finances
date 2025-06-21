@@ -5,6 +5,7 @@ import 'package:flutter_finances/application/blocs/transactions_history_event.da
 import 'package:flutter_finances/application/blocs/transactions_history_state.dart';
 import 'package:flutter_finances/data/repositories/mocks/mocked_transaction_repository.dart';
 import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
+import 'package:flutter_finances/gen/assets.gen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_list.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
 
@@ -46,7 +47,7 @@ class _TransactionsHistoryView extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.analytics_outlined),
+            icon: Assets.icons.history.svg(width: 24, height: 24),
           ),
         ],
       ),

@@ -21,6 +21,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/expenses.svg
   SvgGenImage get expenses => const SvgGenImage('assets/icons/expenses.svg');
 
+  /// File path: assets/icons/history.svg
+  SvgGenImage get history => const SvgGenImage('assets/icons/history.svg');
+
   /// File path: assets/icons/icon.png
   AssetGenImage get icon => const AssetGenImage('assets/icons/icon.png');
 
@@ -37,6 +40,7 @@ class $AssetsIconsGen {
   List<dynamic> get values => [
     account,
     expenses,
+    history,
     icon,
     income,
     items,
