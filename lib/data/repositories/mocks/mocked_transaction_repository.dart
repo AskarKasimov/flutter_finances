@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter_finances/domain/entities/category.dart';
 import 'package:flutter_finances/domain/entities/forms/transaction_form.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
 import 'package:flutter_finances/domain/entities/value_objects/time_interval.dart';
@@ -12,12 +13,70 @@ class MockedTransactionRepository implements TransactionRepository {
       id: 1,
       accountId: 1,
       categoryId: 1,
-      amount: 412,
-      timestamp: DateTime.now(),
-      comment: 'Mocked Transaction',
+      category: Category(id: 1, name: 'Продукты', emoji: '🛒', isIncome: false),
+      comment: 'Магнит',
+      amount: 870.50,
+      timestamp: DateTime.now().subtract(const Duration(days: 1, hours: 2)),
       timeInterval: AuditInfoTime(
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        createdAt: DateTime.now().subtract(const Duration(days: 1, hours: 2)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 1, hours: 2)),
+      ),
+    ),
+    Transaction(
+      id: 2,
+      accountId: 1,
+      categoryId: 2,
+      category: Category(id: 2, name: 'Зарплата', emoji: '💼', isIncome: true),
+      comment: 'Аванс',
+      amount: 25000.00,
+      timestamp: DateTime.now().subtract(const Duration(days: 3)),
+      timeInterval: AuditInfoTime(
+        createdAt: DateTime.now().subtract(const Duration(days: 3)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 3)),
+      ),
+    ),
+    Transaction(
+      id: 3,
+      accountId: 1,
+      categoryId: 3,
+      category: Category(id: 3, name: 'Кафе', emoji: '🍕', isIncome: false),
+      comment: 'Пиццерия',
+      amount: 1250.00,
+      timestamp: DateTime.now().subtract(const Duration(days: 2)),
+      timeInterval: AuditInfoTime(
+        createdAt: DateTime.now().subtract(const Duration(days: 2)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 2)),
+      ),
+    ),
+    Transaction(
+      id: 4,
+      accountId: 1,
+      categoryId: 4,
+      category: Category(
+        id: 4,
+        name: 'Развлечения',
+        emoji: '🎮',
+        isIncome: false,
+      ),
+      comment: 'Steam',
+      amount: 1900.99,
+      timestamp: DateTime.now().subtract(const Duration(days: 5)),
+      timeInterval: AuditInfoTime(
+        createdAt: DateTime.now().subtract(const Duration(days: 5)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 5)),
+      ),
+    ),
+    Transaction(
+      id: 5,
+      accountId: 1,
+      categoryId: 5,
+      category: Category(id: 5, name: 'Перевод', emoji: '💸', isIncome: true),
+      comment: 'От мамы',
+      amount: 3000.00,
+      timestamp: DateTime.now().subtract(const Duration(days: 7)),
+      timeInterval: AuditInfoTime(
+        createdAt: DateTime.now().subtract(const Duration(days: 7)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 7)),
       ),
     ),
   ];
@@ -40,6 +99,7 @@ class MockedTransactionRepository implements TransactionRepository {
         id: _nextId(),
         accountId: form.accountId!,
         categoryId: form.categoryId!,
+        category: null,
         comment: form.comment ?? '',
         amount: form.amount ?? 0.0,
         timestamp: DateTime.now(),
@@ -107,6 +167,7 @@ class MockedTransactionRepository implements TransactionRepository {
       id: id,
       accountId: form.accountId ?? existing.accountId,
       categoryId: form.categoryId ?? existing.categoryId,
+      category: null,
       comment: form.comment ?? existing.comment,
       amount: form.amount ?? existing.amount,
       timestamp: DateTime.now(),

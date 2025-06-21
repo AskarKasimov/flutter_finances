@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter_finances/data/mappers/category_mapper.dart';
 import 'package:flutter_finances/data/mappers/types/try_parse_datetime.dart';
 import 'package:flutter_finances/data/mappers/types/try_parse_double.dart';
 import 'package:flutter_finances/data/models/transaction/transaction.dart';
@@ -26,6 +27,7 @@ extension TransactionMapper on TransactionDTO {
               id: this.id,
               accountId: accountId,
               categoryId: categoryId,
+              category: null,
               amount: parsedAmount,
               timestamp: parsedTransactionDate,
               comment: comment,
@@ -52,26 +54,30 @@ extension TransactionResponseMapper on TransactionResponseDTO {
     final createdAtOrFailure = tryParseDateTime(createdAt, 'createdAt');
     final updatedAtOrFailure = tryParseDateTime(updatedAt, 'updatedAt');
     final categoryId = category.id;
+    final categoryOrFailure = category.toDomain();
 
-    return amountOrFailure.flatMap(
-      (parsedAmount) => transactionDateOrFailure.flatMap(
-        (parsedTransactionDate) => createdAtOrFailure.flatMap(
-          (parsedCreatedAt) => updatedAtOrFailure.map(
-            (parsedUpdatedAt) => Transaction(
-              id: this.id,
-              accountId: accountId,
-              categoryId: categoryId,
-              amount: parsedAmount,
-              timestamp: parsedTransactionDate,
-              comment: comment,
-              timeInterval: AuditInfoTime(
-                createdAt: parsedCreatedAt,
-                updatedAt: parsedUpdatedAt,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+    return amountOrFailure.flatMap((parsedAmount) {
+      return transactionDateOrFailure.flatMap((parsedDate) {
+        return createdAtOrFailure.flatMap((createdAt) {
+          return updatedAtOrFailure.flatMap((updatedAt) {
+            return categoryOrFailure.map((parsedCategory) {
+              return Transaction(
+                id: this.id,
+                accountId: accountId,
+                categoryId: categoryId,
+                category: parsedCategory,
+                amount: parsedAmount,
+                timestamp: parsedDate,
+                comment: comment,
+                timeInterval: AuditInfoTime(
+                  createdAt: createdAt,
+                  updatedAt: updatedAt,
+                ),
+              );
+            });
+          });
+        });
+      });
+    });
   }
 }
