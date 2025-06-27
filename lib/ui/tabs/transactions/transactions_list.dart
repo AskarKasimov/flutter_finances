@@ -13,8 +13,6 @@ enum SortMode {
   const SortMode(this.label);
 }
 
-extension SortModeInfo on SortMode {}
-
 class TransactionsList extends StatefulWidget {
   final List<Transaction> transactions;
   final void Function(Transaction) onTapTransaction;
