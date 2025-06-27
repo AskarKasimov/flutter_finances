@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_finances/application/blocs/transactions_history_bloc.dart';
-import 'package:flutter_finances/application/blocs/transactions_history_event.dart';
-import 'package:flutter_finances/application/blocs/transactions_history_state.dart';
+import 'package:flutter_finances/data/repositories/mocks/mocked_category_repository.dart';
+import 'package:flutter_finances/ui/blocs/transactions_history_bloc.dart';
+import 'package:flutter_finances/ui/blocs/transactions_history_event.dart';
+import 'package:flutter_finances/ui/blocs/transactions_history_state.dart';
 import 'package:flutter_finances/data/repositories/mocks/mocked_transaction_repository.dart';
 import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_list.dart';
@@ -22,14 +23,13 @@ class TransactionsScreen extends StatelessWidget {
     return BlocProvider(
       create:
           (_) => TransactionHistoryBloc(
-            getTransactions: GetTransactionsByPeriod(
+            getTransactions: UseCaseGetTransactionsByPeriod(
               MockedTransactionRepository(),
+              MockedCategoryRepository(),
             ),
             isIncome: isIncome,
             startDate: startDate,
             endDate: endDate,
-          )..add(
-            LoadTransactionHistory(startDate: startDate, endDate: endDate),
           ),
       child: _TransactionsTodayView(isIncome: isIncome),
     );

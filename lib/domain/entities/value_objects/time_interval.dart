@@ -1,12 +1,6 @@
 class AuditInfoTime {
-  final DateTime _createdAt;
-  final DateTime _updatedAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
-  AuditInfoTime({required DateTime createdAt, required DateTime updatedAt})
-    : _createdAt = createdAt,
-      _updatedAt = updatedAt;
-
-  DateTime get updatedAt => _updatedAt;
-
-  DateTime get createdAt => _createdAt;
+  AuditInfoTime({required this.createdAt, required this.updatedAt});
 }

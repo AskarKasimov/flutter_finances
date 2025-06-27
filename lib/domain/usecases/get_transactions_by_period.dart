@@ -1,31 +1,31 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
-import 'package:flutter_finances/domain/failures/failure.dart';
+import 'package:flutter_finances/domain/repositories/category_repository.dart';
 import 'package:flutter_finances/domain/repositories/transaction_repository.dart';
 
-class GetTransactionsByPeriod {
-  final TransactionRepository repository;
+class UseCaseGetTransactionsByPeriod {
+  final TransactionRepository transactionRepository;
+  final CategoryRepository categoryRepository;
 
-  GetTransactionsByPeriod(this.repository);
+  UseCaseGetTransactionsByPeriod(this.transactionRepository, this.categoryRepository);
 
-  Future<Either<Failure, List<Transaction>>> call({
+  Future<List<Transaction>> call({
     required DateTime startDate,
     required DateTime endDate,
     required bool isIncome,
   }) async {
-    final result = await repository.getTransactionsByPeriod(
+    final transactions = await transactionRepository.getTransactionsByPeriod(
       1,
       startDate,
       endDate,
     );
 
-    return result.map(
-      (list) =>
-          list
-              .where(
-                (transaction) => transaction.category?.isIncome == isIncome,
-              )
-              .toList(),
+    final categories = await categoryRepository.getCategoriesByIsIncome(
+      isIncome,
     );
+    final categoryIds = categories.map((c) => c.id).toSet();
+
+    return transactions
+        .where((transaction) => categoryIds.contains(transaction.categoryId))
+        .toList();
   }
 }

@@ -2,31 +2,17 @@ import 'value_objects/money_details.dart';
 import 'value_objects/time_interval.dart';
 
 class Account {
-  final int _id;
-  final int _userId;
-  final String _name;
-  final MoneyDetails _moneyDetails;
-  final AuditInfoTime _timeInterval;
+  final int id;
+  final int userId;
+  final String name;
+  final MoneyDetails moneyDetails;
+  final AuditInfoTime auditInfoTime;
 
   Account({
-    required int id,
-    required int userId,
-    required String name,
-    required MoneyDetails moneyDetails,
-    required AuditInfoTime timeInterval,
-  }) : _id = id,
-       _userId = userId,
-       _name = name,
-       _moneyDetails = moneyDetails,
-       _timeInterval = timeInterval;
-
-  AuditInfoTime get timeInterval => _timeInterval;
-
-  MoneyDetails get moneyDetails => _moneyDetails;
-
-  String get name => _name;
-
-  int get userId => _userId;
-
-  int get id => _id;
+    required this.id,
+    required this.userId,
+    required this.name,
+    required this.moneyDetails,
+    required this.auditInfoTime,
+  });
 }

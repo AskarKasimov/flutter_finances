@@ -1,10 +1,13 @@
-import 'package:dartz/dartz.dart';
-import 'package:flutter_finances/domain/failures/failure.dart';
-import 'package:flutter_finances/domain/failures/parsing_failure.dart';
-
-Either<Failure, double> tryParseDouble(String source, String fieldName) {
-  final value = double.tryParse(source);
-  return value != null
-      ? right(value)
-      : left(ParsingFailure('Поле $fieldName должно быть числом'));
+double tryParseDouble(String source, String fieldName) {
+  try {
+    final value = double.parse(source);
+    if (value.isNaN || value.isInfinite) {
+      throw FormatException('Invalid double value for $fieldName');
+    }
+    return value;
+  } catch (e) {
+    throw FormatException(
+      'Error parsing $fieldName: $source. Must be a valid float number.',
+    );
+  }
 }

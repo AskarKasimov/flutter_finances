@@ -1,7 +1,5 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_finances/domain/entities/category.dart';
-import 'package:flutter_finances/domain/failures/failure.dart';
-import 'package:flutter_finances/domain/failures/repository_failure.dart';
+import 'package:flutter_finances/domain/exceptions/RepositoryException.dart';
 import 'package:flutter_finances/domain/repositories/category_repository.dart';
 
 class MockedCategoryRepository implements CategoryRepository {
@@ -13,20 +11,18 @@ class MockedCategoryRepository implements CategoryRepository {
   ];
 
   @override
-  Future<Either<Failure, List<Category>>> getAllCategories() async {
+  Future<List<Category>> getAllCategories() async {
     try {
-      return right(_mockCategories);
+      return _mockCategories;
     } catch (e) {
-      return left(RepositoryFailure('Ошибка при получении категорий'));
+      throw RepositoryException('Ошибка при получении категорий');
     }
   }
 
   @override
-  Future<Either<Failure, List<Category>>> getCategoriesByIsIncome(
-    bool isIncome,
-  ) async {
+  Future<List<Category>> getCategoriesByIsIncome(bool isIncome) async {
     final filtered =
         _mockCategories.where((c) => c.isIncome == isIncome).toList();
-    return right(filtered);
+    return filtered;
   }
 }

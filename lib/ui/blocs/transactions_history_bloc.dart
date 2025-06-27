@@ -6,7 +6,7 @@ import 'transactions_history_state.dart';
 
 class TransactionHistoryBloc
     extends Bloc<TransactionHistoryEvent, TransactionHistoryState> {
-  final GetTransactionsByPeriod getTransactions;
+  final UseCaseGetTransactionsByPeriod getTransactions;
   final bool isIncome;
 
   TransactionHistoryBloc({
@@ -18,6 +18,7 @@ class TransactionHistoryBloc
          TransactionHistoryLoading(startDate: startDate, endDate: endDate),
        ) {
     on<LoadTransactionHistory>(_onLoadTransactions);
+    add(LoadTransactionHistory(startDate: startDate, endDate: endDate));
   }
 
   Future<void> _onLoadTransactions(
@@ -31,27 +32,28 @@ class TransactionHistoryBloc
       ),
     );
 
-    final result = await getTransactions(
-      startDate: event.startDate,
-      endDate: event.endDate,
-      isIncome: isIncome,
-    );
+    try {
+      final transactions = await getTransactions(
+        startDate: event.startDate,
+        endDate: event.endDate,
+        isIncome: isIncome,
+      );
 
-    result.fold(
-      (failure) => emit(
-        TransactionHistoryError(
-          message: failure.message,
-          startDate: event.startDate,
-          endDate: event.endDate,
-        ),
-      ),
-      (transactions) => emit(
+      emit(
         TransactionHistoryLoaded(
           transactions: transactions,
           startDate: event.startDate,
           endDate: event.endDate,
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      emit(
+        TransactionHistoryError(
+          message: e.toString(),
+          startDate: event.startDate,
+          endDate: event.endDate,
+        ),
+      );
+    }
   }
 }

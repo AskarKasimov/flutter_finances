@@ -1,12 +1,10 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_finances/domain/entities/account.dart';
 import 'package:flutter_finances/domain/entities/account_history.dart';
 import 'package:flutter_finances/domain/entities/account_response.dart';
 import 'package:flutter_finances/domain/entities/forms/account_form.dart';
 import 'package:flutter_finances/domain/entities/value_objects/money_details.dart';
 import 'package:flutter_finances/domain/entities/value_objects/time_interval.dart';
-import 'package:flutter_finances/domain/failures/failure.dart';
-import 'package:flutter_finances/domain/failures/repository_failure.dart';
+import 'package:flutter_finances/domain/exceptions/RepositoryException.dart';
 import 'package:flutter_finances/domain/repositories/account_repository.dart';
 
 class MockedAccountRepository implements AccountRepository {
@@ -16,7 +14,7 @@ class MockedAccountRepository implements AccountRepository {
       userId: 1,
       name: 'Mocked Account',
       moneyDetails: MoneyDetails(balance: 114, currency: 'RUB'),
-      timeInterval: AuditInfoTime(
+      auditInfoTime: AuditInfoTime(
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       ),
@@ -33,73 +31,64 @@ class MockedAccountRepository implements AccountRepository {
   }
 
   @override
-  Future<Either<Failure, Account>> createAccount(AccountForm form) async {
-    try {
-      final account = Account(
-        id: _nextId(),
-        userId: 1,
-        name: form.name ?? 'Mocked Account',
-        moneyDetails:
-            form.moneyDetails ?? MoneyDetails(balance: 0, currency: 'RUB'),
-        timeInterval: AuditInfoTime(
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        ),
-      );
-      _accounts.add(account);
-      return right(account);
-    } catch (e) {
-      return left(RepositoryFailure('Ошибка при создании аккаунта: $e'));
-    }
+  Future<Account> createAccount(AccountForm form) async {
+    final account = Account(
+      id: _nextId(),
+      userId: 1,
+      name: form.name ?? 'Mocked Account',
+      moneyDetails:
+          form.moneyDetails ?? MoneyDetails(balance: 0, currency: 'RUB'),
+      auditInfoTime: AuditInfoTime(
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      ),
+    );
+    _accounts.add(account);
+    return account;
   }
 
   @override
-  Future<Either<Failure, AccountResponse>> getAccountById(int id) async {
+  Future<AccountResponse> getAccountById(int id) async {
     final account = _accounts.where((a) => a.id == id).firstOrNull;
+
     if (account == null) {
-      return left(RepositoryFailure('Аккаунт с id $id не найден'));
+      throw RepositoryException('Аккаунт с id $id не найден');
     }
-    return right(
-      AccountResponse(
-        id: account.id,
-        name: account.name,
-        moneyDetails: account.moneyDetails,
-        incomeStats: [],
-        expenseStats: [],
-        timeInterval: account.timeInterval,
-      ),
+
+    return AccountResponse(
+      id: account.id,
+      name: account.name,
+      moneyDetails: account.moneyDetails,
+      incomeStats: [],
+      expenseStats: [],
+      auditInfoTime: account.auditInfoTime,
     );
   }
 
   @override
-  Future<Either<Failure, AccountHistory>> getAccountHistory(int id) async {
+  Future<AccountHistory> getAccountHistory(int id) async {
     final account = _accounts.where((a) => a.id == id).firstOrNull;
     if (account == null) {
-      return left(RepositoryFailure('История аккаунта с id $id не найдена'));
+      throw RepositoryException('Аккаунт с id $id не найден');
     }
-    return right(
-      AccountHistory(
-        accountId: account.id,
-        accountName: account.name,
-        moneyDetails: account.moneyDetails,
-        history: [],
-      ),
+    return AccountHistory(
+      accountId: account.id,
+      accountName: account.name,
+      moneyDetails: account.moneyDetails,
+      history: [],
     );
   }
 
   @override
-  Future<Either<Failure, List<Account>>> getAllAccounts() async {
-    return right(List.unmodifiable(_accounts));
+  Future<List<Account>> getAllAccounts() async {
+    return List.unmodifiable(_accounts);
   }
 
   @override
-  Future<Either<Failure, AccountForm>> updateAccount(
-    int id,
-    AccountForm form,
-  ) async {
+  Future<AccountForm> updateAccount(int id, AccountForm form) async {
     final index = _accounts.indexWhere((a) => a.id == id);
     if (index == -1) {
-      return left(RepositoryFailure('Не удалось обновить: аккаунт не найден'));
+      throw RepositoryException('Не удалось обновить: аккаунт не найден');
     }
 
     final updated = Account(
@@ -107,16 +96,14 @@ class MockedAccountRepository implements AccountRepository {
       userId: _accounts[index].userId,
       name: form.name ?? _accounts[index].name,
       moneyDetails: form.moneyDetails ?? _accounts[index].moneyDetails,
-      timeInterval: AuditInfoTime(
-        createdAt: _accounts[index].timeInterval.createdAt,
+      auditInfoTime: AuditInfoTime(
+        createdAt: _accounts[index].auditInfoTime.createdAt,
         updatedAt: DateTime.now(),
       ),
     );
 
     _accounts[index] = updated;
 
-    return right(
-      AccountForm(name: updated.name, moneyDetails: updated.moneyDetails),
-    );
+    return AccountForm(name: updated.name, moneyDetails: updated.moneyDetails);
   }
 }
