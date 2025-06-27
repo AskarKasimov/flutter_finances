@@ -124,6 +124,7 @@ class DatePickerRow extends StatelessWidget {
             ),
           ),
         ),
+        Divider(height: 1, color: Theme.of(context).dividerColor),
         InkWell(
           onTap: () async {
             final result = await _pickDate(

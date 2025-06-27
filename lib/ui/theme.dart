@@ -28,7 +28,7 @@ final lightTheme = ThemeData(
     bodySmall: TextStyle(color: Color(0x3C3C434D), fontSize: 13),
   ),
   iconTheme: const IconThemeData(color: Color(0x3C3C434D)),
-  dividerColor: const Color(0x3C3C434D),
+  dividerColor: const Color(0xFFCAC4D0),
 );
 
 final darkTheme = ThemeData(
