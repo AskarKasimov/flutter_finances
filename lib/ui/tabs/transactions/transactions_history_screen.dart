@@ -69,7 +69,7 @@ class _TransactionsHistoryView extends StatelessWidget {
               },
               child: Column(
                 children: [
-                  _buildDatePickerRow(context, state.startDate, state.endDate),
+                  DatePickerRow(start: state.startDate, end: state.endDate),
                   Expanded(
                     child: TransactionsList(
                       transactions: state.transactions,
@@ -88,12 +88,16 @@ class _TransactionsHistoryView extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildDatePickerRow(
-    BuildContext context,
-    DateTime start,
-    DateTime end,
-  ) {
+class DatePickerRow extends StatelessWidget {
+  final DateTime start;
+  final DateTime end;
+
+  const DatePickerRow({super.key, required this.start, required this.end});
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
         InkWell(
@@ -104,9 +108,7 @@ class _TransactionsHistoryView extends StatelessWidget {
               currentStart: start,
               currentEnd: end,
             );
-
             if (!context.mounted || result == null) return;
-
             final (startDate, endDate) = result;
             context.read<TransactionHistoryBloc>().add(
               LoadTransactionHistory(startDate: startDate, endDate: endDate),
@@ -130,9 +132,7 @@ class _TransactionsHistoryView extends StatelessWidget {
               currentStart: start,
               currentEnd: end,
             );
-
             if (!context.mounted || result == null) return;
-
             final (startDate, endDate) = result;
             context.read<TransactionHistoryBloc>().add(
               LoadTransactionHistory(startDate: startDate, endDate: endDate),
