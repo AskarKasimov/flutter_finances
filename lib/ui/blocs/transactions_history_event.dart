@@ -1,4 +1,4 @@
-abstract class TransactionHistoryEvent {}
+sealed class TransactionHistoryEvent {}
 
 class LoadTransactionHistory extends TransactionHistoryEvent {
   final DateTime startDate;

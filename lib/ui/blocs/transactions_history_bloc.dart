@@ -17,7 +17,13 @@ class TransactionHistoryBloc
   }) : super(
          TransactionHistoryLoading(startDate: startDate, endDate: endDate),
        ) {
-    on<LoadTransactionHistory>(_onLoadTransactions);
+    on<TransactionHistoryEvent>((event, emit) {
+      switch (event) {
+        case LoadTransactionHistory():
+          _onLoadTransactions(event, emit);
+          break;
+      }
+    });
     add(LoadTransactionHistory(startDate: startDate, endDate: endDate));
   }
 

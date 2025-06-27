@@ -1,6 +1,6 @@
 import 'package:flutter_finances/domain/entities/transaction.dart';
 
-abstract class TransactionHistoryState {
+sealed class TransactionHistoryState {
   final DateTime startDate;
   final DateTime endDate;
 
