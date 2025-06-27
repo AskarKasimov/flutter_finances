@@ -17,10 +17,10 @@ class TransactionHistoryBloc
   }) : super(
          TransactionHistoryLoading(startDate: startDate, endDate: endDate),
        ) {
-    on<TransactionHistoryEvent>((event, emit) {
+    on<TransactionHistoryEvent>((event, emit) async {
       switch (event) {
         case LoadTransactionHistory():
-          _onLoadTransactions(event, emit);
+          await _onLoadTransactions(event, emit);
           break;
       }
     });
@@ -31,20 +31,12 @@ class TransactionHistoryBloc
     LoadTransactionHistory event,
     Emitter<TransactionHistoryState> emit,
   ) async {
-    emit(
-      TransactionHistoryLoading(
-        startDate: event.startDate,
-        endDate: event.endDate,
-      ),
-    );
-
     try {
       final transactions = await getTransactions(
         startDate: event.startDate,
         endDate: event.endDate,
         isIncome: isIncome,
       );
-
       emit(
         TransactionHistoryLoaded(
           transactions: transactions,
