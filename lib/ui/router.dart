@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_finances/gen/assets.gen.dart';
-import 'package:flutter_finances/ui/tabs/account_screen.dart';
+import 'package:flutter_finances/ui/tabs/account/account_screen.dart';
 import 'package:flutter_finances/ui/tabs/items_screen.dart';
 import 'package:flutter_finances/ui/tabs/settings_screen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_history_screen.dart';
