@@ -13,7 +13,7 @@ class MockedAccountRepository implements AccountRepository {
       id: 1,
       userId: 1,
       name: 'Mocked Account',
-      moneyDetails: MoneyDetails(balance: 114, currency: 'RUB'),
+      moneyDetails: MoneyDetails(balance: 114, currency: '₽'),
       auditInfoTime: AuditInfoTime(
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
@@ -37,7 +37,7 @@ class MockedAccountRepository implements AccountRepository {
       userId: 1,
       name: form.name ?? 'Mocked Account',
       moneyDetails:
-          form.moneyDetails ?? MoneyDetails(balance: 0, currency: 'RUB'),
+          form.moneyDetails ?? MoneyDetails(balance: 0, currency: '₽'),
       auditInfoTime: AuditInfoTime(
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),

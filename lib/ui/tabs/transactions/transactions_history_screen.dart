@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/data/repositories/mocks/mocked_category_repository.dart';
-import 'package:flutter_finances/ui/blocs/transactions_history_bloc.dart';
-import 'package:flutter_finances/ui/blocs/transactions_history_event.dart';
-import 'package:flutter_finances/ui/blocs/transactions_history_state.dart';
+import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
+import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
+import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
 import 'package:flutter_finances/data/repositories/mocks/mocked_transaction_repository.dart';
 import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
 import 'package:flutter_finances/gen/assets.gen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_list.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
+import 'package:go_router/go_router.dart';
 
 class TransactionsHistoryScreen extends StatelessWidget {
   final bool isIncome;
@@ -32,12 +33,16 @@ class TransactionsHistoryScreen extends StatelessWidget {
             startDate: startDate,
             endDate: endDate,
           ),
-      child: _TransactionsHistoryView(),
+      child: _TransactionsHistoryView(isIncome: isIncome),
     );
   }
 }
 
 class _TransactionsHistoryView extends StatelessWidget {
+  final bool isIncome;
+
+  const _TransactionsHistoryView({required this.isIncome});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +51,9 @@ class _TransactionsHistoryView extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              context.go(isIncome ? '/income/history/analysis' : '/expenses/history/analysis');
+            },
             icon: Assets.icons.history.svg(width: 24, height: 24),
           ),
         ],
@@ -124,6 +131,7 @@ class DatePickerRow extends StatelessWidget {
             ),
           ),
         ),
+        Divider(height: 1, color: Theme.of(context).dividerColor),
         InkWell(
           onTap: () async {
             final result = await _pickDate(

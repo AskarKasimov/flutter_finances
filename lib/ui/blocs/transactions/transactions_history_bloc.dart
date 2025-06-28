@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
 
-import 'transactions_history_event.dart';
-import 'transactions_history_state.dart';
+import './transactions_history_event.dart';
+import './transactions_history_state.dart';
 
 class TransactionHistoryBloc
     extends Bloc<TransactionHistoryEvent, TransactionHistoryState> {

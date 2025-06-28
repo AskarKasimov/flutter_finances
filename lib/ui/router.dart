@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_finances/gen/assets.gen.dart';
-import 'package:flutter_finances/ui/tabs/account_screen.dart';
+import 'package:flutter_finances/ui/tabs/account/account_edit_name_screen.dart';
+import 'package:flutter_finances/ui/tabs/account/account_screen.dart';
 import 'package:flutter_finances/ui/tabs/items_screen.dart';
 import 'package:flutter_finances/ui/tabs/settings_screen.dart';
+import 'package:flutter_finances/ui/tabs/transactions/transactions_analysis.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_history_screen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -87,6 +89,14 @@ final GoRouter router = GoRouter(
                   builder:
                       (context, state) =>
                           const TransactionsHistoryScreen(isIncome: false),
+                  routes: [
+                    GoRoute(
+                      path: 'analysis',
+                      builder:
+                          (context, state) =>
+                              const TransactionsAnalysisScreen(isIncome: false),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -104,6 +114,14 @@ final GoRouter router = GoRouter(
                   builder:
                       (context, state) =>
                           const TransactionsHistoryScreen(isIncome: true),
+                  routes: [
+                    GoRoute(
+                      path: 'analysis',
+                      builder:
+                          (context, state) =>
+                              const TransactionsAnalysisScreen(isIncome: true),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -114,6 +132,12 @@ final GoRouter router = GoRouter(
             GoRoute(
               path: '/account',
               builder: (context, state) => const AccountScreen(),
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  builder: (context, state) => const AccountEditNameScreen(),
+                ),
+              ],
             ),
           ],
         ),
