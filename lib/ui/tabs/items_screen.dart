@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_event.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
+import 'package:string_similarity/string_similarity.dart';
 
 class ItemsScreen extends StatelessWidget {
   const ItemsScreen({super.key});
@@ -89,13 +90,17 @@ class _ItemsViewState extends State<_ItemsView> {
                           ),
                       itemBuilder: (context, index) {
                         final filtered =
-                            categoriesState.categories
-                                .where(
-                                  (c) => c.name.toLowerCase().contains(
-                                    _searchQuery,
-                                  ),
-                                )
-                                .toList();
+                            _searchQuery.isEmpty
+                                ? categoriesState.categories
+                                : categoriesState.categories.where((c) {
+                                  final similarity = c.name
+                                      .toLowerCase()
+                                      .similarityTo(_searchQuery);
+                                  return similarity > 0.2 ||
+                                      c.name.toLowerCase().contains(
+                                        _searchQuery,
+                                      );
+                                }).toList();
                         final category = filtered[index];
 
                         return ListTile(
