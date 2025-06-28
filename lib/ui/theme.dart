@@ -29,6 +29,7 @@ final lightTheme = ThemeData(
   ),
   iconTheme: const IconThemeData(color: Color(0x3C3C434D)),
   dividerColor: const Color(0xFFCAC4D0),
+  inputDecorationTheme: InputDecorationTheme(fillColor: Color(0xFFECE6F0)),
 );
 
 final darkTheme = ThemeData(
