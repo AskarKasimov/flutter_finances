@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_finances/gen/assets.gen.dart';
+import 'package:flutter_finances/ui/tabs/account/account_edit_name_screen.dart';
 import 'package:flutter_finances/ui/tabs/account/account_screen.dart';
 import 'package:flutter_finances/ui/tabs/items_screen.dart';
 import 'package:flutter_finances/ui/tabs/settings_screen.dart';
@@ -114,6 +115,12 @@ final GoRouter router = GoRouter(
             GoRoute(
               path: '/account',
               builder: (context, state) => const AccountScreen(),
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  builder: (context, state) => const AccountEditNameScreen(),
+                ),
+              ],
             ),
           ],
         ),

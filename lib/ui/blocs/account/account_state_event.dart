@@ -5,3 +5,14 @@ class ChangeCurrency extends AccountEvent {
 
   ChangeCurrency(this.currency);
 }
+
+class ChangeAccountName extends AccountEvent {
+  final String newName;
+
+  ChangeAccountName(this.newName);
+}
+
+class LoadAccount extends AccountEvent {
+  final int id;
+  LoadAccount(this.id);
+}

@@ -6,6 +6,7 @@ import 'package:flutter_finances/gen/assets.gen.dart';
 import 'package:flutter_finances/ui/blocs/account/account_state_bloc.dart';
 import 'package:flutter_finances/ui/blocs/account/account_state_event.dart';
 import 'package:flutter_finances/ui/tabs/account/currency.dart';
+import 'package:go_router/go_router.dart';
 import 'package:spoiler_widget/spoiler_widget.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
@@ -56,7 +57,9 @@ class _AccountScreenState extends State<AccountScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              context.go('/account/edit');
+            },
             icon: Assets.icons.edit.svg(width: 18, height: 18),
           ),
         ],

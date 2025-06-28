@@ -24,19 +24,19 @@ Future<String?> showCurrencyPicker(BuildContext context) {
             title: const Text('Российский рубль ₽'),
             onTap: () => Navigator.of(context).pop('₽'),
           ),
-          Divider(height: 1),
+          Divider(height: 1, color: Theme.of(context).dividerColor),
           ListTile(
             leading: const Text('\$', style: TextStyle(fontSize: 20)),
             title: const Text('Американский доллар \$'),
             onTap: () => Navigator.of(context).pop('\$'),
           ),
-          Divider(height: 1),
+          Divider(height: 1, color: Theme.of(context).dividerColor),
           ListTile(
             leading: const Text('€', style: TextStyle(fontSize: 20)),
             title: const Text('Евро'),
             onTap: () => Navigator.of(context).pop('€'),
           ),
-          Divider(height: 1),
+          Divider(height: 1, color: Theme.of(context).dividerColor),
           ListTile(
             leading: const Icon(Icons.close, color: Colors.white),
             title: const Text('Отмена', style: TextStyle(color: Colors.white)),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/data/repositories/mocks/mocked_account_repository.dart';
 import 'package:flutter_finances/ui/blocs/account/account_state_bloc.dart';
 import 'package:flutter_finances/ui/router.dart';
 import 'package:flutter_finances/ui/theme.dart';
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AccountBloc(),
+      create: (_) => AccountBloc(MockedAccountRepository()),
       child: MaterialApp.router(
         title: 'Flutter Finance',
         debugShowCheckedModeBanner: false,
