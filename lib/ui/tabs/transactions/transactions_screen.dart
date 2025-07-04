@@ -6,6 +6,7 @@ import 'package:flutter_finances/ui/blocs/transactions/transactions_history_even
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
 import 'package:flutter_finances/data/repositories/mocks/mocked_transaction_repository.dart';
 import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
+import 'package:flutter_finances/ui/tabs/transactions/transaction_creation_sheet.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_list.dart';
 import 'package:go_router/go_router.dart';
 
@@ -21,16 +22,15 @@ class TransactionsScreen extends StatelessWidget {
     final endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
 
     return BlocProvider(
-      create:
-          (_) => TransactionHistoryBloc(
-            getTransactions: UseCaseGetTransactionsByPeriod(
-              MockedTransactionRepository(),
-              MockedCategoryRepository(),
-            ),
-            isIncome: isIncome,
-            startDate: startDate,
-            endDate: endDate,
-          ),
+      create: (_) => TransactionHistoryBloc(
+        getTransactions: UseCaseGetTransactionsByPeriod(
+          MockedTransactionRepository(),
+          MockedCategoryRepository(),
+        ),
+        isIncome: isIncome,
+        startDate: startDate,
+        endDate: endDate,
+      ),
       child: _TransactionsTodayView(isIncome: isIncome),
     );
   }
@@ -58,7 +58,11 @@ class _TransactionsTodayView extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO: переход к созданию транзакции
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            builder: (context) => const TransactionCreationSheet(),
+          );
         },
         child: const Icon(Icons.add),
       ),
@@ -81,46 +85,45 @@ class _TransactionsTodayView extends StatelessWidget {
                     ),
                   );
                 },
-                child:
-                    transactions.isEmpty
-                        ? ListView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          children: [
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 2,
-                              child: Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      isIncome
-                                          ? 'Здесь будут твои доходы за день'
-                                          : 'Здесь будут твои расходы за день',
-                                      style:
-                                          Theme.of(
-                                            context,
-                                          ).textTheme.bodyMedium,
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Добавь нажатием на плюсик :)',
-                                      style:
-                                          Theme.of(context).textTheme.bodySmall,
-                                    ),
-                                  ],
-                                ),
+                child: transactions.isEmpty
+                    ? ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height / 2,
+                            child: Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    isIncome
+                                        ? 'Здесь будут твои доходы за день'
+                                        : 'Здесь будут твои расходы за день',
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Добавь нажатием на плюсик :)',
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall,
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        )
-                        : TransactionsList(
-                          transactions: transactions,
-                          showTime: false,
-                          showSortMethods: false,
-                          onTapTransaction: (tx) {
-                            // TODO: переход к деталям транзакции
-                          },
-                        ),
+                          ),
+                        ],
+                      )
+                    : TransactionsList(
+                        transactions: transactions,
+                        showTime: false,
+                        showSortMethods: false,
+                        onTapTransaction: (tx) {
+                          // TODO: переход к деталям транзакции
+                        },
+                      ),
               );
           }
         },
