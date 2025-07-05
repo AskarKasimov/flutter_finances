@@ -8,7 +8,7 @@ import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creat
 import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_state.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
-import 'package:flutter_finances/ui/tabs/transactions/transaction_form.dart'; // <- импорт твоей формы
+import 'package:flutter_finances/ui/tabs/transactions/transaction_form.dart';
 
 class TransactionCreationSheet extends StatelessWidget {
   final bool isIncome;

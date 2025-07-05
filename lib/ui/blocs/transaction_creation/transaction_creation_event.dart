@@ -43,6 +43,12 @@ class UpdateTransactionSubmitted extends TransactionCreationEvent {
   UpdateTransactionSubmitted({required this.transactionId});
 }
 
+class DeleteTransactionSubmitted extends TransactionCreationEvent {
+  final int transactionId;
+
+  DeleteTransactionSubmitted({required this.transactionId});
+}
+
 class TransactionFormReset extends TransactionCreationEvent {}
 
 class InitializeForEditing extends TransactionCreationEvent {

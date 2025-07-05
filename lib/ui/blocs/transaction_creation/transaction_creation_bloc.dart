@@ -42,13 +42,39 @@ class TransactionCreationBloc
           await _onTransactionSubmitted(event, emit);
           break;
         case InitializeForEditing():
-          await _initForEditing(event, emit);
+          await _initForEditing(
+            InitializeForEditing(transactionId: event.transactionId),
+            emit,
+          );
           break;
         case UpdateTransactionSubmitted():
-          await _onTransactionUpdated(event, emit);
+          await _onTransactionUpdated(
+            UpdateTransactionSubmitted(transactionId: event.transactionId),
+            emit,
+          );
+          break;
+        case DeleteTransactionSubmitted():
+          await _onTransactionDeleted(
+            DeleteTransactionSubmitted(transactionId: event.transactionId),
+            emit,
+          );
           break;
       }
     });
+  }
+
+  Future<void> _onTransactionDeleted(
+    DeleteTransactionSubmitted event,
+    Emitter<TransactionCreationState> emit,
+  ) async {
+    try {
+      final previousState = state;
+      final deletedTransaction = await transactionRepository.getTransactionById(
+        event.transactionId,
+      );
+      await transactionRepository.deleteTransaction(event.transactionId);
+      emit(TransactionDeletedSuccessfully(deletedTransaction, previousState));
+    } catch (e) {}
   }
 
   Future<void> _onTransactionUpdated(
@@ -73,7 +99,7 @@ class TransactionCreationBloc
         ),
       );
 
-      emit(TransactionSubmittedSuccessfully(transaction, currentState));
+      emit(TransactionUpdatedSuccessfully(transaction, currentState));
     } catch (e) {}
   }
 
@@ -118,11 +144,11 @@ class TransactionCreationBloc
     try {
       final transaction = await transactionRepository.createTransaction(
         TransactionForm(
-          accountId: 1,
-          categoryId: state.category!.id,
-          amount: state.amount,
-          timestamp: state.date,
-          comment: state.comment,
+          accountId: currentState.accountState!.id,
+          categoryId: currentState.category!.id,
+          amount: currentState.amount,
+          timestamp: currentState.date,
+          comment: currentState.comment,
         ),
       );
 

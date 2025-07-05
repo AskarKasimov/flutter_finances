@@ -2,7 +2,7 @@ import 'package:flutter_finances/domain/entities/transaction.dart';
 
 sealed class TransactionHistoryEvent {}
 
-class LoadTransactionHistory extends TransactionHistoryEvent {
+class   LoadTransactionHistory extends TransactionHistoryEvent {
   final DateTime startDate;
   final DateTime endDate;
   final bool isIncome;
@@ -20,6 +20,18 @@ class AddSingleTransaction extends TransactionHistoryEvent {
   AddSingleTransaction(this.transaction);
 }
 
+class UpdateTransaction extends TransactionHistoryEvent {
+  final Transaction transaction;
+
+  UpdateTransaction(this.transaction);
+}
+
+class DeleteTransaction extends TransactionHistoryEvent {
+  final Transaction transaction;
+
+  DeleteTransaction(this.transaction);
+}
+
 class ChangeTransactionFilter extends TransactionHistoryEvent {
   final bool isIncome;
 
@@ -31,16 +43,4 @@ class ChangeTransactionPeriod extends TransactionHistoryEvent {
   final DateTime endDate;
 
   ChangeTransactionPeriod({required this.startDate, required this.endDate});
-}
-
-class RemoveSingleTransaction extends TransactionHistoryEvent {
-  final int transactionId;
-
-  RemoveSingleTransaction(this.transactionId);
-}
-
-class UpdateTransactionInHistory extends TransactionHistoryEvent {
-  final Transaction updatedTransaction;
-
-  UpdateTransactionInHistory(this.updatedTransaction);
 }

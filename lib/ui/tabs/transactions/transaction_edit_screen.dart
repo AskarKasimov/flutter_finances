@@ -43,10 +43,9 @@ class TransactionEditScreen extends StatelessWidget {
   }
 
   void _onDelete(BuildContext context) {
-    context.read<TransactionHistoryBloc>().add(
-      RemoveSingleTransaction(transactionId),
+    context.read<TransactionCreationBloc>().add(
+      DeleteTransactionSubmitted(transactionId: transactionId),
     );
-    context.pop();
   }
 
   @override
@@ -59,15 +58,16 @@ class TransactionEditScreen extends StatelessWidget {
       )..add(InitializeForEditing(transactionId: transactionId)),
       child: BlocListener<TransactionCreationBloc, TransactionCreationState>(
         listener: (context, state) {
-          if (state is TransactionUpdatedSuccessfully) {
-            context.read<TransactionHistoryBloc>().add(
-              UpdateTransactionInHistory(state.updatedTransaction),
-            );
-            context.pop();
-          } else if (state is TransactionDeletedSuccessfully) {
-            context.pop();
-          } else if (state is TransactionSubmittedSuccessfully) {
-            context.pop();
+          final historyBloc = context.read<TransactionHistoryBloc>();
+          switch (state) {
+            case TransactionUpdatedSuccessfully():
+              historyBloc.add(UpdateTransaction(state.updatedTransaction));
+              context.pop();
+              break;
+            case TransactionDeletedSuccessfully():
+              historyBloc.add(DeleteTransaction(state.deletedTransaction));
+              context.pop();
+              break;
           }
         },
         child: BlocBuilder<TransactionCreationBloc, TransactionCreationState>(

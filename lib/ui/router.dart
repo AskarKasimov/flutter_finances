@@ -107,8 +107,6 @@ final GoRouter router = GoRouter(
                     context.read<MockedTransactionRepository>(),
                     context.read<MockedCategoryRepository>(),
                   ),
-                  transactionRepository: context
-                      .read<MockedTransactionRepository>(),
                   initialStartDate: startThisDay(),
                   initialEndDate: endThisDay(),
                   initialIsIncome: false,
@@ -142,8 +140,6 @@ final GoRouter router = GoRouter(
                         context.read<MockedTransactionRepository>(),
                         context.read<MockedCategoryRepository>(),
                       ),
-                      transactionRepository: context
-                          .read<MockedTransactionRepository>(),
                       initialStartDate: startThisMonth(),
                       initialEndDate: endThisDay(),
                       initialIsIncome: false,
@@ -177,8 +173,6 @@ final GoRouter router = GoRouter(
                             context.read<MockedTransactionRepository>(),
                             context.read<MockedCategoryRepository>(),
                           ),
-                          transactionRepository: context
-                              .read<MockedTransactionRepository>(),
                           initialStartDate: startThisMonth(),
                           initialEndDate: endThisDay(),
                           initialIsIncome: false,
@@ -202,8 +196,6 @@ final GoRouter router = GoRouter(
                     context.read<MockedTransactionRepository>(),
                     context.read<MockedCategoryRepository>(),
                   ),
-                  transactionRepository: context
-                      .read<MockedTransactionRepository>(),
                   initialStartDate: startThisDay(),
                   initialEndDate: endThisDay(),
                   initialIsIncome: true,
@@ -237,8 +229,6 @@ final GoRouter router = GoRouter(
                         context.read<MockedTransactionRepository>(),
                         context.read<MockedCategoryRepository>(),
                       ),
-                      transactionRepository: context
-                          .read<MockedTransactionRepository>(),
                       initialStartDate: startThisDay(),
                       initialEndDate: endThisDay(),
                       initialIsIncome: true,
@@ -272,8 +262,6 @@ final GoRouter router = GoRouter(
                             context.read<MockedTransactionRepository>(),
                             context.read<MockedCategoryRepository>(),
                           ),
-                          transactionRepository: context
-                              .read<MockedTransactionRepository>(),
                           initialStartDate: startThisMonth(),
                           initialEndDate: endThisDay(),
                           initialIsIncome: true,

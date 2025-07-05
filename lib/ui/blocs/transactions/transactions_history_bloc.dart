@@ -1,7 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_finances/domain/entities/forms/transaction_form.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
-import 'package:flutter_finances/domain/repositories/transaction_repository.dart';
 import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
@@ -9,11 +7,9 @@ import 'package:flutter_finances/ui/blocs/transactions/transactions_history_stat
 class TransactionHistoryBloc
     extends Bloc<TransactionHistoryEvent, TransactionHistoryState> {
   final UseCaseGetTransactionsByPeriod getTransactions;
-  final TransactionRepository transactionRepository;
 
   TransactionHistoryBloc({
     required this.getTransactions,
-    required this.transactionRepository,
     required DateTime initialStartDate,
     required DateTime initialEndDate,
     required bool initialIsIncome,
@@ -30,18 +26,7 @@ class TransactionHistoryBloc
           await _onLoadTransactions(event, emit);
           break;
         case AddSingleTransaction():
-          final currentState = state as TransactionHistoryLoaded;
-          final updatedList = List<Transaction>.from(currentState.transactions)
-            ..insert(0, event.transaction);
-
-          emit(
-            TransactionHistoryLoaded(
-              transactions: updatedList,
-              startDate: currentState.startDate,
-              endDate: currentState.endDate,
-              isIncome: currentState.isIncome,
-            ),
-          );
+          _createTransaction(event, emit);
           break;
         case ChangeTransactionFilter():
           _onChangeFilter(event, emit);
@@ -49,11 +34,11 @@ class TransactionHistoryBloc
         case ChangeTransactionPeriod():
           _onChangePeriod(event, emit);
           break;
-        case RemoveSingleTransaction():
-          await _onRemoveSingleTransaction(event, emit);
+        case UpdateTransaction():
+          _updateTransaction(event, emit);
           break;
-        case UpdateTransactionInHistory():
-          await _onUpdateTransactionInHistory(event, emit);
+        case DeleteTransaction():
+          _deleteTransaction(event, emit);
           break;
       }
     });
@@ -67,27 +52,15 @@ class TransactionHistoryBloc
     );
   }
 
-  Future<void> _onUpdateTransactionInHistory(
-    UpdateTransactionInHistory event,
+  void _deleteTransaction(
+    DeleteTransaction event,
     Emitter<TransactionHistoryState> emit,
-  ) async {
+  ) {
+    if (state is! TransactionHistoryLoaded) return;
     final currentState = state as TransactionHistoryLoaded;
-    final updatedList = currentState.transactions.map((transaction) {
-      return transaction.id == event.updatedTransaction.id
-          ? event.updatedTransaction
-          : transaction;
-    }).toList();
-
-    await transactionRepository.updateTransaction(
-      event.updatedTransaction.id,
-      TransactionForm(
-        accountId: event.updatedTransaction.accountId,
-        categoryId: event.updatedTransaction.categoryId,
-        amount: event.updatedTransaction.amount,
-        timestamp: event.updatedTransaction.timestamp,
-        comment: event.updatedTransaction.comment,
-      ),
-    );
+    final updatedList = currentState.transactions
+        .where((transaction) => transaction.id != event.transaction.id)
+        .toList();
 
     emit(
       TransactionHistoryLoaded(
@@ -99,16 +72,35 @@ class TransactionHistoryBloc
     );
   }
 
-  Future<void> _onRemoveSingleTransaction(
-    RemoveSingleTransaction event,
+  void _updateTransaction(
+    UpdateTransaction event,
+    Emitter<TransactionHistoryState> emit,
+  ) {
+    if (state is! TransactionHistoryLoaded) return;
+    final currentState = state as TransactionHistoryLoaded;
+    final updatedList = currentState.transactions.map((transaction) {
+      return transaction.id == event.transaction.id
+          ? event.transaction
+          : transaction;
+    }).toList();
+
+    emit(
+      TransactionHistoryLoaded(
+        transactions: updatedList,
+        startDate: currentState.startDate,
+        endDate: currentState.endDate,
+        isIncome: currentState.isIncome,
+      ),
+    );
+  }
+
+  Future<void> _createTransaction(
+    AddSingleTransaction event,
     Emitter<TransactionHistoryState> emit,
   ) async {
     final currentState = state as TransactionHistoryLoaded;
     final updatedList = List<Transaction>.from(currentState.transactions)
-      ..removeWhere((transaction) => transaction.id == event.transactionId);
-
-    await transactionRepository.deleteTransaction(event.transactionId);
-    print('удаляю');
+      ..insert(0, event.transaction);
 
     emit(
       TransactionHistoryLoaded(

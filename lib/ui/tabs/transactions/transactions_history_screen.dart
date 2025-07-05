@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/gen/assets.gen.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
-import 'package:flutter_finances/gen/assets.gen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_list.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
 import 'package:go_router/go_router.dart';
@@ -69,6 +69,7 @@ class _TransactionsHistoryView extends StatelessWidget {
                   ),
                   Expanded(
                     child: TransactionsList(
+                      key: ValueKey(state.transactions),
                       transactions: state.transactions,
                       showTime: true,
                       showSortMethods: true,
