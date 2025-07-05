@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_finances/ui/blocs/account/account_state_bloc.dart';
-import 'package:flutter_finances/ui/blocs/account/account_state_event.dart';
+import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
+import 'package:flutter_finances/ui/blocs/account/account_event.dart';
 
 class AccountEditNameScreen extends StatefulWidget {
   const AccountEditNameScreen({super.key});
@@ -17,7 +17,7 @@ class _AccountEditNameScreenState extends State<AccountEditNameScreen> {
   @override
   void initState() {
     super.initState();
-    final currentName = context.read<AccountBloc>().state.name;
+    final currentName = context.read<AccountBloc>().state.account?.name;
     _controller = TextEditingController(text: currentName);
   }
 

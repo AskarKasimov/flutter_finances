@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/data/repositories/mocks/mocked_transaction_repository.dart';
 import 'package:flutter_finances/domain/entities/category.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
+import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
 import 'package:flutter_finances/data/repositories/mocks/mocked_category_repository.dart';
-import 'package:flutter_finances/data/repositories/mocks/mocked_transaction_repository.dart';
-import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
 
 class TransactionsAnalysisScreen extends StatelessWidget {
@@ -22,18 +22,16 @@ class TransactionsAnalysisScreen extends StatelessWidget {
     final endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
 
     return BlocProvider(
-      create:
-          (_) => TransactionHistoryBloc(
-            getTransactions: UseCaseGetTransactionsByPeriod(
-              MockedTransactionRepository(),
-              MockedCategoryRepository(),
-            ),
-            isIncome: isIncome,
-            startDate: startDate,
-            endDate: endDate,
-          )..add(
-            LoadTransactionHistory(startDate: startDate, endDate: endDate),
-          ),
+      create: (_) => TransactionHistoryBloc(
+        getTransactions: UseCaseGetTransactionsByPeriod(
+          context.read<MockedTransactionRepository>(),
+          context.read<MockedCategoryRepository>(),
+        ),
+        transactionRepository: context.read<MockedTransactionRepository>(),
+        initialStartDate: startDate,
+        initialEndDate: endDate,
+        initialIsIncome: isIncome,
+      ),
       child: _TransactionsAnalysisView(),
     );
   }
@@ -92,22 +90,23 @@ class _TransactionsAnalysisViewState extends State<_TransactionsAnalysisView> {
               (sum, tx) => sum + tx.amount,
             );
 
-            final categoryById = {for (var cat in _categories) cat.id: cat};
-
             final Map<int, double> sumsByCategoryId = {};
             for (final tx in state.transactions) {
               sumsByCategoryId[tx.categoryId!] =
                   (sumsByCategoryId[tx.categoryId] ?? 0) + tx.amount;
             }
 
-            final sortedEntries =
-                sumsByCategoryId.entries.toList()
-                  ..sort((a, b) => a.value.compareTo(b.value));
+            final sortedEntries = sumsByCategoryId.entries.toList()
+              ..sort((a, b) => a.value.compareTo(b.value));
 
             return RefreshIndicator(
               onRefresh: () async {
                 context.read<TransactionHistoryBloc>().add(
-                  LoadTransactionHistory(startDate: start, endDate: end),
+                  LoadTransactionHistory(
+                    startDate: start,
+                    endDate: end,
+                    isIncome: state.isIncome,
+                  ),
                 );
                 await _loadCategories();
               },
@@ -130,7 +129,11 @@ class _TransactionsAnalysisViewState extends State<_TransactionsAnalysisView> {
                       });
 
                       context.read<TransactionHistoryBloc>().add(
-                        LoadTransactionHistory(startDate: start, endDate: end),
+                        LoadTransactionHistory(
+                          startDate: start,
+                          endDate: end,
+                          isIncome: state.isIncome,
+                        ),
                       );
                     },
                     child: Container(
@@ -173,7 +176,11 @@ class _TransactionsAnalysisViewState extends State<_TransactionsAnalysisView> {
                       });
 
                       context.read<TransactionHistoryBloc>().add(
-                        LoadTransactionHistory(startDate: start, endDate: end),
+                        LoadTransactionHistory(
+                          startDate: start,
+                          endDate: end,
+                          isIncome: state.isIncome,
+                        ),
                       );
                     },
                     child: Container(
@@ -230,8 +237,9 @@ class _TransactionsAnalysisViewState extends State<_TransactionsAnalysisView> {
                           (c) => c.id == categoryId,
                         );
 
-                        final percent =
-                            totalSum > 0 ? (totalAmount / totalSum * 100) : 0;
+                        final percent = totalSum > 0
+                            ? (totalAmount / totalSum * 100)
+                            : 0;
 
                         final categoryTransactions =
                             state.transactions
@@ -241,10 +249,9 @@ class _TransactionsAnalysisViewState extends State<_TransactionsAnalysisView> {
                                 (a, b) => b.timestamp.compareTo(a.timestamp),
                               );
 
-                        final lastTransaction =
-                            categoryTransactions.isNotEmpty
-                                ? categoryTransactions.first
-                                : null;
+                        final lastTransaction = categoryTransactions.isNotEmpty
+                            ? categoryTransactions.first
+                            : null;
 
                         return ListTile(
                           contentPadding: const EdgeInsets.symmetric(
@@ -252,20 +259,19 @@ class _TransactionsAnalysisViewState extends State<_TransactionsAnalysisView> {
                             vertical: 10,
                           ),
                           title: Text(category.name),
-                          subtitle:
-                              lastTransaction != null
-                                  ? Text(
-                                    lastTransaction.comment ?? '',
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
-                                  )
-                                  : null,
+                          subtitle: lastTransaction != null
+                              ? Text(
+                                  lastTransaction.comment ?? '',
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                )
+                              : null,
                           leading: CircleAvatar(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.secondary,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.secondary,
                             radius: 16,
                             child: Text(
-                              category.emoji ?? '',
+                              category.emoji,
                               style: const TextStyle(fontSize: 18),
                             ),
                           ),
@@ -278,13 +284,15 @@ class _TransactionsAnalysisViewState extends State<_TransactionsAnalysisView> {
                                 children: [
                                   Text(
                                     '${percent.toStringAsFixed(1)}%',
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium,
                                   ),
                                   Text(
                                     entry.value.toStringAsFixed(2),
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium,
                                   ),
                                 ],
                               ),
@@ -305,8 +313,8 @@ class _TransactionsAnalysisViewState extends State<_TransactionsAnalysisView> {
                           },
                         );
                       },
-                      separatorBuilder:
-                          (BuildContext context, int index) => Divider(
+                      separatorBuilder: (BuildContext context, int index) =>
+                          Divider(
                             height: 1,
                             color: Theme.of(context).dividerColor,
                           ),
@@ -345,34 +353,31 @@ class _TransactionsAnalysisViewState extends State<_TransactionsAnalysisView> {
                   ),
                   const SizedBox(height: 12),
                   Expanded(
-                    child:
-                        transactions.isEmpty
-                            ? Center(child: Text('Нет транзакций'))
-                            : ListView.separated(
-                              controller: scrollController,
-                              itemCount: transactions.length,
-                              separatorBuilder: (_, __) => const Divider(),
-                              itemBuilder: (context, index) {
-                                final tx = transactions[index];
-                                return ListTile(
-                                  title: Text(tx.comment ?? 'Без описания'),
-                                  subtitle: Text(
-                                    formatDate(tx.timestamp),
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
+                    child: transactions.isEmpty
+                        ? Center(child: Text('Нет транзакций'))
+                        : ListView.separated(
+                            controller: scrollController,
+                            itemCount: transactions.length,
+                            separatorBuilder: (_, __) => const Divider(),
+                            itemBuilder: (context, index) {
+                              final tx = transactions[index];
+                              return ListTile(
+                                title: Text(tx.comment ?? 'Без описания'),
+                                subtitle: Text(
+                                  formatDate(tx.timestamp),
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                                trailing: Text(
+                                  '${tx.amount.toStringAsFixed(2)} ₽',
+                                  style: TextStyle(
+                                    color: tx.amount > 0
+                                        ? Colors.green
+                                        : Colors.red,
                                   ),
-                                  trailing: Text(
-                                    '${tx.amount.toStringAsFixed(2)} ₽',
-                                    style: TextStyle(
-                                      color:
-                                          tx.amount > 0
-                                              ? Colors.green
-                                              : Colors.red,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
+                                ),
+                              );
+                            },
+                          ),
                   ),
                 ],
               ),

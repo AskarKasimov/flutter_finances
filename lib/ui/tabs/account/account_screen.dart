@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_finances/domain/entities/account_state.dart';
 import 'package:flutter_finances/gen/assets.gen.dart';
-import 'package:flutter_finances/ui/blocs/account/account_state_bloc.dart';
-import 'package:flutter_finances/ui/blocs/account/account_state_event.dart';
+import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
+import 'package:flutter_finances/ui/blocs/account/account_event.dart';
+import 'package:flutter_finances/ui/blocs/account/account_state.dart';
 import 'package:flutter_finances/ui/tabs/account/currency.dart';
 import 'package:go_router/go_router.dart';
 import 'package:spoiler_widget/spoiler_widget.dart';
@@ -64,8 +64,21 @@ class _AccountScreenState extends State<AccountScreen> {
           ),
         ],
       ),
-      body: BlocBuilder<AccountBloc, AccountState>(
+      body: BlocBuilder<AccountBloc, AccountBlocState>(
         builder: (context, state) {
+          if (state.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state.errorMessage != null) {
+            return Center(child: Text('Ошибка: ${state.errorMessage}'));
+          }
+
+          final account = state.account;
+          if (account == null) {
+            return const Center(child: Text('Аккаунт не найден'));
+          }
+
           return Column(
             children: [
               Container(
@@ -78,7 +91,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     const Text('Баланс'),
                     SpoilerText(
                       text:
-                          '${state.moneyDetails.balance.toStringAsFixed(0)} ${state.moneyDetails.currency}',
+                          '${account.moneyDetails.balance.toStringAsFixed(0)} ${account.moneyDetails.currency}',
                       config: TextSpoilerConfig(
                         isEnabled: _spoilerEnabled,
                         enableFadeAnimation: true,
@@ -109,7 +122,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text('Валюта'),
-                      Text(state.moneyDetails.currency),
+                      Text(account.moneyDetails.currency),
                     ],
                   ),
                 ),

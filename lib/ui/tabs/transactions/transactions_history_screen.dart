@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/data/repositories/mocks/mocked_category_repository.dart';
+import 'package:flutter_finances/data/repositories/mocks/mocked_transaction_repository.dart';
+import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
-import 'package:flutter_finances/data/repositories/mocks/mocked_transaction_repository.dart';
-import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
 import 'package:flutter_finances/gen/assets.gen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_list.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
@@ -23,16 +23,16 @@ class TransactionsHistoryScreen extends StatelessWidget {
     final endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
 
     return BlocProvider(
-      create:
-          (_) => TransactionHistoryBloc(
-            getTransactions: UseCaseGetTransactionsByPeriod(
-              MockedTransactionRepository(),
-              MockedCategoryRepository(),
-            ),
-            isIncome: isIncome,
-            startDate: startDate,
-            endDate: endDate,
-          ),
+      create: (_) => TransactionHistoryBloc(
+        getTransactions: UseCaseGetTransactionsByPeriod(
+          context.read<MockedTransactionRepository>(),
+          context.read<MockedCategoryRepository>(),
+        ),
+        transactionRepository: context.read<MockedTransactionRepository>(),
+        initialStartDate: startDate,
+        initialEndDate: endDate,
+        initialIsIncome: isIncome,
+      ),
       child: _TransactionsHistoryView(isIncome: isIncome),
     );
   }
@@ -52,7 +52,11 @@ class _TransactionsHistoryView extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              context.go(isIncome ? '/income/history/analysis' : '/expenses/history/analysis');
+              context.go(
+                isIncome
+                    ? '/income/history/analysis'
+                    : '/expenses/history/analysis',
+              );
             },
             icon: Assets.icons.history.svg(width: 24, height: 24),
           ),
@@ -71,12 +75,17 @@ class _TransactionsHistoryView extends StatelessWidget {
                   LoadTransactionHistory(
                     startDate: state.startDate,
                     endDate: state.endDate,
+                    isIncome: isIncome,
                   ),
                 );
               },
               child: Column(
                 children: [
-                  DatePickerRow(start: state.startDate, end: state.endDate),
+                  DatePickerRow(
+                    start: state.startDate,
+                    end: state.endDate,
+                    isIncome: isIncome,
+                  ),
                   Expanded(
                     child: TransactionsList(
                       transactions: state.transactions,
@@ -100,8 +109,14 @@ class _TransactionsHistoryView extends StatelessWidget {
 class DatePickerRow extends StatelessWidget {
   final DateTime start;
   final DateTime end;
+  final bool isIncome;
 
-  const DatePickerRow({super.key, required this.start, required this.end});
+  const DatePickerRow({
+    super.key,
+    required this.start,
+    required this.isIncome,
+    required this.end,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +133,11 @@ class DatePickerRow extends StatelessWidget {
             if (!context.mounted || result == null) return;
             final (startDate, endDate) = result;
             context.read<TransactionHistoryBloc>().add(
-              LoadTransactionHistory(startDate: startDate, endDate: endDate),
+              LoadTransactionHistory(
+                startDate: startDate,
+                endDate: endDate,
+                isIncome: isIncome,
+              ),
             );
           },
           child: Container(
@@ -143,7 +162,11 @@ class DatePickerRow extends StatelessWidget {
             if (!context.mounted || result == null) return;
             final (startDate, endDate) = result;
             context.read<TransactionHistoryBloc>().add(
-              LoadTransactionHistory(startDate: startDate, endDate: endDate),
+              LoadTransactionHistory(
+                startDate: startDate,
+                endDate: endDate,
+                isIncome: isIncome,
+              ),
             );
           },
           child: Container(

@@ -1,10 +1,10 @@
-import 'package:flutter_finances/domain/entities/account.dart';
+import 'package:flutter_finances/domain/entities/account_state.dart';
 import 'package:flutter_finances/domain/entities/category.dart';
 
 sealed class TransactionCreationEvent {}
 
 class TransactionAccountChanged extends TransactionCreationEvent {
-  final Account account;
+  final AccountState account;
 
   TransactionAccountChanged(this.account);
 }

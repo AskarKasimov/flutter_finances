@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/data/repositories/mocks/mocked_category_repository.dart';
+import 'package:flutter_finances/data/repositories/mocks/mocked_transaction_repository.dart';
+import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
-import 'package:flutter_finances/data/repositories/mocks/mocked_transaction_repository.dart';
-import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transaction_creation_sheet.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_list.dart';
 import 'package:go_router/go_router.dart';
@@ -24,12 +24,13 @@ class TransactionsScreen extends StatelessWidget {
     return BlocProvider(
       create: (_) => TransactionHistoryBloc(
         getTransactions: UseCaseGetTransactionsByPeriod(
-          MockedTransactionRepository(),
-          MockedCategoryRepository(),
+          context.read<MockedTransactionRepository>(),
+          context.read<MockedCategoryRepository>(),
         ),
-        isIncome: isIncome,
-        startDate: startDate,
-        endDate: endDate,
+        transactionRepository: context.read<MockedTransactionRepository>(),
+        initialStartDate: startDate,
+        initialEndDate: endDate,
+        initialIsIncome: isIncome,
       ),
       child: _TransactionsTodayView(isIncome: isIncome),
     );
@@ -61,11 +62,15 @@ class _TransactionsTodayView extends StatelessWidget {
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
-            builder: (context) => const TransactionCreationSheet(),
+            builder: (sheetContext) => TransactionCreationSheet(
+              parentContext: context,
+              isIncome: isIncome,
+            ),
           );
         },
         child: const Icon(Icons.add),
       ),
+
       body: BlocBuilder<TransactionHistoryBloc, TransactionHistoryState>(
         builder: (context, state) {
           switch (state) {
@@ -82,6 +87,7 @@ class _TransactionsTodayView extends StatelessWidget {
                     LoadTransactionHistory(
                       startDate: state.startDate,
                       endDate: state.endDate,
+                      isIncome: isIncome,
                     ),
                   );
                 },
