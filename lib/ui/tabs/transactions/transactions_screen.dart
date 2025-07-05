@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_finances/data/repositories/mocks/mocked_category_repository.dart';
-import 'package:flutter_finances/data/repositories/mocks/mocked_transaction_repository.dart';
-import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
@@ -17,23 +14,7 @@ class TransactionsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final startDate = DateTime(now.year, now.month, now.day);
-    final endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
-
-    return BlocProvider(
-      create: (_) => TransactionHistoryBloc(
-        getTransactions: UseCaseGetTransactionsByPeriod(
-          context.read<MockedTransactionRepository>(),
-          context.read<MockedCategoryRepository>(),
-        ),
-        transactionRepository: context.read<MockedTransactionRepository>(),
-        initialStartDate: startDate,
-        initialEndDate: endDate,
-        initialIsIncome: isIncome,
-      ),
-      child: _TransactionsTodayView(isIncome: isIncome),
-    );
+    return _TransactionsTodayView(isIncome: isIncome);
   }
 }
 
@@ -51,7 +32,7 @@ class _TransactionsTodayView extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              context.go(isIncome ? '/income/history' : '/expenses/history');
+              context.go(isIncome ? '/incomes/history' : '/expenses/history');
             },
             icon: const Icon(Icons.history_outlined),
           ),
@@ -127,7 +108,15 @@ class _TransactionsTodayView extends StatelessWidget {
                         showTime: false,
                         showSortMethods: false,
                         onTapTransaction: (tx) {
-                          // TODO: переход к деталям транзакции
+                          print(
+                            'Navigating to: ${isIncome ? '/incomes/transaction/${tx.id}' : '/expenses/transaction/${tx.id}'}',
+                          );
+                          context.go(
+                            isIncome
+                                ? '/incomes/transaction/${tx.id}'
+                                : '/expenses/transaction/${tx.id}',
+                            extra: context.read<TransactionHistoryBloc>(),
+                          );
                         },
                       ),
               );

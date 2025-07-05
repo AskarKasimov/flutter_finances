@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_finances/data/repositories/mocks/mocked_category_repository.dart';
-import 'package:flutter_finances/data/repositories/mocks/mocked_transaction_repository.dart';
-import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
@@ -18,23 +15,7 @@ class TransactionsHistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final startDate = DateTime(now.year, now.month - 1, now.day);
-    final endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
-
-    return BlocProvider(
-      create: (_) => TransactionHistoryBloc(
-        getTransactions: UseCaseGetTransactionsByPeriod(
-          context.read<MockedTransactionRepository>(),
-          context.read<MockedCategoryRepository>(),
-        ),
-        transactionRepository: context.read<MockedTransactionRepository>(),
-        initialStartDate: startDate,
-        initialEndDate: endDate,
-        initialIsIncome: isIncome,
-      ),
-      child: _TransactionsHistoryView(isIncome: isIncome),
-    );
+    return _TransactionsHistoryView(isIncome: isIncome);
   }
 }
 
@@ -54,7 +35,7 @@ class _TransactionsHistoryView extends StatelessWidget {
             onPressed: () {
               context.go(
                 isIncome
-                    ? '/income/history/analysis'
+                    ? '/incomes/history/analysis'
                     : '/expenses/history/analysis',
               );
             },
@@ -91,7 +72,14 @@ class _TransactionsHistoryView extends StatelessWidget {
                       transactions: state.transactions,
                       showTime: true,
                       showSortMethods: true,
-                      onTapTransaction: (tx) {},
+                      onTapTransaction: (tx) {
+                        context.go(
+                          isIncome
+                              ? '/incomes/history/transaction/${tx.id}'
+                              : '/expenses/history/transaction/${tx.id}',
+                          extra: context.read<TransactionHistoryBloc>(),
+                        );
+                      },
                     ),
                   ),
                 ],

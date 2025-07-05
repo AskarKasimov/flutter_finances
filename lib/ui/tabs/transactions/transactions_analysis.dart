@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_finances/data/repositories/mocks/mocked_transaction_repository.dart';
 import 'package:flutter_finances/domain/entities/category.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
-import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
@@ -17,23 +15,7 @@ class TransactionsAnalysisScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final startDate = DateTime(now.year, now.month - 1, now.day);
-    final endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
-
-    return BlocProvider(
-      create: (_) => TransactionHistoryBloc(
-        getTransactions: UseCaseGetTransactionsByPeriod(
-          context.read<MockedTransactionRepository>(),
-          context.read<MockedCategoryRepository>(),
-        ),
-        transactionRepository: context.read<MockedTransactionRepository>(),
-        initialStartDate: startDate,
-        initialEndDate: endDate,
-        initialIsIncome: isIncome,
-      ),
-      child: _TransactionsAnalysisView(),
-    );
+    return _TransactionsAnalysisView();
   }
 }
 

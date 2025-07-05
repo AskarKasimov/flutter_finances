@@ -67,3 +67,33 @@ class TransactionSubmittedSuccessfully extends TransactionCreationState {
         comment: previous.comment,
       );
 }
+
+class TransactionDeletedSuccessfully extends TransactionCreationState {
+  final Transaction deletedTransaction;
+
+  TransactionDeletedSuccessfully(
+    this.deletedTransaction,
+    TransactionCreationState previous,
+  ) : super(
+        accountState: previous.accountState,
+        category: previous.category,
+        amount: previous.amount,
+        date: previous.date,
+        comment: previous.comment,
+      );
+}
+
+class TransactionUpdatedSuccessfully extends TransactionCreationState {
+  final Transaction updatedTransaction;
+
+  TransactionUpdatedSuccessfully(
+    this.updatedTransaction,
+    TransactionCreationState previous,
+  ) : super(
+        accountState: previous.accountState,
+        category: previous.category,
+        amount: previous.amount,
+        date: previous.date,
+        comment: previous.comment,
+      );
+}

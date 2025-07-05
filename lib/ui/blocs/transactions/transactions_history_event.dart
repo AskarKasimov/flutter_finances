@@ -32,3 +32,15 @@ class ChangeTransactionPeriod extends TransactionHistoryEvent {
 
   ChangeTransactionPeriod({required this.startDate, required this.endDate});
 }
+
+class RemoveSingleTransaction extends TransactionHistoryEvent {
+  final int transactionId;
+
+  RemoveSingleTransaction(this.transactionId);
+}
+
+class UpdateTransactionInHistory extends TransactionHistoryEvent {
+  final Transaction updatedTransaction;
+
+  UpdateTransactionInHistory(this.updatedTransaction);
+}

@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/data/repositories/mocks/mocked_category_repository.dart';
+import 'package:flutter_finances/data/repositories/mocks/mocked_transaction_repository.dart';
+import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
 import 'package:flutter_finances/gen/assets.gen.dart';
+import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/tabs/account/account_edit_name_screen.dart';
 import 'package:flutter_finances/ui/tabs/account/account_screen.dart';
 import 'package:flutter_finances/ui/tabs/items_screen.dart';
 import 'package:flutter_finances/ui/tabs/settings_screen.dart';
-import 'package:flutter_finances/ui/tabs/transactions/transactions_analysis.dart';
+import 'package:flutter_finances/ui/tabs/transactions/transaction_edit_screen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_history_screen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +18,21 @@ ColorFilter? _navIconColor(BuildContext context, bool isSelected) {
   return isSelected
       ? ColorFilter.mode(Theme.of(context).colorScheme.primary, BlendMode.srcIn)
       : null;
+}
+
+DateTime startThisDay() {
+  final now = DateTime.now();
+  return DateTime(now.year, now.month, now.day, 0, 0, 0);
+}
+
+DateTime startThisMonth() {
+  final now = DateTime.now();
+  return DateTime(now.year, now.month - 1, now.day, 0, 0, 0);
+}
+
+DateTime endThisDay() {
+  final now = DateTime.now();
+  return DateTime(now.year, now.month, now.day, 23, 59, 59);
 }
 
 final GoRouter router = GoRouter(
@@ -81,20 +101,90 @@ final GoRouter router = GoRouter(
           routes: [
             GoRoute(
               path: '/expenses',
-              builder:
-                  (context, state) => const TransactionsScreen(isIncome: false),
+              builder: (context, state) => BlocProvider(
+                create: (_) => TransactionHistoryBloc(
+                  getTransactions: UseCaseGetTransactionsByPeriod(
+                    context.read<MockedTransactionRepository>(),
+                    context.read<MockedCategoryRepository>(),
+                  ),
+                  transactionRepository: context
+                      .read<MockedTransactionRepository>(),
+                  initialStartDate: startThisDay(),
+                  initialEndDate: endThisDay(),
+                  initialIsIncome: false,
+                ),
+                child: const TransactionsScreen(isIncome: false),
+              ),
               routes: [
                 GoRoute(
+                  path: 'transaction/:transactionId',
+                  builder: (context, state) {
+                    final id = int.parse(
+                      state.pathParameters['transactionId']!,
+                    );
+                    final bloc = state.extra as TransactionHistoryBloc?;
+                    if (bloc == null) {
+                      throw Exception(
+                        'TransactionHistoryBloc must be passed as extra',
+                      );
+                    }
+                    return BlocProvider.value(
+                      value: bloc,
+                      child: TransactionEditScreen(transactionId: id),
+                    );
+                  },
+                ),
+                GoRoute(
                   path: 'history',
-                  builder:
-                      (context, state) =>
-                          const TransactionsHistoryScreen(isIncome: false),
+                  builder: (context, state) => BlocProvider(
+                    create: (_) => TransactionHistoryBloc(
+                      getTransactions: UseCaseGetTransactionsByPeriod(
+                        context.read<MockedTransactionRepository>(),
+                        context.read<MockedCategoryRepository>(),
+                      ),
+                      transactionRepository: context
+                          .read<MockedTransactionRepository>(),
+                      initialStartDate: startThisMonth(),
+                      initialEndDate: endThisDay(),
+                      initialIsIncome: false,
+                    ),
+                    child: const TransactionsHistoryScreen(isIncome: false),
+                  ),
                   routes: [
                     GoRoute(
+                      path: 'transaction/:transactionId',
+                      builder: (context, state) {
+                        final id = int.parse(
+                          state.pathParameters['transactionId']!,
+                        );
+                        final bloc = state.extra as TransactionHistoryBloc?;
+                        if (bloc == null) {
+                          throw Exception(
+                            'TransactionHistoryBloc must be passed as extra',
+                          );
+                        }
+                        return BlocProvider.value(
+                          value: bloc,
+                          child: TransactionEditScreen(transactionId: id),
+                        );
+                      },
+                    ),
+                    GoRoute(
                       path: 'analysis',
-                      builder:
-                          (context, state) =>
-                              const TransactionsAnalysisScreen(isIncome: false),
+                      builder: (context, state) => BlocProvider(
+                        create: (_) => TransactionHistoryBloc(
+                          getTransactions: UseCaseGetTransactionsByPeriod(
+                            context.read<MockedTransactionRepository>(),
+                            context.read<MockedCategoryRepository>(),
+                          ),
+                          transactionRepository: context
+                              .read<MockedTransactionRepository>(),
+                          initialStartDate: startThisMonth(),
+                          initialEndDate: endThisDay(),
+                          initialIsIncome: false,
+                        ),
+                        child: const TransactionsHistoryScreen(isIncome: false),
+                      ),
                     ),
                   ],
                 ),
@@ -105,21 +195,91 @@ final GoRouter router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/income',
-              builder:
-                  (context, state) => const TransactionsScreen(isIncome: true),
+              path: '/incomes',
+              builder: (context, state) => BlocProvider(
+                create: (_) => TransactionHistoryBloc(
+                  getTransactions: UseCaseGetTransactionsByPeriod(
+                    context.read<MockedTransactionRepository>(),
+                    context.read<MockedCategoryRepository>(),
+                  ),
+                  transactionRepository: context
+                      .read<MockedTransactionRepository>(),
+                  initialStartDate: startThisDay(),
+                  initialEndDate: endThisDay(),
+                  initialIsIncome: true,
+                ),
+                child: const TransactionsScreen(isIncome: true),
+              ),
               routes: [
                 GoRoute(
+                  path: 'transaction/:transactionId',
+                  builder: (context, state) {
+                    final id = int.parse(
+                      state.pathParameters['transactionId']!,
+                    );
+                    final bloc = state.extra as TransactionHistoryBloc?;
+                    if (bloc == null) {
+                      throw Exception(
+                        'TransactionHistoryBloc must be passed as extra',
+                      );
+                    }
+                    return BlocProvider.value(
+                      value: bloc,
+                      child: TransactionEditScreen(transactionId: id),
+                    );
+                  },
+                ),
+                GoRoute(
                   path: 'history',
-                  builder:
-                      (context, state) =>
-                          const TransactionsHistoryScreen(isIncome: true),
+                  builder: (context, state) => BlocProvider(
+                    create: (_) => TransactionHistoryBloc(
+                      getTransactions: UseCaseGetTransactionsByPeriod(
+                        context.read<MockedTransactionRepository>(),
+                        context.read<MockedCategoryRepository>(),
+                      ),
+                      transactionRepository: context
+                          .read<MockedTransactionRepository>(),
+                      initialStartDate: startThisDay(),
+                      initialEndDate: endThisDay(),
+                      initialIsIncome: true,
+                    ),
+                    child: const TransactionsHistoryScreen(isIncome: true),
+                  ),
                   routes: [
                     GoRoute(
+                      path: 'transaction/:transactionId',
+                      builder: (context, state) {
+                        final id = int.parse(
+                          state.pathParameters['transactionId']!,
+                        );
+                        final bloc = state.extra as TransactionHistoryBloc?;
+                        if (bloc == null) {
+                          throw Exception(
+                            'TransactionHistoryBloc must be passed as extra',
+                          );
+                        }
+                        return BlocProvider.value(
+                          value: bloc,
+                          child: TransactionEditScreen(transactionId: id),
+                        );
+                      },
+                    ),
+                    GoRoute(
                       path: 'analysis',
-                      builder:
-                          (context, state) =>
-                              const TransactionsAnalysisScreen(isIncome: true),
+                      builder: (context, state) => BlocProvider(
+                        create: (_) => TransactionHistoryBloc(
+                          getTransactions: UseCaseGetTransactionsByPeriod(
+                            context.read<MockedTransactionRepository>(),
+                            context.read<MockedCategoryRepository>(),
+                          ),
+                          transactionRepository: context
+                              .read<MockedTransactionRepository>(),
+                          initialStartDate: startThisMonth(),
+                          initialEndDate: endThisDay(),
+                          initialIsIncome: true,
+                        ),
+                        child: const TransactionsHistoryScreen(isIncome: true),
+                      ),
                     ),
                   ],
                 ),

@@ -33,6 +33,20 @@ class TransactionCommentChanged extends TransactionCreationEvent {
   TransactionCommentChanged(this.comment);
 }
 
-class TransactionSubmitted extends TransactionCreationEvent {}
+class CreateTransactionSubmitted extends TransactionCreationEvent {
+  CreateTransactionSubmitted();
+}
+
+class UpdateTransactionSubmitted extends TransactionCreationEvent {
+  final int transactionId;
+
+  UpdateTransactionSubmitted({required this.transactionId});
+}
 
 class TransactionFormReset extends TransactionCreationEvent {}
+
+class InitializeForEditing extends TransactionCreationEvent {
+  final int transactionId;
+
+  InitializeForEditing({required this.transactionId});
+}
