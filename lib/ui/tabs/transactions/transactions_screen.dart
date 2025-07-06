@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
+import 'package:flutter_finances/ui/blocs/account/account_state.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
@@ -40,76 +42,94 @@ class TransactionsScreen extends StatelessWidget {
         },
         child: const Icon(Icons.add),
       ),
-
       body: BlocBuilder<TransactionHistoryBloc, TransactionHistoryState>(
-        builder: (context, state) {
-          switch (state) {
-            case TransactionHistoryLoading():
-              return const Center(child: CircularProgressIndicator());
-            case TransactionHistoryError():
-              return Center(child: Text('Ошибка: ${state.message}'));
-            case TransactionHistoryLoaded():
-              final transactions = state.transactions;
+        builder: (transactionContext, transactionState) {
+          return BlocBuilder<AccountBloc, AccountBlocState>(
+            builder: (accountContext, accountState) {
+              if (transactionState is TransactionHistoryLoading ||
+                  accountState is AccountBlocLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-              return RefreshIndicator(
-                onRefresh: () async {
-                  context.read<TransactionHistoryBloc>().add(
-                    LoadTransactionHistory(
-                      startDate: state.startDate,
-                      endDate: state.endDate,
-                      isIncome: isIncome,
-                    ),
-                  );
-                },
-                child: transactions.isEmpty
-                    ? ListView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        children: [
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height / 2,
-                            child: Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    isIncome
-                                        ? 'Здесь будут твои доходы за день'
-                                        : 'Здесь будут твои расходы за день',
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.bodyMedium,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Добавь нажатием на плюсик :)',
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.bodySmall,
-                                  ),
-                                ],
+              if (transactionState is TransactionHistoryError) {
+                return Center(
+                  child: Text('Ошибка: ${transactionState.message}'),
+                );
+              }
+
+              if (accountState is AccountBlocError) {
+                return Center(child: Text('Ошибка: ${accountState.message}'));
+              }
+
+              if (transactionState is TransactionHistoryLoaded &&
+                  accountState is AccountBlocLoaded) {
+                final transactions = transactionState.transactions;
+
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    transactionContext.read<TransactionHistoryBloc>().add(
+                      LoadTransactionHistory(
+                        startDate: transactionState.startDate,
+                        endDate: transactionState.endDate,
+                        isIncome: isIncome,
+                      ),
+                    );
+                  },
+                  child: transactions.isEmpty
+                      ? ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          children: [
+                            SizedBox(
+                              height:
+                                  MediaQuery.of(
+                                    transactionContext,
+                                  ).size.height /
+                                  2,
+                              child: Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      isIncome
+                                          ? 'Здесь будут твои доходы за день'
+                                          : 'Здесь будут твои расходы за день',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Добавь нажатием на плюсик :)',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodySmall,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      )
-                    : TransactionsList(
-                        transactions: transactions,
-                        showTime: false,
-                        showSortMethods: false,
-                        onTapTransaction: (tx) {
-                          print(
-                            'Navigating to: ${isIncome ? '/incomes/transaction/${tx.id}' : '/expenses/transaction/${tx.id}'}',
-                          );
-                          context.go(
-                            isIncome
-                                ? '/incomes/transaction/${tx.id}'
-                                : '/expenses/transaction/${tx.id}',
-                            extra: context.read<TransactionHistoryBloc>(),
-                          );
-                        },
-                      ),
-              );
-          }
+                          ],
+                        )
+                      : TransactionsList(
+                          transactions: transactions,
+                          showTime: false,
+                          showSortMethods: false,
+                          onTapTransaction: (tx) {
+                            transactionContext.go(
+                              isIncome
+                                  ? '/incomes/transaction/${tx.id}'
+                                  : '/expenses/transaction/${tx.id}',
+                              extra: transactionContext
+                                  .read<TransactionHistoryBloc>(),
+                            );
+                          },
+                          currency: accountState.account.moneyDetails.currency,
+                        ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          );
         },
       ),
     );

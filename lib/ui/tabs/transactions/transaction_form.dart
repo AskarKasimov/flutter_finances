@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
-
-import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_bloc.dart';
-import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_event.dart';
-import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_state.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
+import 'package:flutter_finances/ui/blocs/account/account_state.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_event.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
-
-import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
-import 'package:flutter_finances/ui/blocs/account/account_state.dart';
-
+import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_bloc.dart';
+import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_event.dart';
+import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_state.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
 import 'package:flutter_finances/utils/number_utils.dart';
 
@@ -250,23 +246,19 @@ class TransactionForm extends StatelessWidget {
               Expanded(
                 child: BlocBuilder<AccountBloc, AccountBlocState>(
                   builder: (context, state) {
-                    if (state.isLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (state.errorMessage != null) {
-                      return Center(
-                        child: Text('Ошибка: ${state.errorMessage}'),
-                      );
-                    } else if (state.account == null) {
-                      return const Center(child: Text('Аккаунт не найден'));
-                    } else {
-                      return ListView.separated(
+                    return switch (state) {
+                      AccountBlocInitial() || AccountBlocLoading() =>
+                        const Center(child: CircularProgressIndicator()),
+                      AccountBlocError(:final message) => Center(
+                        child: Text('Ошибка: $message'),
+                      ),
+                      AccountBlocLoaded(:final account) => ListView.separated(
                         itemCount: 1,
                         separatorBuilder: (_, __) => Divider(
                           height: 1,
                           color: Theme.of(context).dividerColor,
                         ),
                         itemBuilder: (context, index) {
-                          final account = state.account!;
                           return ListTile(
                             title: Text(account.name),
                             subtitle: Text(
@@ -280,8 +272,8 @@ class TransactionForm extends StatelessWidget {
                             },
                           );
                         },
-                      );
-                    }
+                      ),
+                    };
                   },
                 ),
               ),

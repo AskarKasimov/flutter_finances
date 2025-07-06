@@ -21,6 +21,7 @@ class TransactionsList extends StatefulWidget {
   final void Function(Transaction) onTapTransaction;
   final bool showTime;
   final bool showSortMethods;
+  final String currency;
 
   const TransactionsList({
     super.key,
@@ -28,6 +29,7 @@ class TransactionsList extends StatefulWidget {
     required this.onTapTransaction,
     this.showTime = false,
     this.showSortMethods = false,
+    required this.currency,
   });
 
   @override
@@ -121,7 +123,7 @@ class _TransactionsListState extends State<TransactionsList> {
             children: [
               const Text('Всего'),
               Text(
-                '$totalSum ₽',
+                '$totalSum ${widget.currency}',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
@@ -195,7 +197,7 @@ class _TransactionsListState extends State<TransactionsList> {
                                             CrossAxisAlignment.end,
                                         children: [
                                           Text(
-                                            '${item.amount.toStringAsFixed(2)} ₽',
+                                            '${item.amount.toStringAsFixed(2)} ${widget.currency}',
                                             style: Theme.of(
                                               context,
                                             ).textTheme.bodyMedium,
@@ -209,7 +211,7 @@ class _TransactionsListState extends State<TransactionsList> {
                                         ],
                                       )
                                     : Text(
-                                        '${item.amount.toStringAsFixed(2)} ₽',
+                                        '${item.amount.toStringAsFixed(2)} ${widget.currency}',
                                         style: Theme.of(
                                           context,
                                         ).textTheme.bodyMedium,

@@ -1,21 +1,19 @@
 import 'package:flutter_finances/domain/entities/account_state.dart';
 
-class AccountBlocState {
-  final bool isLoading;
-  final AccountState? account;
-  final String? errorMessage;
+sealed class AccountBlocState {}
 
-  AccountBlocState({this.isLoading = false, this.account, this.errorMessage});
+class AccountBlocInitial extends AccountBlocState {}
 
-  AccountBlocState copyWith({
-    bool? isLoading,
-    AccountState? account,
-    String? errorMessage,
-  }) {
-    return AccountBlocState(
-      isLoading: isLoading ?? this.isLoading,
-      account: account ?? this.account,
-      errorMessage: errorMessage ?? this.errorMessage,
-    );
-  }
+class AccountBlocLoading extends AccountBlocState {}
+
+class AccountBlocLoaded extends AccountBlocState {
+  final AccountState account;
+
+  AccountBlocLoaded(this.account);
+}
+
+class AccountBlocError extends AccountBlocState {
+  final String message;
+
+  AccountBlocError(this.message);
 }

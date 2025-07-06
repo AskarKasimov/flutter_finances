@@ -2,13 +2,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/domain/entities/account_state.dart';
 import 'package:flutter_finances/domain/entities/forms/account_form.dart';
 import 'package:flutter_finances/domain/repositories/account_repository.dart';
-import 'package:flutter_finances/ui/blocs/account/account_state.dart';
 import 'package:flutter_finances/ui/blocs/account/account_event.dart';
+import 'package:flutter_finances/ui/blocs/account/account_state.dart';
 
 class AccountBloc extends Bloc<AccountEvent, AccountBlocState> {
   final AccountRepository repository;
 
-  AccountBloc(this.repository) : super(AccountBlocState(isLoading: true)) {
+  AccountBloc(this.repository) : super(AccountBlocInitial()) {
     on<AccountEvent>((event, emit) async {
       switch (event) {
         case LoadAccount():
@@ -30,13 +30,12 @@ class AccountBloc extends Bloc<AccountEvent, AccountBlocState> {
     LoadAccount event,
     Emitter<AccountBlocState> emit,
   ) async {
-    emit(state.copyWith(isLoading: true, errorMessage: null));
+    emit(AccountBlocLoading());
     try {
       final account = await repository.getAccountById(event.id);
       emit(
-        state.copyWith(
-          isLoading: false,
-          account: AccountState(
+        AccountBlocLoaded(
+          AccountState(
             id: account.id,
             name: account.name,
             moneyDetails: account.moneyDetails,
@@ -44,7 +43,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountBlocState> {
         ),
       );
     } catch (e) {
-      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+      emit(AccountBlocError(e.toString()));
     }
   }
 
@@ -52,28 +51,28 @@ class AccountBloc extends Bloc<AccountEvent, AccountBlocState> {
     ChangeAccountName event,
     Emitter<AccountBlocState> emit,
   ) async {
-    if (state.account == null) return;
+    if (state is! AccountBlocLoaded) return;
+    final current = (state as AccountBlocLoaded).account;
     try {
       final updatedForm = AccountForm(
         name: event.newName,
-        moneyDetails: state.account!.moneyDetails,
+        moneyDetails: current.moneyDetails,
       );
       final updatedAccount = await repository.updateAccount(
-        state.account!.id,
+        current.id,
         updatedForm,
       );
       emit(
-        state.copyWith(
-          account: AccountState(
-            id: state.account!.id,
-            name: updatedAccount.name ?? state.account!.name,
-            moneyDetails:
-                updatedAccount.moneyDetails ?? state.account!.moneyDetails,
+        AccountBlocLoaded(
+          AccountState(
+            id: current.id,
+            name: updatedAccount.name ?? current.name,
+            moneyDetails: updatedAccount.moneyDetails ?? current.moneyDetails,
           ),
         ),
       );
     } catch (e) {
-      // обработка ошибки, если надо
+      emit(AccountBlocError(e.toString()));
     }
   }
 
@@ -81,30 +80,28 @@ class AccountBloc extends Bloc<AccountEvent, AccountBlocState> {
     ChangeCurrency event,
     Emitter<AccountBlocState> emit,
   ) async {
-    if (state.account == null) return;
+    if (state is! AccountBlocLoaded) return;
+    final current = (state as AccountBlocLoaded).account;
     try {
       final updatedForm = AccountForm(
-        name: state.account!.name,
-        moneyDetails: state.account!.moneyDetails.copyWith(
-          currency: event.currency,
-        ),
+        name: current.name,
+        moneyDetails: current.moneyDetails.copyWith(currency: event.currency),
       );
       final updatedAccount = await repository.updateAccount(
-        state.account!.id,
+        current.id,
         updatedForm,
       );
       emit(
-        state.copyWith(
-          account: AccountState(
-            id: state.account!.id,
-            name: updatedAccount.name ?? state.account!.name,
-            moneyDetails:
-                updatedAccount.moneyDetails ?? state.account!.moneyDetails,
+        AccountBlocLoaded(
+          AccountState(
+            id: current.id,
+            name: updatedAccount.name ?? current.name,
+            moneyDetails: updatedAccount.moneyDetails ?? current.moneyDetails,
           ),
         ),
       );
     } catch (e) {
-      // обработка ошибки
+      emit(AccountBlocError(e.toString()));
     }
   }
 }

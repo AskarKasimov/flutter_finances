@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/gen/assets.gen.dart';
+import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
+import 'package:flutter_finances/ui/blocs/account/account_state.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
@@ -33,51 +35,69 @@ class TransactionsHistoryScreen extends StatelessWidget {
         ],
       ),
       body: BlocBuilder<TransactionHistoryBloc, TransactionHistoryState>(
-        builder: (context, state) {
-          if (state is TransactionHistoryLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is TransactionHistoryError) {
-            return Center(child: Text('Ошибка: ${state.message}'));
-          } else if (state is TransactionHistoryLoaded) {
-            return RefreshIndicator(
-              onRefresh: () async {
-                context.read<TransactionHistoryBloc>().add(
-                  LoadTransactionHistory(
-                    startDate: state.startDate,
-                    endDate: state.endDate,
-                    isIncome: isIncome,
+        builder: (transactionContext, transactionState) {
+          return BlocBuilder<AccountBloc, AccountBlocState>(
+            builder: (accountContext, accountState) {
+              if (transactionState is TransactionHistoryLoading ||
+                  accountState is AccountBlocLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (transactionState is TransactionHistoryError) {
+                return Center(
+                  child: Text('Ошибка: ${transactionState.message}'),
+                );
+              }
+
+              if (accountState is AccountBlocError) {
+                return Center(child: Text('Ошибка: ${accountState.message}'));
+              }
+
+              if (transactionState is TransactionHistoryLoaded &&
+                  accountState is AccountBlocLoaded) {
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    transactionContext.read<TransactionHistoryBloc>().add(
+                      LoadTransactionHistory(
+                        startDate: transactionState.startDate,
+                        endDate: transactionState.endDate,
+                        isIncome: isIncome,
+                      ),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      DatePickerRow(
+                        start: transactionState.startDate,
+                        end: transactionState.endDate,
+                        isIncome: isIncome,
+                      ),
+                      Expanded(
+                        child: TransactionsList(
+                          key: ValueKey(transactionState.transactions),
+                          transactions: transactionState.transactions,
+                          showTime: true,
+                          showSortMethods: true,
+                          onTapTransaction: (tx) {
+                            transactionContext.go(
+                              isIncome
+                                  ? '/incomes/history/transaction/${tx.id}'
+                                  : '/expenses/history/transaction/${tx.id}',
+                              extra: transactionContext
+                                  .read<TransactionHistoryBloc>(),
+                            );
+                          },
+                          currency: accountState.account.moneyDetails.currency,
+                        ),
+                      ),
+                    ],
                   ),
                 );
-              },
-              child: Column(
-                children: [
-                  DatePickerRow(
-                    start: state.startDate,
-                    end: state.endDate,
-                    isIncome: isIncome,
-                  ),
-                  Expanded(
-                    child: TransactionsList(
-                      key: ValueKey(state.transactions),
-                      transactions: state.transactions,
-                      showTime: true,
-                      showSortMethods: true,
-                      onTapTransaction: (tx) {
-                        context.go(
-                          isIncome
-                              ? '/incomes/history/transaction/${tx.id}'
-                              : '/expenses/history/transaction/${tx.id}',
-                          extra: context.read<TransactionHistoryBloc>(),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            );
-          } else {
-            return const Center(child: Text('Неизвестное состояние'));
-          }
+              } else {
+                return const Center(child: Text('Неизвестное состояние'));
+              }
+            },
+          );
         },
       ),
     );

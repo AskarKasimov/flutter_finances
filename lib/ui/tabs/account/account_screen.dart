@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/gen/assets.gen.dart';
@@ -7,8 +8,8 @@ import 'package:flutter_finances/ui/blocs/account/account_event.dart';
 import 'package:flutter_finances/ui/blocs/account/account_state.dart';
 import 'package:flutter_finances/ui/tabs/account/currency.dart';
 import 'package:go_router/go_router.dart';
-import 'package:spoiler_widget/spoiler_widget.dart';
 import 'package:sensors_plus/sensors_plus.dart';
+import 'package:spoiler_widget/spoiler_widget.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -66,69 +67,61 @@ class _AccountScreenState extends State<AccountScreen> {
       ),
       body: BlocBuilder<AccountBloc, AccountBlocState>(
         builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (state.errorMessage != null) {
-            return Center(child: Text('Ошибка: ${state.errorMessage}'));
-          }
-
-          final account = state.account;
-          if (account == null) {
-            return const Center(child: Text('Аккаунт не найден'));
-          }
-
-          return Column(
-            children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                color: Theme.of(context).colorScheme.secondary,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Баланс'),
-                    SpoilerText(
-                      text:
-                          '${account.moneyDetails.balance.toStringAsFixed(0)} ${account.moneyDetails.currency}',
-                      config: TextSpoilerConfig(
-                        isEnabled: _spoilerEnabled,
-                        enableFadeAnimation: true,
-                        enableGestureReveal: true,
-                        textStyle: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
-                        particleColor: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Divider(height: 1, color: Theme.of(context).dividerColor),
-              InkWell(
-                onTap: () async {
-                  final selected = await showCurrencyPicker(context);
-                  if (selected != null) {
-                    context.read<AccountBloc>().add(ChangeCurrency(selected));
-                  }
-                },
-                child: Container(
+          return switch (state) {
+            AccountBlocInitial() || AccountBlocLoading() => const Center(
+              child: CircularProgressIndicator(),
+            ),
+            AccountBlocError(:final message) => Center(
+              child: Text('Ошибка: $message'),
+            ),
+            AccountBlocLoaded(:final account) => Column(
+              children: [
+                Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   color: Theme.of(context).colorScheme.secondary,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Валюта'),
-                      Text(account.moneyDetails.currency),
+                      Text(account.name),
+                      SpoilerText(
+                        text:
+                            '${account.moneyDetails.balance.toStringAsFixed(0)} ${account.moneyDetails.currency}',
+                        config: TextSpoilerConfig(
+                          isEnabled: _spoilerEnabled,
+                          enableFadeAnimation: true,
+                          enableGestureReveal: true,
+                          textStyle: Theme.of(context).textTheme.bodyMedium,
+                          particleColor: Theme.of(context).hintColor,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ),
-            ],
-          );
+                Divider(height: 1, color: Theme.of(context).dividerColor),
+                InkWell(
+                  onTap: () async {
+                    final selected = await showCurrencyPicker(context);
+                    if (selected != null) {
+                      context.read<AccountBloc>().add(ChangeCurrency(selected));
+                    }
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    color: Theme.of(context).colorScheme.secondary,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Валюта'),
+                        Text(account.moneyDetails.currency),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          };
         },
       ),
     );
