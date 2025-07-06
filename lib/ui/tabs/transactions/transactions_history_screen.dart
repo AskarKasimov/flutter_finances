@@ -15,17 +15,6 @@ class TransactionsHistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _TransactionsHistoryView(isIncome: isIncome);
-  }
-}
-
-class _TransactionsHistoryView extends StatelessWidget {
-  final bool isIncome;
-
-  const _TransactionsHistoryView({required this.isIncome});
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Моя история'),

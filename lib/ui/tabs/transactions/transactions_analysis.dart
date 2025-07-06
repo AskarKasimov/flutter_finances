@@ -1,31 +1,23 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/data/repositories/mocks/mocked_category_repository.dart';
 import 'package:flutter_finances/domain/entities/category.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
-import 'package:flutter_finances/data/repositories/mocks/mocked_category_repository.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
 
-class TransactionsAnalysisScreen extends StatelessWidget {
-  final bool isIncome;
-
-  const TransactionsAnalysisScreen({super.key, required this.isIncome});
+class TransactionsAnalysisScreen extends StatefulWidget {
+  const TransactionsAnalysisScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return _TransactionsAnalysisView();
-  }
-}
-
-class _TransactionsAnalysisView extends StatefulWidget {
-  @override
-  State<_TransactionsAnalysisView> createState() =>
+  State<TransactionsAnalysisScreen> createState() =>
       _TransactionsAnalysisViewState();
 }
 
-class _TransactionsAnalysisViewState extends State<_TransactionsAnalysisView> {
+class _TransactionsAnalysisViewState extends State<TransactionsAnalysisScreen> {
   List<Category> _categories = [];
 
   late DateTime start;
@@ -50,6 +42,20 @@ class _TransactionsAnalysisViewState extends State<_TransactionsAnalysisView> {
     end = DateTime(now.year, now.month, now.day, 23, 59, 59);
 
     _loadCategories();
+  }
+
+  Color _generateColorFromId(int id) {
+    final colors = [
+      Colors.blue,
+      Colors.red,
+      Colors.green,
+      Colors.orange,
+      Colors.purple,
+      Colors.teal,
+      Colors.indigo,
+      Colors.brown,
+    ];
+    return colors[id % colors.length];
   }
 
   @override
@@ -80,6 +86,42 @@ class _TransactionsAnalysisViewState extends State<_TransactionsAnalysisView> {
 
             final sortedEntries = sumsByCategoryId.entries.toList()
               ..sort((a, b) => a.value.compareTo(b.value));
+
+            final sections = sortedEntries.map((entry) {
+              final category = _categories.firstWhere((c) => c.id == entry.key);
+              final value = entry.value;
+              final percent = totalSum > 0 ? value / totalSum : 0.0;
+
+              return PieChartSectionData(
+                color: _generateColorFromId(entry.key),
+                value: percent,
+                title: '${(percent * 100).toStringAsFixed(1)}%',
+                radius: 50,
+                titleStyle: Theme.of(context).textTheme.bodySmall,
+                badgeWidget: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    '${category.emoji} ${category.name}',
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ),
+                badgePositionPercentageOffset: 1.2,
+              );
+            }).toList();
 
             return RefreshIndicator(
               onRefresh: () async {
@@ -200,6 +242,20 @@ class _TransactionsAnalysisViewState extends State<_TransactionsAnalysisView> {
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],
+                    ),
+                  ),
+                  Divider(height: 1, color: Theme.of(context).dividerColor),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: AspectRatio(
+                      aspectRatio: 1.4,
+                      child: PieChart(
+                        PieChartData(
+                          sectionsSpace: 2,
+                          centerSpaceRadius: 40,
+                          sections: sections,
+                        ),
+                      ),
                     ),
                   ),
                   Divider(height: 1, color: Theme.of(context).dividerColor),

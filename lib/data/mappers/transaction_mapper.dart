@@ -16,7 +16,7 @@ extension TransactionMapper on TransactionDTO {
     final parsedUpdatedAt = tryParseDateTime(updatedAt, 'updatedAt');
 
     return Transaction(
-      id: this.id,
+      id: id,
       accountId: accountId,
       categoryId: categoryId,
       amount: parsedAmount,

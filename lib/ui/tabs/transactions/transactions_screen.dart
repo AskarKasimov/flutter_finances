@@ -14,17 +14,6 @@ class TransactionsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _TransactionsTodayView(isIncome: isIncome);
-  }
-}
-
-class _TransactionsTodayView extends StatelessWidget {
-  final bool isIncome;
-
-  const _TransactionsTodayView({required this.isIncome});
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(isIncome ? 'Доходы сегодня' : 'Расходы сегодня'),

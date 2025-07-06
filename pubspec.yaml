@@ -18,6 +18,7 @@ dependencies:
   spoiler_widget: ^1.0.12
   sensors_plus: ^4.0.2
   string_similarity: ^2.0.0
+  fl_chart: ^1.0.0
 
 dev_dependencies:
   flutter_test:

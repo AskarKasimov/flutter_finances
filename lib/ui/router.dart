@@ -10,6 +10,7 @@ import 'package:flutter_finances/ui/tabs/account/account_screen.dart';
 import 'package:flutter_finances/ui/tabs/items_screen.dart';
 import 'package:flutter_finances/ui/tabs/settings_screen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transaction_edit_screen.dart';
+import 'package:flutter_finances/ui/tabs/transactions/transactions_analysis.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_history_screen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -177,7 +178,7 @@ final GoRouter router = GoRouter(
                           initialEndDate: endThisDay(),
                           initialIsIncome: false,
                         ),
-                        child: const TransactionsHistoryScreen(isIncome: false),
+                        child: const TransactionsAnalysisScreen(),
                       ),
                     ),
                   ],
@@ -229,7 +230,7 @@ final GoRouter router = GoRouter(
                         context.read<MockedTransactionRepository>(),
                         context.read<MockedCategoryRepository>(),
                       ),
-                      initialStartDate: startThisDay(),
+                      initialStartDate: startThisMonth(),
                       initialEndDate: endThisDay(),
                       initialIsIncome: true,
                     ),
@@ -266,7 +267,7 @@ final GoRouter router = GoRouter(
                           initialEndDate: endThisDay(),
                           initialIsIncome: true,
                         ),
-                        child: const TransactionsHistoryScreen(isIncome: true),
+                        child: const TransactionsAnalysisScreen(),
                       ),
                     ),
                   ],

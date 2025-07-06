@@ -7,7 +7,6 @@ final lightTheme = ThemeData(
   splashColor: Color(0x3300D68F),
   highlightColor: Color(0x1A00D68F),
   scaffoldBackgroundColor: const Color(0xFFFEF7FF),
-  primaryColor: _primaryColor,
   appBarTheme: const AppBarTheme(
     backgroundColor: _primaryColor,
     foregroundColor: Colors.white,
@@ -25,7 +24,7 @@ final lightTheme = ThemeData(
   ),
   textTheme: const TextTheme(
     bodyMedium: TextStyle(color: Color(0xFF1D1B20), fontSize: 16),
-    bodySmall: TextStyle(color: Color(0x3C3C434D), fontSize: 13),
+    bodySmall: TextStyle(color: Color(0xFF1D1B20), fontSize: 13),
   ),
   iconTheme: const IconThemeData(color: Color(0x3C3C434D)),
   dividerColor: const Color(0xFFCAC4D0),
