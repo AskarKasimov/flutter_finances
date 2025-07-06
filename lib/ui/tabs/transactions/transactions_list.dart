@@ -91,7 +91,7 @@ class _TransactionsListState extends State<TransactionsList> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Align(
-              alignment: Alignment.centerLeft,
+              alignment: Alignment.centerRight,
               child: PopupMenuButton<SortMode>(
                 onSelected: (value) => setState(() => _sortMode = value),
                 itemBuilder: (context) => SortMode.values.map((mode) {
