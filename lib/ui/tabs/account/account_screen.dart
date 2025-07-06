@@ -285,9 +285,25 @@ class _AccountScreenState extends State<AccountScreen> {
                             ],
                             selected: {_selectedPeriod},
                             onSelectionChanged: (newSelection) {
+                              final selected = newSelection.first;
                               setState(() {
-                                _selectedPeriod = newSelection.first;
+                                _selectedPeriod = selected;
                               });
+
+                              final now = DateTime.now();
+                              final startDate = selected == StatsPeriod.day
+                                  ? startThisMonth()
+                                  : DateTime(now.year - 1, now.month);
+
+                              final endDate = endThisDay();
+
+                              context.read<TransactionHistoryBloc>().add(
+                                LoadTransactionHistory(
+                                  startDate: startDate,
+                                  endDate: endDate,
+                                  isIncome: null,
+                                ),
+                              );
                             },
                           ),
                         ),
@@ -318,6 +334,12 @@ class _AccountScreenState extends State<AccountScreen> {
 
                               final sortedEntries = [...groupedBalance.entries]
                                 ..sort((a, b) => a.key.compareTo(b.key));
+
+                              if (sortedEntries.isEmpty) {
+                                return const Center(
+                                  child: Text('Нет данных для отображения'),
+                                );
+                              }
 
                               final screenWidth = MediaQuery.of(
                                 context,
@@ -412,7 +434,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                             x: i,
                                             barRods: [
                                               BarChartRodData(
-                                                toY: sortedEntries[i].value.abs(),
+                                                toY: sortedEntries[i].value
+                                                    .abs(),
                                                 width: 6,
                                                 color:
                                                     sortedEntries[i].value >= 0
