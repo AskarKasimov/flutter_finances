@@ -306,7 +306,7 @@ class _TransactionsAnalysisViewState extends State<TransactionsAnalysisScreen> {
                       if (_categories.isEmpty)
                         const Center(child: CircularProgressIndicator())
                       else
-                        ListView.separated(
+                        ListView.builder(
                           shrinkWrap: true,
                           itemCount: sortedEntries.length,
                           itemBuilder: (context, index) {
@@ -337,73 +337,79 @@ class _TransactionsAnalysisViewState extends State<TransactionsAnalysisScreen> {
                                 ? categoryTransactions.first
                                 : null;
 
-                            return ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 10,
-                              ),
-                              title: Text(category.name),
-                              subtitle: lastTransaction != null
-                                  ? Text(
-                                      lastTransaction.comment ?? '',
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodySmall,
-                                    )
-                                  : null,
-                              leading: CircleAvatar(
-                                backgroundColor: Theme.of(
-                                  context,
-                                ).colorScheme.secondary,
-                                radius: 16,
-                                child: Text(
-                                  category.emoji,
-                                  style: const TextStyle(fontSize: 18),
+                            return Container(
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: Theme.of(context).dividerColor,
+                                    width: 1,
+                                  ),
                                 ),
                               ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        '${percent.toStringAsFixed(1)}%',
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 10,
+                                ),
+                                title: Text(category.name),
+                                subtitle: lastTransaction != null
+                                    ? Text(
+                                        lastTransaction.comment ?? '',
                                         style: Theme.of(
                                           context,
-                                        ).textTheme.bodyMedium,
-                                      ),
-                                      Text(
-                                        '${entry.value.toStringAsFixed(2)} ${accountState.account.moneyDetails.currency}',
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.bodyMedium,
-                                      ),
-                                    ],
+                                        ).textTheme.bodySmall,
+                                      )
+                                    : null,
+                                leading: CircleAvatar(
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.secondary,
+                                  radius: 16,
+                                  child: Text(
+                                    category.emoji,
+                                    style: const TextStyle(fontSize: 18),
                                   ),
-                                  const SizedBox(width: 24),
-                                  Icon(
-                                    Icons.arrow_forward_ios_outlined,
-                                    size: 16,
-                                    color: Theme.of(context).iconTheme.color,
-                                  ),
-                                ],
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          '${percent.toStringAsFixed(1)}%',
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodyMedium,
+                                        ),
+                                        Text(
+                                          '${entry.value.toStringAsFixed(2)} ${accountState.account.moneyDetails.currency}',
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodyMedium,
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(width: 24),
+                                    Icon(
+                                      Icons.arrow_forward_ios_outlined,
+                                      size: 16,
+                                      color: Theme.of(context).iconTheme.color,
+                                    ),
+                                  ],
+                                ),
+                                onTap: () {
+                                  _showTransactionsModal(
+                                    context,
+                                    category,
+                                    categoryTransactions,
+                                  );
+                                },
                               ),
-                              onTap: () {
-                                _showTransactionsModal(
-                                  context,
-                                  category,
-                                  categoryTransactions,
-                                );
-                              },
                             );
                           },
-                          separatorBuilder: (BuildContext context, int index) =>
-                              Divider(
-                                height: 1,
-                                color: Theme.of(context).dividerColor,
-                              ),
                         ),
                     ],
                   ),
