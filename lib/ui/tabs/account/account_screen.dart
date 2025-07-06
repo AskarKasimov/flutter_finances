@@ -71,33 +71,57 @@ class _AccountScreenState extends State<AccountScreen> {
     super.dispose();
   }
 
-  Map<DateTime, double> _groupTransactionsByDay(List transactions) {
+  Map<DateTime, double> _groupTransactionsByDay(
+    List transactions,
+    List categories,
+  ) {
+    final categoryById = {for (var c in categories) c.id: c};
     final Map<DateTime, double> dailyBalance = {};
+
     for (final tx in transactions) {
       final day = DateTime(
         tx.timestamp.year,
         tx.timestamp.month,
         tx.timestamp.day,
       );
+
+      final category = categoryById[tx.categoryId];
+      if (category == null) continue;
+
+      final amount = category.isIncome ? tx.amount : -tx.amount;
+
       dailyBalance.update(
         day,
-        (value) => value + tx.amount,
-        ifAbsent: () => tx.amount,
+        (value) => value + amount,
+        ifAbsent: () => amount,
       );
     }
+
     return dailyBalance;
   }
 
-  Map<DateTime, double> _groupTransactionsByMonth(List transactions) {
+  Map<DateTime, double> _groupTransactionsByMonth(
+    List transactions,
+    List categories,
+  ) {
+    final categoryById = {for (var c in categories) c.id: c};
     final Map<DateTime, double> monthlyBalance = {};
+
     for (final tx in transactions) {
       final month = DateTime(tx.timestamp.year, tx.timestamp.month);
+
+      final category = categoryById[tx.categoryId];
+      if (category == null) continue;
+
+      final amount = category.isIncome ? tx.amount : -tx.amount;
+
       monthlyBalance.update(
         month,
-        (value) => value + tx.amount,
-        ifAbsent: () => tx.amount,
+        (value) => value + amount,
+        ifAbsent: () => amount,
       );
     }
+
     return monthlyBalance;
   }
 
@@ -283,8 +307,14 @@ class _AccountScreenState extends State<AccountScreen> {
 
                               final Map<DateTime, double> groupedBalance =
                                   _selectedPeriod == StatsPeriod.day
-                                  ? _groupTransactionsByDay(transactions)
-                                  : _groupTransactionsByMonth(transactions);
+                                  ? _groupTransactionsByDay(
+                                      transactions,
+                                      categoriesState.categories,
+                                    )
+                                  : _groupTransactionsByMonth(
+                                      transactions,
+                                      categoriesState.categories,
+                                    );
 
                               final sortedEntries = [...groupedBalance.entries]
                                 ..sort((a, b) => a.key.compareTo(b.key));
@@ -322,8 +352,9 @@ class _AccountScreenState extends State<AccountScreen> {
                                             showTitles: true,
                                             reservedSize: 70,
                                             getTitlesWidget: (value, meta) {
-                                              if (value % 10 != 0)
+                                              if (value % 10 != 0) {
                                                 return const SizedBox.shrink();
+                                              }
                                               return Text(
                                                 formatNumber(value),
                                                 style: Theme.of(
@@ -381,8 +412,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                             x: i,
                                             barRods: [
                                               BarChartRodData(
-                                                toY: sortedEntries[i].value
-                                                    .abs(),
+                                                toY: sortedEntries[i].value.abs(),
                                                 width: 6,
                                                 color:
                                                     sortedEntries[i].value >= 0
