@@ -12,7 +12,7 @@ class TransactionHistoryBloc
     required this.getTransactions,
     required DateTime initialStartDate,
     required DateTime initialEndDate,
-    required bool initialIsIncome,
+    required bool? initialIsIncome,
   }) : super(
          TransactionHistoryLoading(
            startDate: initialStartDate,

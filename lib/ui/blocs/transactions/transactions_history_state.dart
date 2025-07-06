@@ -3,7 +3,7 @@ import 'package:flutter_finances/domain/entities/transaction.dart';
 sealed class TransactionHistoryState {
   final DateTime startDate;
   final DateTime endDate;
-  final bool isIncome;
+  final bool? isIncome;
 
   TransactionHistoryState({
     required this.startDate,

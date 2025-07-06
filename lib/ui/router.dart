@@ -13,27 +13,13 @@ import 'package:flutter_finances/ui/tabs/transactions/transaction_edit_screen.da
 import 'package:flutter_finances/ui/tabs/transactions/transactions_analysis.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_history_screen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_screen.dart';
+import 'package:flutter_finances/utils/date_utils.dart';
 import 'package:go_router/go_router.dart';
 
 ColorFilter? _navIconColor(BuildContext context, bool isSelected) {
   return isSelected
       ? ColorFilter.mode(Theme.of(context).colorScheme.primary, BlendMode.srcIn)
       : null;
-}
-
-DateTime startThisDay() {
-  final now = DateTime.now();
-  return DateTime(now.year, now.month, now.day, 0, 0, 0);
-}
-
-DateTime startThisMonth() {
-  final now = DateTime.now();
-  return DateTime(now.year, now.month - 1, now.day, 0, 0, 0);
-}
-
-DateTime endThisDay() {
-  final now = DateTime.now();
-  return DateTime(now.year, now.month, now.day, 23, 59, 59);
 }
 
 final GoRouter router = GoRouter(
@@ -280,7 +266,18 @@ final GoRouter router = GoRouter(
           routes: [
             GoRoute(
               path: '/account',
-              builder: (context, state) => const AccountScreen(),
+              builder: (context, state) => BlocProvider(
+                create: (_) => TransactionHistoryBloc(
+                  getTransactions: UseCaseGetTransactionsByPeriod(
+                    context.read<MockedTransactionRepository>(),
+                    context.read<MockedCategoryRepository>(),
+                  ),
+                  initialStartDate: startThisDay(),
+                  initialEndDate: endThisDay(),
+                  initialIsIncome: null,
+                ),
+                child: const AccountScreen(),
+              ),
               routes: [
                 GoRoute(
                   path: 'edit',

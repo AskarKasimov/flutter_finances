@@ -2,10 +2,10 @@ import 'package:flutter_finances/domain/entities/transaction.dart';
 
 sealed class TransactionHistoryEvent {}
 
-class   LoadTransactionHistory extends TransactionHistoryEvent {
+class LoadTransactionHistory extends TransactionHistoryEvent {
   final DateTime startDate;
   final DateTime endDate;
-  final bool isIncome;
+  final bool? isIncome;
 
   LoadTransactionHistory({
     required this.startDate,
