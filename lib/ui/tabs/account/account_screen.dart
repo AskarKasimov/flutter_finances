@@ -19,6 +19,8 @@ import 'package:go_router/go_router.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:spoiler_widget/spoiler_widget.dart';
 
+enum StatsPeriod { day, month }
+
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
 
@@ -30,6 +32,8 @@ class _AccountScreenState extends State<AccountScreen> {
   late final StreamSubscription<AccelerometerEvent> _accelerometerSub;
   bool _spoilerEnabled = false;
   bool _wasFacingDown = false;
+
+  StatsPeriod _selectedPeriod = StatsPeriod.day;
 
   @override
   void initState() {
@@ -67,6 +71,36 @@ class _AccountScreenState extends State<AccountScreen> {
     super.dispose();
   }
 
+  Map<DateTime, double> _groupTransactionsByDay(List transactions) {
+    final Map<DateTime, double> dailyBalance = {};
+    for (final tx in transactions) {
+      final day = DateTime(
+        tx.timestamp.year,
+        tx.timestamp.month,
+        tx.timestamp.day,
+      );
+      dailyBalance.update(
+        day,
+        (value) => value + tx.amount,
+        ifAbsent: () => tx.amount,
+      );
+    }
+    return dailyBalance;
+  }
+
+  Map<DateTime, double> _groupTransactionsByMonth(List transactions) {
+    final Map<DateTime, double> monthlyBalance = {};
+    for (final tx in transactions) {
+      final month = DateTime(tx.timestamp.year, tx.timestamp.month);
+      monthlyBalance.update(
+        month,
+        (value) => value + tx.amount,
+        ifAbsent: () => tx.amount,
+      );
+    }
+    return monthlyBalance;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,19 +134,16 @@ class _AccountScreenState extends State<AccountScreen> {
                       categoriesState is CategoryLoading) {
                     return const Center(child: CircularProgressIndicator());
                   }
-
                   if (accountState is AccountBlocError) {
                     return Center(
                       child: Text('Ошибка: ${accountState.message}'),
                     );
                   }
-
                   if (categoriesState is CategoryError) {
                     return Center(
                       child: Text('Ошибка: ${categoriesState.message}'),
                     );
                   }
-
                   if (accountState is AccountBlocLoaded &&
                       categoriesState is CategoryLoaded) {
                     return Column(
@@ -215,6 +246,28 @@ class _AccountScreenState extends State<AccountScreen> {
                             ),
                           ),
                         ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: SegmentedButton<StatsPeriod>(
+                            segments: const [
+                              ButtonSegment(
+                                value: StatsPeriod.day,
+                                label: Text('По дням'),
+                              ),
+                              ButtonSegment(
+                                value: StatsPeriod.month,
+                                label: Text('По месяцам'),
+                              ),
+                            ],
+                            selected: {_selectedPeriod},
+                            onSelectionChanged: (newSelection) {
+                              setState(() {
+                                _selectedPeriod = newSelection.first;
+                              });
+                            },
+                          ),
+                        ),
+
                         BlocBuilder<
                           TransactionHistoryBloc,
                           TransactionHistoryState
@@ -225,50 +278,21 @@ class _AccountScreenState extends State<AccountScreen> {
                                 child: CircularProgressIndicator(),
                               );
                             }
-
                             if (state is TransactionHistoryLoaded) {
                               final transactions = state.transactions;
-                              final categories = categoriesState.categories;
 
-                              // Создадим мапу для быстрого поиска категории по id
-                              final categoryById = {
-                                for (var c in categories) c.id: c,
-                              };
+                              final Map<DateTime, double> groupedBalance =
+                                  _selectedPeriod == StatsPeriod.day
+                                  ? _groupTransactionsByDay(transactions)
+                                  : _groupTransactionsByMonth(transactions);
 
-                              final Map<DateTime, double> dailyBalance = {};
-
-                              for (final tx in transactions) {
-                                final day = DateTime(
-                                  tx.timestamp.year,
-                                  tx.timestamp.month,
-                                  tx.timestamp.day,
-                                );
-
-                                final category = categoryById[tx.categoryId];
-                                if (category == null) {
-                                  // Категория не найдена — можно пропустить или обработать отдельно
-                                  continue;
-                                }
-
-                                // Если категория — доход, то прибавляем сумму, если расход — вычитаем
-                                final amount = category.isIncome
-                                    ? tx.amount
-                                    : -tx.amount;
-
-                                dailyBalance.update(
-                                  day,
-                                  (value) => value + amount,
-                                  ifAbsent: () => amount,
-                                );
-                              }
-
-                              final sortedEntries = [...dailyBalance.entries]
+                              final sortedEntries = [...groupedBalance.entries]
                                 ..sort((a, b) => a.key.compareTo(b.key));
+
                               final screenWidth = MediaQuery.of(
                                 context,
                               ).size.width;
                               const minLabelWidth = 24.0;
-
                               final maxLabels = (screenWidth / minLabelWidth)
                                   .floor();
                               final step = (sortedEntries.length / maxLabels)
@@ -328,11 +352,16 @@ class _AccountScreenState extends State<AccountScreen> {
                                               }
                                               final date =
                                                   sortedEntries[index].key;
+                                              final label =
+                                                  _selectedPeriod ==
+                                                      StatsPeriod.day
+                                                  ? formatDateTimeShort(date)
+                                                  : '${date.year}-${date.month.toString().padLeft(2, '0')}';
                                               return SideTitleWidget(
                                                 meta: meta,
                                                 space: 4,
                                                 child: Text(
-                                                  formatDateTimeShort(date),
+                                                  label,
                                                   style: Theme.of(
                                                     context,
                                                   ).textTheme.bodySmall,
@@ -372,15 +401,12 @@ class _AccountScreenState extends State<AccountScreen> {
                                 ),
                               );
                             }
-
                             return const SizedBox.shrink();
                           },
                         ),
                       ],
                     );
                   }
-
-                  // fallback пустой виджет
                   return const SizedBox.shrink();
                 },
               );
