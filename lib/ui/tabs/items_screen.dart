@@ -76,37 +76,32 @@ class _ItemsViewState extends State<_ItemsView> {
                   Expanded(
                     child: ListView.separated(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount:
-                          categoriesState.categories
-                              .where(
-                                (c) =>
-                                    c.name.toLowerCase().contains(_searchQuery),
-                              )
-                              .length,
-                      separatorBuilder:
-                          (context, index) => Divider(
-                            height: 1,
-                            color: Theme.of(context).dividerColor,
-                          ),
+                      itemCount: categoriesState.categories
+                          .where(
+                            (c) => c.name.toLowerCase().contains(_searchQuery),
+                          )
+                          .length,
+                      separatorBuilder: (context, index) => Divider(
+                        height: 1,
+                        color: Theme.of(context).dividerColor,
+                      ),
                       itemBuilder: (context, index) {
-                        final filtered =
-                            _searchQuery.isEmpty
-                                ? categoriesState.categories
-                                : categoriesState.categories.where((c) {
-                                  final similarity = c.name
-                                      .toLowerCase()
-                                      .similarityTo(_searchQuery);
-                                  return similarity > 0.2 ||
-                                      c.name.toLowerCase().contains(
-                                        _searchQuery,
-                                      );
-                                }).toList();
+                        final filtered = _searchQuery.isEmpty
+                            ? categoriesState.categories
+                            : categoriesState.categories.where((c) {
+                                final similarity = c.name
+                                    .toLowerCase()
+                                    .similarityTo(_searchQuery);
+                                return similarity > 0.2 ||
+                                    c.name.toLowerCase().contains(_searchQuery);
+                              }).toList();
                         final category = filtered[index];
 
                         return ListTile(
                           leading: CircleAvatar(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.secondary,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.secondary,
                             radius: 16,
                             child: Text(
                               category.emoji,

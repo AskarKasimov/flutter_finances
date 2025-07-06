@@ -58,10 +58,8 @@ class _AccountScreenState extends State<AccountScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {
-              context.go('/account/edit');
-            },
             icon: Assets.icons.edit.svg(width: 18, height: 18),
+            onPressed: () {},
           ),
         ],
       ),
@@ -76,26 +74,54 @@ class _AccountScreenState extends State<AccountScreen> {
             ),
             AccountBlocLoaded(:final account) => Column(
               children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  color: Theme.of(context).colorScheme.secondary,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(account.name),
-                      SpoilerText(
-                        text:
-                            '${account.moneyDetails.balance.toStringAsFixed(0)} ${account.moneyDetails.currency}',
-                        config: TextSpoilerConfig(
-                          isEnabled: _spoilerEnabled,
-                          enableFadeAnimation: true,
-                          enableGestureReveal: true,
-                          textStyle: Theme.of(context).textTheme.bodyMedium,
-                          particleColor: Theme.of(context).hintColor,
+                InkWell(
+                  onTap: () {
+                    context.go('/account/edit');
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    color: Theme.of(context).colorScheme.secondary,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Theme.of(
+                                context,
+                              ).scaffoldBackgroundColor,
+                              radius: 12,
+                              child: const Text('💰'),
+                            ),
+                            const SizedBox(width: 8),
+                            Text('Баланс'),
+                          ],
                         ),
-                      ),
-                    ],
+                        Row(
+                          children: [
+                            SpoilerText(
+                              text:
+                                  '${account.moneyDetails.balance.toStringAsFixed(0)} ${account.moneyDetails.currency}',
+                              config: TextSpoilerConfig(
+                                isEnabled: _spoilerEnabled,
+                                enableFadeAnimation: true,
+                                enableGestureReveal: true,
+                                textStyle: Theme.of(
+                                  context,
+                                ).textTheme.bodyMedium,
+                                particleColor: Theme.of(context).hintColor,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            const Icon(
+                              Icons.arrow_forward_ios_outlined,
+                              size: 16,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Divider(height: 1, color: Theme.of(context).dividerColor),
@@ -114,7 +140,16 @@ class _AccountScreenState extends State<AccountScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text('Валюта'),
-                        Text(account.moneyDetails.currency),
+                        Row(
+                          children: [
+                            Text(account.moneyDetails.currency),
+                            const SizedBox(width: 16),
+                            const Icon(
+                              Icons.arrow_forward_ios_outlined,
+                              size: 16,
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
