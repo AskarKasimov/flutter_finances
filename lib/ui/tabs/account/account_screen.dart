@@ -357,12 +357,35 @@ class _AccountScreenState extends State<AccountScreen> {
                                   padding: const EdgeInsets.fromLTRB(
                                     10,
                                     25,
-                                    25,
+                                    50,
                                     0,
                                   ),
                                   child: BarChart(
                                     BarChartData(
                                       alignment: BarChartAlignment.spaceBetween,
+                                      barTouchData: BarTouchData(
+                                        enabled: true,
+                                        touchTooltipData: BarTouchTooltipData(
+                                          getTooltipItem:
+                                              (
+                                                group,
+                                                groupIndex,
+                                                rod,
+                                                rodIndex,
+                                              ) {
+                                                final value =
+                                                    sortedEntries[group.x]
+                                                        .value;
+                                                return BarTooltipItem(
+                                                  '${value.toString()} ${accountState.account.moneyDetails.currency}',
+                                                  TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                );
+                                              },
+                                        ),
+                                      ),
                                       titlesData: FlTitlesData(
                                         topTitles: AxisTitles(
                                           sideTitles: SideTitles(
