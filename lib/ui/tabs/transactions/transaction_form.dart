@@ -11,11 +11,29 @@ import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creat
 import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_state.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
 import 'package:flutter_finances/utils/number_utils.dart';
-
-class TransactionForm extends StatelessWidget {
+class TransactionForm extends StatefulWidget {
   final bool isIncome;
 
   const TransactionForm({super.key, required this.isIncome});
+
+  @override
+  State<TransactionForm> createState() => _TransactionFormState();
+}
+
+class _TransactionFormState extends State<TransactionForm> {
+  late final TextEditingController _commentController;
+
+  @override
+  void initState() {
+    super.initState();
+    _commentController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +42,13 @@ class TransactionForm extends StatelessWidget {
 
     return BlocBuilder<TransactionCreationBloc, TransactionCreationState>(
       builder: (context, state) {
+        if (_commentController.text != state.comment) {
+          _commentController.text = state.comment;
+          _commentController.selection = TextSelection.fromPosition(
+            TextPosition(offset: _commentController.text.length),
+          );
+        }
+
         return Column(
           children: [
             // --- СЧЁТ ---
@@ -80,7 +105,7 @@ class TransactionForm extends StatelessWidget {
                 ],
               ),
               onTap: () {
-                _showCategoriesSelectionSheet(context, isIncome);
+                _showCategoriesSelectionSheet(context, widget.isIncome);
               },
             ),
 
@@ -206,7 +231,7 @@ class TransactionForm extends StatelessWidget {
             // --- КОММЕНТАРИЙ ---
             ListTile(
               title: TextFormField(
-                initialValue: state.comment,
+                controller: _commentController,
                 onChanged: (value) => context
                     .read<TransactionCreationBloc>()
                     .add(TransactionCommentChanged(value)),
