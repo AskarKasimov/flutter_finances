@@ -271,8 +271,10 @@ class _AccountScreenState extends State<AccountScreen> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: SegmentedButton<StatsPeriod>(
+                          padding: const EdgeInsets.all(32),
+                          child: SizedBox(
+                            width: double.infinity,
+                              child: SegmentedButton<StatsPeriod>(
                             segments: const [
                               ButtonSegment(
                                 value: StatsPeriod.day,
@@ -305,7 +307,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                 ),
                               );
                             },
-                          ),
+                          ),)
                         ),
 
                         BlocBuilder<
