@@ -120,14 +120,12 @@ class MockedTransactionRepository implements TransactionRepository {
     DateTime? startDate,
     DateTime? endDate,
   ) async {
-    final filtered =
-        _transactions.where((t) {
-          final matchesAccount = t.accountId == accountId;
-          final matchesStart =
-              startDate == null || t.timestamp.isAfter(startDate);
-          final matchesEnd = endDate == null || t.timestamp.isBefore(endDate);
-          return matchesAccount && matchesStart && matchesEnd;
-        }).toList();
+    final filtered = _transactions.where((t) {
+      final matchesAccount = t.accountId == accountId;
+      final matchesStart = startDate == null || t.timestamp.isAfter(startDate);
+      final matchesEnd = endDate == null || t.timestamp.isBefore(endDate);
+      return matchesAccount && matchesStart && matchesEnd;
+    }).toList();
 
     return filtered;
   }
@@ -146,7 +144,7 @@ class MockedTransactionRepository implements TransactionRepository {
       categoryId: form.categoryId ?? existing.categoryId,
       comment: form.comment ?? existing.comment,
       amount: form.amount ?? existing.amount,
-      timestamp: DateTime.now(),
+      timestamp: form.timestamp ?? existing.timestamp,
       auditInfoTime: AuditInfoTime(
         createdAt: existing.auditInfoTime.createdAt,
         updatedAt: DateTime.now(),

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
+import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
+import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
 
 enum SortMode {
@@ -18,6 +21,7 @@ class TransactionsList extends StatefulWidget {
   final void Function(Transaction) onTapTransaction;
   final bool showTime;
   final bool showSortMethods;
+  final String currency;
 
   const TransactionsList({
     super.key,
@@ -25,6 +29,7 @@ class TransactionsList extends StatefulWidget {
     required this.onTapTransaction,
     this.showTime = false,
     this.showSortMethods = false,
+    required this.currency,
   });
 
   @override
@@ -86,17 +91,12 @@ class _TransactionsListState extends State<TransactionsList> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Align(
-              alignment: Alignment.centerLeft,
+              alignment: Alignment.centerRight,
               child: PopupMenuButton<SortMode>(
                 onSelected: (value) => setState(() => _sortMode = value),
-                itemBuilder:
-                    (context) =>
-                        SortMode.values.map((mode) {
-                          return PopupMenuItem(
-                            value: mode,
-                            child: Text(mode.label),
-                          );
-                        }).toList(),
+                itemBuilder: (context) => SortMode.values.map((mode) {
+                  return PopupMenuItem(value: mode, child: Text(mode.label));
+                }).toList(),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -123,70 +123,117 @@ class _TransactionsListState extends State<TransactionsList> {
             children: [
               const Text('Всего'),
               Text(
-                '$totalSum ₽',
+                '$totalSum ${widget.currency}',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
           ),
         ),
         Expanded(
-          child: ListView.builder(
-            itemCount: transactions.length,
-            itemBuilder: (context, index) {
-              final item = transactions[index];
-              return InkWell(
-                onTap: () => widget.onTapTransaction(item),
-                child: Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: widget.showTime ? 14 : 20,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Theme.of(context).dividerColor,
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(item.comment ?? ''),
-                      Row(
-                        children: [
-                          widget.showTime
-                              ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    '${item.amount.toStringAsFixed(2)} ₽',
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
-                                  ),
-                                  Text(
-                                    formatDateTime(item.timestamp),
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
-                                  ),
-                                ],
-                              )
-                              : Text(
-                                '${item.amount.toStringAsFixed(2)} ₽',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                          const SizedBox(width: 24),
-                          const Icon(
-                            Icons.arrow_forward_ios_outlined,
-                            size: 16,
+          child: BlocBuilder<CategoryBloc, CategoryState>(
+            builder: (context, state) {
+              if (state is CategoryLoaded) {
+                return ListView.builder(
+                  itemCount: transactions.length,
+                  itemBuilder: (context, index) {
+                    final item = transactions[index];
+                    final category = state.categories.firstWhere(
+                      (cat) => cat.id == item.categoryId,
+                    );
+                    return InkWell(
+                      onTap: () => widget.onTapTransaction(item),
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: widget.showTime ? 14 : 20,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Theme.of(context).dividerColor,
+                              width: 1,
+                            ),
                           ),
-                        ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 20,
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.secondary,
+                                  child: Text(
+                                    category.emoji,
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                item.comment != null && item.comment!.isNotEmpty
+                                    ? Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(category.name),
+                                          Text(
+                                            item.comment!,
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.bodySmall,
+                                          ),
+                                        ],
+                                      )
+                                    : Text(category.name),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                widget.showTime
+                                    ? Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            '${item.amount.toStringAsFixed(2)} ${widget.currency}',
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.bodyMedium,
+                                          ),
+                                          Text(
+                                            formatDateTime(item.timestamp),
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.bodyMedium,
+                                          ),
+                                        ],
+                                      )
+                                    : Text(
+                                        '${item.amount.toStringAsFixed(2)} ${widget.currency}',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium,
+                                      ),
+                                const SizedBox(width: 24),
+                                const Icon(
+                                  Icons.arrow_forward_ios_outlined,
+                                  size: 16,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-              );
+                    );
+                  },
+                );
+              } else if (state is CategoryLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else {
+                return Center(child: Text('Ошибка загрузки категорий'));
+              }
             },
           ),
         ),

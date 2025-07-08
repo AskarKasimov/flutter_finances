@@ -15,7 +15,7 @@ extension AccountResponseMapper on AccountResponseDTO {
     final parsedUpdatedAt = tryParseDateTime(updatedAt, 'updatedAt');
 
     return AccountResponse(
-      id: this.id,
+      id: id,
       name: name,
       moneyDetails: MoneyDetails(balance: parsedBalance, currency: currency),
       incomeStats: parsedIncomeStats,
