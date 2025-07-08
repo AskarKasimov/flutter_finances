@@ -1,5 +1,5 @@
 import 'package:flutter_finances/domain/entities/category.dart';
-import 'package:flutter_finances/domain/exceptions/RepositoryException.dart';
+import 'package:flutter_finances/domain/exceptions/repository_exception.dart';
 import 'package:flutter_finances/domain/repositories/category_repository.dart';
 
 class MockedCategoryRepository implements CategoryRepository {

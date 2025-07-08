@@ -1,7 +1,7 @@
 import 'package:flutter_finances/domain/entities/forms/transaction_form.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
 import 'package:flutter_finances/domain/entities/value_objects/time_interval.dart';
-import 'package:flutter_finances/domain/exceptions/RepositoryException.dart';
+import 'package:flutter_finances/domain/exceptions/repository_exception.dart';
 import 'package:flutter_finances/domain/repositories/transaction_repository.dart';
 
 class MockedTransactionRepository implements TransactionRepository {

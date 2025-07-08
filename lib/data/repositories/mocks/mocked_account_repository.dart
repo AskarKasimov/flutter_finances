@@ -4,7 +4,7 @@ import 'package:flutter_finances/domain/entities/account_response.dart';
 import 'package:flutter_finances/domain/entities/forms/account_form.dart';
 import 'package:flutter_finances/domain/entities/value_objects/money_details.dart';
 import 'package:flutter_finances/domain/entities/value_objects/time_interval.dart';
-import 'package:flutter_finances/domain/exceptions/RepositoryException.dart';
+import 'package:flutter_finances/domain/exceptions/repository_exception.dart';
 import 'package:flutter_finances/domain/repositories/account_repository.dart';
 
 class MockedAccountRepository implements AccountRepository {
