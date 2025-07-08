@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,8 +14,6 @@ import 'package:flutter_finances/ui/tabs/account/currency.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
 import 'package:flutter_finances/utils/number_utils.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sensors_plus/sensors_plus.dart';
-import 'package:spoiler_widget/spoiler_widget.dart';
 
 enum StatsPeriod { day, month }
 
@@ -29,31 +25,11 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
-  late final StreamSubscription<AccelerometerEvent> _accelerometerSub;
-  bool _spoilerEnabled = false;
-  bool _wasFacingDown = false;
-
   StatsPeriod _selectedPeriod = StatsPeriod.day;
 
   @override
   void initState() {
     super.initState();
-
-    _accelerometerSub = accelerometerEventStream().listen((event) {
-      final z = event.z;
-
-      // Z ~ -9.8 => экран вниз, Z ~ 9.8 => экран вверх
-      if (z < -9) {
-        _wasFacingDown = true;
-      }
-
-      if (_wasFacingDown && z > 9) {
-        setState(() {
-          _spoilerEnabled = true;
-        });
-        _wasFacingDown = false;
-      }
-    });
 
     final bloc = context.read<TransactionHistoryBloc>();
     bloc.add(
@@ -63,12 +39,6 @@ class _AccountScreenState extends State<AccountScreen> {
         isIncome: null,
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _accelerometerSub.cancel();
-    super.dispose();
   }
 
   Map<DateTime, double> _groupTransactionsByDay(
@@ -200,20 +170,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                 ),
                                 Row(
                                   children: [
-                                    SpoilerText(
-                                      text:
-                                          '${accountState.account.moneyDetails.balance.toStringAsFixed(0)} ${accountState.account.moneyDetails.currency}',
-                                      config: TextSpoilerConfig(
-                                        isEnabled: _spoilerEnabled,
-                                        enableFadeAnimation: true,
-                                        enableGestureReveal: true,
-                                        textStyle: Theme.of(
-                                          accountContext,
-                                        ).textTheme.bodyMedium,
-                                        particleColor: Theme.of(
-                                          accountContext,
-                                        ).hintColor,
-                                      ),
+                                    Text(
+                                      '${accountState.account.moneyDetails.balance.toStringAsFixed(0)} ${accountState.account.moneyDetails.currency}',
                                     ),
                                     const SizedBox(width: 16),
                                     const Icon(
@@ -274,40 +232,41 @@ class _AccountScreenState extends State<AccountScreen> {
                           padding: const EdgeInsets.all(32),
                           child: SizedBox(
                             width: double.infinity,
-                              child: SegmentedButton<StatsPeriod>(
-                            segments: const [
-                              ButtonSegment(
-                                value: StatsPeriod.day,
-                                label: Text('По дням'),
-                              ),
-                              ButtonSegment(
-                                value: StatsPeriod.month,
-                                label: Text('По месяцам'),
-                              ),
-                            ],
-                            selected: {_selectedPeriod},
-                            onSelectionChanged: (newSelection) {
-                              final selected = newSelection.first;
-                              setState(() {
-                                _selectedPeriod = selected;
-                              });
-
-                              final now = DateTime.now();
-                              final startDate = selected == StatsPeriod.day
-                                  ? startThisMonth()
-                                  : DateTime(now.year - 1, now.month);
-
-                              final endDate = endThisDay();
-
-                              context.read<TransactionHistoryBloc>().add(
-                                LoadTransactionHistory(
-                                  startDate: startDate,
-                                  endDate: endDate,
-                                  isIncome: null,
+                            child: SegmentedButton<StatsPeriod>(
+                              segments: const [
+                                ButtonSegment(
+                                  value: StatsPeriod.day,
+                                  label: Text('По дням'),
                                 ),
-                              );
-                            },
-                          ),)
+                                ButtonSegment(
+                                  value: StatsPeriod.month,
+                                  label: Text('По месяцам'),
+                                ),
+                              ],
+                              selected: {_selectedPeriod},
+                              onSelectionChanged: (newSelection) {
+                                final selected = newSelection.first;
+                                setState(() {
+                                  _selectedPeriod = selected;
+                                });
+
+                                final now = DateTime.now();
+                                final startDate = selected == StatsPeriod.day
+                                    ? startThisMonth()
+                                    : DateTime(now.year - 1, now.month);
+
+                                final endDate = endThisDay();
+
+                                context.read<TransactionHistoryBloc>().add(
+                                  LoadTransactionHistory(
+                                    startDate: startDate,
+                                    endDate: endDate,
+                                    isIncome: null,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
                         ),
 
                         BlocBuilder<
