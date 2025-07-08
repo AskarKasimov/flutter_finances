@@ -11,6 +11,7 @@ import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creat
 import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_state.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
 import 'package:flutter_finances/utils/number_utils.dart';
+
 class TransactionForm extends StatefulWidget {
   final bool isIncome;
 
