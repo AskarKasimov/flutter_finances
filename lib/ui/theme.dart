@@ -4,8 +4,8 @@ const _primaryColor = Color(0xFF2AE881);
 
 final lightTheme = ThemeData(
   brightness: Brightness.light,
-  splashColor: Color(0x3300D68F),
-  highlightColor: Color(0x1A00D68F),
+  splashColor: const Color(0x3300D68F),
+  highlightColor: const Color(0x1A00D68F),
   scaffoldBackgroundColor: const Color(0xFFFEF7FF),
   appBarTheme: const AppBarTheme(
     backgroundColor: _primaryColor,
@@ -28,15 +28,15 @@ final lightTheme = ThemeData(
   ),
   iconTheme: const IconThemeData(color: Color(0x3C3C434D)),
   dividerColor: const Color(0xFFCAC4D0),
-  inputDecorationTheme: InputDecorationTheme(fillColor: Color(0xFFECE6F0)),
+  inputDecorationTheme: const InputDecorationTheme(fillColor: Color(0xFFECE6F0)),
   hintColor: const Color(0xFF49454F),
 );
 
 final darkTheme = ThemeData(
   // TODO: fully implement dark theme
   brightness: Brightness.dark,
-  splashColor: Color(0x3300D68F),
-  highlightColor: Color(0x1A00D68F),
+  splashColor: const Color(0x3300D68F),
+  highlightColor: const Color(0x1A00D68F),
   scaffoldBackgroundColor: const Color(0xFF121212),
   primaryColor: _primaryColor,
   appBarTheme: const AppBarTheme(

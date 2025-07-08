@@ -366,7 +366,9 @@ class _TransactionFormState extends State<TransactionForm> {
                     } else if (state is CategoryLoading) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (state is CategoryError) {
-                      return Center(child: Text('Ошибка загрузки категорий'));
+                      return const Center(
+                        child: Text('Ошибка загрузки категорий'),
+                      );
                     } else {
                       outerContext.read<CategoryBloc>().add(LoadCategories());
                       return const Center(child: CircularProgressIndicator());

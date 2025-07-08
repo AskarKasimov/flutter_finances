@@ -1,6 +1,6 @@
-import 'account_state.dart';
-import 'enums/change_type.dart';
-import 'value_objects/time_interval.dart';
+import 'package:flutter_finances/domain/entities/account_state.dart';
+import 'package:flutter_finances/domain/entities/enums/change_type.dart';
+import 'package:flutter_finances/domain/entities/value_objects/time_interval.dart';
 
 class AccountHistoryItem {
   final int id;

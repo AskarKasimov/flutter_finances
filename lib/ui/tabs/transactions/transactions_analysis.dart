@@ -122,7 +122,7 @@ class _TransactionsAnalysisViewState extends State<TransactionsAnalysisScreen> {
                           transactionContext,
                         ).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
+                        boxShadow: const [
                           BoxShadow(
                             color: Colors.black12,
                             blurRadius: 4,
@@ -448,7 +448,7 @@ class _TransactionsAnalysisViewState extends State<TransactionsAnalysisScreen> {
                   const SizedBox(height: 12),
                   Expanded(
                     child: transactions.isEmpty
-                        ? Center(child: Text('Нет транзакций'))
+                        ? const Center(child: Text('Нет транзакций'))
                         : ListView.separated(
                             controller: scrollController,
                             itemCount: transactions.length,

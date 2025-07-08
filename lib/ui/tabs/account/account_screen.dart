@@ -1,6 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/domain/entities/category.dart';
+import 'package:flutter_finances/domain/entities/transaction.dart';
 import 'package:flutter_finances/gen/assets.gen.dart';
 import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
 import 'package:flutter_finances/ui/blocs/account/account_event.dart';
@@ -42,8 +44,8 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Map<DateTime, double> _groupTransactionsByDay(
-    List transactions,
-    List categories,
+    List<Transaction> transactions,
+    List<Category> categories,
   ) {
     final categoryById = {for (var c in categories) c.id: c};
     final Map<DateTime, double> dailyBalance = {};
@@ -71,8 +73,8 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Map<DateTime, double> _groupTransactionsByMonth(
-    List transactions,
-    List categories,
+    List<Transaction> transactions,
+    List<Category> categories,
   ) {
     final categoryById = {for (var c in categories) c.id: c};
     final Map<DateTime, double> monthlyBalance = {};
@@ -339,7 +341,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                                         .value;
                                                 return BarTooltipItem(
                                                   '${value.toString()} ${accountState.account.moneyDetails.currency}',
-                                                  TextStyle(
+                                                  const TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
                                                   ),
@@ -348,7 +350,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                         ),
                                       ),
                                       titlesData: FlTitlesData(
-                                        topTitles: AxisTitles(
+                                        topTitles: const AxisTitles(
                                           sideTitles: SideTitles(
                                             showTitles: false,
                                           ),
@@ -370,7 +372,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                             },
                                           ),
                                         ),
-                                        rightTitles: AxisTitles(
+                                        rightTitles: const AxisTitles(
                                           sideTitles: SideTitles(
                                             showTitles: false,
                                           ),
@@ -431,7 +433,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                             ],
                                           ),
                                       ],
-                                      gridData: FlGridData(show: false),
+                                      gridData: const FlGridData(show: false),
                                       borderData: FlBorderData(show: false),
                                     ),
                                   ),

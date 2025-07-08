@@ -1,4 +1,4 @@
-import '../value_objects/money_details.dart';
+import 'package:flutter_finances/domain/entities/value_objects/money_details.dart';
 
 class AccountForm {
   final String? name;

@@ -46,7 +46,7 @@ class _ItemsViewState extends State<_ItemsView> {
                 child: CircularProgressIndicator(),
               ),
 
-              CategoryLoaded categoriesState => Column(
+              final CategoryLoaded categoriesState => Column(
                 children: [
                   Container(
                     decoration: BoxDecoration(
@@ -122,7 +122,7 @@ class _ItemsViewState extends State<_ItemsView> {
                 ],
               ),
 
-              CategoryError errorState => ListView(
+              final CategoryError errorState => ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: [
                   Center(

@@ -232,7 +232,7 @@ class _TransactionsListState extends State<TransactionsList> {
               } else if (state is CategoryLoading) {
                 return const Center(child: CircularProgressIndicator());
               } else {
-                return Center(child: Text('Ошибка загрузки категорий'));
+                return const Center(child: Text('Ошибка загрузки категорий'));
               }
             },
           ),

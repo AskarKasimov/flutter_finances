@@ -1,5 +1,5 @@
-import 'account_history_item.dart';
-import 'value_objects/money_details.dart';
+import 'package:flutter_finances/domain/entities/account_history_item.dart';
+import 'package:flutter_finances/domain/entities/value_objects/money_details.dart';
 
 class AccountHistory {
   final int accountId;

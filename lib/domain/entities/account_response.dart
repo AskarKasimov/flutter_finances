@@ -1,6 +1,6 @@
-import 'stat_item.dart';
-import 'value_objects/money_details.dart';
-import 'value_objects/time_interval.dart';
+import 'package:flutter_finances/domain/entities/stat_item.dart';
+import 'package:flutter_finances/domain/entities/value_objects/money_details.dart';
+import 'package:flutter_finances/domain/entities/value_objects/time_interval.dart';
 
 class AccountResponse {
   final int id;
