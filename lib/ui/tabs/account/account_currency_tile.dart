@@ -1,4 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
+import 'package:flutter_finances/ui/blocs/account/account_event.dart';
+import 'package:flutter_finances/ui/blocs/account/account_state.dart';
+
+class AccountCurrencyTile extends StatelessWidget {
+  const AccountCurrencyTile({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        final selected = await showCurrencyPicker(context);
+        if (selected != null) {
+          context.read<AccountBloc>().add(ChangeCurrency(selected));
+        }
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        color: Theme.of(context).colorScheme.secondary,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Валюта'),
+            BlocBuilder<AccountBloc, AccountBlocState>(
+              builder: (context, state) {
+                if (state is AccountBlocLoaded) {
+                  return Row(
+                    children: [
+                      Text(state.account.moneyDetails.currency),
+                      const SizedBox(width: 16),
+                      const Icon(Icons.arrow_forward_ios_outlined, size: 16),
+                    ],
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 Future<String?> showCurrencyPicker(BuildContext context) {
   return showModalBottomSheet<String>(
