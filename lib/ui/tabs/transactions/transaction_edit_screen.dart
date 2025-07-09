@@ -20,7 +20,7 @@ class TransactionEditScreen extends StatelessWidget {
 
   void _onSubmit(BuildContext context) {
     final bloc = context.read<TransactionCreationBloc>();
-    final state = bloc.state;
+    final state = bloc.state as TransactionDataState;
 
     if (state.isValid) {
       bloc.add(UpdateTransactionSubmitted(transactionId: transactionId));
@@ -68,12 +68,22 @@ class TransactionEditScreen extends StatelessWidget {
               historyBloc.add(DeleteTransaction(state.deletedTransaction));
               context.pop();
               break;
+            case TransactionDataState():
+              break;
+            case TransactionProcessing():
+              break;
+            case TransactionCreatedSuccessfully():
+              break;
           }
         },
         child: BlocBuilder<TransactionCreationBloc, TransactionCreationState>(
           builder: (context, creationState) {
             return BlocBuilder<CategoryBloc, CategoryState>(
               builder: (context, categoryState) {
+                if (creationState is! TransactionDataState) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
                 bool isIncome = false;
                 if (categoryState is CategoryLoaded &&
                     creationState.category != null) {

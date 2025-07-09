@@ -17,47 +17,50 @@ class TransactionCreationBloc
     this.transactionRepository,
     this.categoryRepository,
     this.accountRepository,
-  ) : super(TransactionCreationState.initial()) {
+  ) : super(TransactionDataState.initial()) {
     on<TransactionCreationEvent>((event, emit) async {
+      final currentState = state;
+      if (currentState is! TransactionDataState) return;
+
       switch (event) {
         case TransactionAccountChanged():
-          emit(state.copyWith(accountState: event.account));
+          emit(currentState.copyWith(accountState: event.account));
           break;
+
         case TransactionCategoryChanged():
-          emit(state.copyWith(category: event.category));
+          emit(currentState.copyWith(category: event.category));
           break;
+
         case TransactionAmountChanged():
-          emit(state.copyWith(amount: event.amount));
+          emit(currentState.copyWith(amount: event.amount));
           break;
+
         case TransactionDateChanged():
-          emit(state.copyWith(date: event.date));
+          emit(currentState.copyWith(date: event.date));
           break;
+
         case TransactionCommentChanged():
-          emit(state.copyWith(comment: event.comment));
+          emit(currentState.copyWith(comment: event.comment));
           break;
+
         case TransactionFormReset():
-          emit(TransactionCreationState.initial());
+          emit(TransactionDataState.initial());
           break;
+
         case CreateTransactionSubmitted():
-          await _onTransactionSubmitted(event, emit);
+          await _onTransactionSubmitted(event, emit, currentState);
           break;
+
         case InitializeForEditing():
-          await _initForEditing(
-            InitializeForEditing(transactionId: event.transactionId),
-            emit,
-          );
+          await _initForEditing(event, emit);
           break;
+
         case UpdateTransactionSubmitted():
-          await _onTransactionUpdated(
-            UpdateTransactionSubmitted(transactionId: event.transactionId),
-            emit,
-          );
+          await _onTransactionUpdated(event, emit, currentState);
           break;
+
         case DeleteTransactionSubmitted():
-          await _onTransactionDeleted(
-            DeleteTransactionSubmitted(transactionId: event.transactionId),
-            emit,
-          );
+          await _onTransactionDeleted(event, emit);
           break;
       }
     });
@@ -68,26 +71,31 @@ class TransactionCreationBloc
     Emitter<TransactionCreationState> emit,
   ) async {
     try {
-      final previousState = state;
+      if (state is! TransactionDataState) return;
+      final data = state as TransactionDataState;
+
+      emit(TransactionProcessing());
       final deletedTransaction = await transactionRepository.getTransactionById(
         event.transactionId,
       );
       await transactionRepository.deleteTransaction(event.transactionId);
-      emit(TransactionDeletedSuccessfully(deletedTransaction, previousState));
-    } catch (e) {}
+      emit(TransactionDeletedSuccessfully(deletedTransaction, data));
+    } catch (e) {
+      // Обработка ошибок
+    }
   }
 
   Future<void> _onTransactionUpdated(
     UpdateTransactionSubmitted event,
     Emitter<TransactionCreationState> emit,
+    TransactionDataState currentState,
   ) async {
-    final currentState = state;
-
     if (!currentState.isValid) {
       return;
     }
 
     try {
+      emit(TransactionProcessing());
       final transaction = await transactionRepository.updateTransaction(
         event.transactionId,
         TransactionForm(
@@ -100,13 +108,16 @@ class TransactionCreationBloc
       );
 
       emit(TransactionUpdatedSuccessfully(transaction, currentState));
-    } catch (e) {}
+    } catch (e) {
+      // Обработка ошибок
+    }
   }
 
   Future<void> _initForEditing(
     InitializeForEditing event,
     Emitter<TransactionCreationState> emit,
   ) async {
+    emit(TransactionProcessing());
     final transaction = await transactionRepository.getTransactionById(
       event.transactionId,
     );
@@ -117,7 +128,7 @@ class TransactionCreationBloc
     final accounts = await accountRepository.getAllAccounts();
     final account = accounts.firstWhere((a) => a.id == transaction.accountId);
     emit(
-      state.copyWith(
+      TransactionDataState(
         amount: transaction.amount,
         category: category,
         accountState: AccountState(
@@ -125,7 +136,7 @@ class TransactionCreationBloc
           name: account.name,
           moneyDetails: account.moneyDetails,
         ),
-        comment: transaction.comment,
+        comment: transaction.comment ?? '',
         date: transaction.timestamp,
       ),
     );
@@ -134,14 +145,14 @@ class TransactionCreationBloc
   Future<void> _onTransactionSubmitted(
     CreateTransactionSubmitted event,
     Emitter<TransactionCreationState> emit,
+    TransactionDataState currentState,
   ) async {
-    final currentState = state;
-
     if (!currentState.isValid) {
       return;
     }
 
     try {
+      emit(TransactionProcessing());
       final transaction = await transactionRepository.createTransaction(
         TransactionForm(
           accountId: currentState.accountState!.id,
@@ -152,7 +163,9 @@ class TransactionCreationBloc
         ),
       );
 
-      emit(TransactionSubmittedSuccessfully(transaction, currentState));
-    } catch (e) {}
+      emit(TransactionCreatedSuccessfully(transaction, currentState));
+    } catch (e) {
+      // Обработка ошибок
+    }
   }
 }

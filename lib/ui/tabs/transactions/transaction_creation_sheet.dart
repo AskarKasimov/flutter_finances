@@ -22,7 +22,7 @@ class TransactionCreationSheet extends StatelessWidget {
 
   void _onSubmit(BuildContext context) {
     final bloc = context.read<TransactionCreationBloc>();
-    final state = bloc.state;
+    final state = bloc.state as TransactionDataState;
 
     if (state.isValid) {
       bloc.add(CreateTransactionSubmitted());
@@ -52,36 +52,65 @@ class TransactionCreationSheet extends StatelessWidget {
         context.read<MockedCategoryRepository>(),
         context.read<MockedAccountRepository>(),
       ),
-      child: BlocListener<TransactionCreationBloc, TransactionCreationState>(
+      child: BlocConsumer<TransactionCreationBloc, TransactionCreationState>(
         listener: (context, state) {
-          if (state is TransactionSubmittedSuccessfully) {
-            BlocProvider.of<TransactionHistoryBloc>(
-              parentContext,
-            ).add(AddSingleTransaction(state.createdTransaction));
-            Navigator.of(context).pop();
+          switch (state) {
+            case TransactionCreatedSuccessfully(:final createdTransaction):
+              BlocProvider.of<TransactionHistoryBloc>(
+                parentContext,
+              ).add(AddSingleTransaction(createdTransaction));
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(parentContext).showSnackBar(
+                const SnackBar(content: Text('Транзакция успешно добавлена')),
+              );
+              break;
+
+            case TransactionProcessing():
+              ScaffoldMessenger.of(
+                parentContext,
+              ).showSnackBar(const SnackBar(content: Text('Загрузка...')));
+              break;
+
+            case TransactionUpdatedSuccessfully():
+              // такого не будет
+              break;
+
+            case TransactionDeletedSuccessfully():
+              // такого не будет
+              break;
+
+            case TransactionDataState():
+              // такого не будет
+              break;
           }
         },
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Мои расходы'),
-            centerTitle: true,
-            leading: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () => Navigator.of(context).pop(),
+        builder: (context, state) {
+          return switch (state) {
+            TransactionProcessing() => const Center(
+              child: CircularProgressIndicator(),
             ),
-            actions: [
-              Builder(
-                builder: (localContext) => IconButton(
-                  icon: const Icon(Icons.check),
-                  onPressed: () => _onSubmit(localContext),
+            _ => Scaffold(
+              appBar: AppBar(
+                title: Text(isIncome ? 'Добавить доход' : 'Добавить расход'),
+                centerTitle: true,
+                leading: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
+                actions: [
+                  Builder(
+                    builder: (localContext) => IconButton(
+                      icon: const Icon(Icons.check),
+                      onPressed: () => _onSubmit(localContext),
+                    ),
+                  ),
+                ],
+                automaticallyImplyLeading: false,
               ),
-            ],
-            automaticallyImplyLeading: false,
-          ),
-          // Используем готовый виджет формы, передавая isIncome:
-          body: TransactionForm(isIncome: isIncome),
-        ),
+              body: TransactionForm(isIncome: isIncome),
+            ),
+          };
+        },
       ),
     );
   }

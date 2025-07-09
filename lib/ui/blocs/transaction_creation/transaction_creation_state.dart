@@ -2,12 +2,46 @@ import 'package:flutter_finances/domain/entities/account_state.dart';
 import 'package:flutter_finances/domain/entities/category.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
 
-class TransactionCreationState {
+sealed class TransactionCreationState {}
+
+class TransactionDataState extends TransactionCreationState {
   final AccountState? accountState;
   final Category? category;
   final double amount;
   final DateTime date;
   final String comment;
+
+  TransactionDataState({
+    required this.accountState,
+    required this.category,
+    required this.amount,
+    required this.date,
+    required this.comment,
+  });
+
+  factory TransactionDataState.initial() => TransactionDataState(
+    accountState: null,
+    category: null,
+    amount: 0,
+    date: DateTime.now(),
+    comment: '',
+  );
+
+  TransactionDataState copyWith({
+    AccountState? accountState,
+    Category? category,
+    double? amount,
+    DateTime? date,
+    String? comment,
+  }) {
+    return TransactionDataState(
+      accountState: accountState ?? this.accountState,
+      category: category ?? this.category,
+      amount: amount ?? this.amount,
+      date: date ?? this.date,
+      comment: comment ?? this.comment,
+    );
+  }
 
   String? get validationError {
     if (accountState == null) return 'Пожалуйста, выберите счёт.';
@@ -17,83 +51,27 @@ class TransactionCreationState {
   }
 
   bool get isValid => validationError == null;
-
-  TransactionCreationState({
-    required this.accountState,
-    required this.category,
-    required this.amount,
-    required this.date,
-    required this.comment,
-  });
-
-  factory TransactionCreationState.initial() {
-    return TransactionCreationState(
-      accountState: null,
-      category: null,
-      amount: 0.0,
-      date: DateTime.now(),
-      comment: '',
-    );
-  }
-
-  TransactionCreationState copyWith({
-    AccountState? accountState,
-    Category? category,
-    double? amount,
-    DateTime? date,
-    String? comment,
-  }) {
-    return TransactionCreationState(
-      amount: amount ?? this.amount,
-      comment: comment ?? this.comment,
-      date: date ?? this.date,
-      accountState: accountState ?? this.accountState,
-      category: category ?? this.category,
-    );
-  }
 }
 
-class TransactionSubmittedSuccessfully extends TransactionCreationState {
+class TransactionProcessing extends TransactionCreationState {}
+
+class TransactionCreatedSuccessfully extends TransactionCreationState {
+  final TransactionDataState data;
   final Transaction createdTransaction;
 
-  TransactionSubmittedSuccessfully(
-    this.createdTransaction,
-    TransactionCreationState previous,
-  ) : super(
-        accountState: previous.accountState,
-        category: previous.category,
-        amount: previous.amount,
-        date: previous.date,
-        comment: previous.comment,
-      );
+  TransactionCreatedSuccessfully(this.createdTransaction, this.data);
 }
 
 class TransactionDeletedSuccessfully extends TransactionCreationState {
+  final TransactionDataState data;
   final Transaction deletedTransaction;
 
-  TransactionDeletedSuccessfully(
-    this.deletedTransaction,
-    TransactionCreationState previous,
-  ) : super(
-        accountState: previous.accountState,
-        category: previous.category,
-        amount: previous.amount,
-        date: previous.date,
-        comment: previous.comment,
-      );
+  TransactionDeletedSuccessfully(this.deletedTransaction, this.data);
 }
 
 class TransactionUpdatedSuccessfully extends TransactionCreationState {
+  final TransactionDataState data;
   final Transaction updatedTransaction;
 
-  TransactionUpdatedSuccessfully(
-    this.updatedTransaction,
-    TransactionCreationState previous,
-  ) : super(
-        accountState: previous.accountState,
-        category: previous.category,
-        amount: previous.amount,
-        date: previous.date,
-        comment: previous.comment,
-      );
+  TransactionUpdatedSuccessfully(this.updatedTransaction, this.data);
 }

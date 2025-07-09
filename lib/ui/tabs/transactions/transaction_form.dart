@@ -43,6 +43,10 @@ class _TransactionFormState extends State<TransactionForm> {
 
     return BlocBuilder<TransactionCreationBloc, TransactionCreationState>(
       builder: (context, state) {
+        if (state is! TransactionDataState) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
         if (_commentController.text != state.comment) {
           _commentController.text = state.comment;
           _commentController.selection = TextSelection.fromPosition(

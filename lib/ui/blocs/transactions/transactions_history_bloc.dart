@@ -6,7 +6,7 @@ import 'package:flutter_finances/ui/blocs/transactions/transactions_history_stat
 
 class TransactionHistoryBloc
     extends Bloc<TransactionHistoryEvent, TransactionHistoryState> {
-  final UseCaseGetTransactionsByPeriod getTransactions;
+  final GetTransactionsByPeriodUseCase getTransactions;
 
   TransactionHistoryBloc({
     required this.getTransactions,

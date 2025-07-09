@@ -90,9 +90,11 @@ final GoRouter router = GoRouter(
               path: '/expenses',
               builder: (context, state) => BlocProvider(
                 create: (_) => TransactionHistoryBloc(
-                  getTransactions: UseCaseGetTransactionsByPeriod(
-                    context.read<MockedTransactionRepository>(),
-                    context.read<MockedCategoryRepository>(),
+                  getTransactions: GetTransactionsByPeriodUseCase(
+                    transactionRepository: context
+                        .read<MockedTransactionRepository>(),
+                    categoryRepository: context
+                        .read<MockedCategoryRepository>(),
                   ),
                   initialStartDate: startThisDay(),
                   initialEndDate: endThisDay(),
@@ -123,9 +125,11 @@ final GoRouter router = GoRouter(
                   path: 'history',
                   builder: (context, state) => BlocProvider(
                     create: (_) => TransactionHistoryBloc(
-                      getTransactions: UseCaseGetTransactionsByPeriod(
-                        context.read<MockedTransactionRepository>(),
-                        context.read<MockedCategoryRepository>(),
+                      getTransactions: GetTransactionsByPeriodUseCase(
+                        transactionRepository: context
+                            .read<MockedTransactionRepository>(),
+                        categoryRepository: context
+                            .read<MockedCategoryRepository>(),
                       ),
                       initialStartDate: startThisMonth(),
                       initialEndDate: endThisDay(),
@@ -156,9 +160,11 @@ final GoRouter router = GoRouter(
                       path: 'analysis',
                       builder: (context, state) => BlocProvider(
                         create: (_) => TransactionHistoryBloc(
-                          getTransactions: UseCaseGetTransactionsByPeriod(
-                            context.read<MockedTransactionRepository>(),
-                            context.read<MockedCategoryRepository>(),
+                          getTransactions: GetTransactionsByPeriodUseCase(
+                            transactionRepository: context
+                                .read<MockedTransactionRepository>(),
+                            categoryRepository: context
+                                .read<MockedCategoryRepository>(),
                           ),
                           initialStartDate: startThisMonth(),
                           initialEndDate: endThisDay(),
@@ -179,9 +185,11 @@ final GoRouter router = GoRouter(
               path: '/incomes',
               builder: (context, state) => BlocProvider(
                 create: (_) => TransactionHistoryBloc(
-                  getTransactions: UseCaseGetTransactionsByPeriod(
-                    context.read<MockedTransactionRepository>(),
-                    context.read<MockedCategoryRepository>(),
+                  getTransactions: GetTransactionsByPeriodUseCase(
+                    transactionRepository: context
+                        .read<MockedTransactionRepository>(),
+                    categoryRepository: context
+                        .read<MockedCategoryRepository>(),
                   ),
                   initialStartDate: startThisDay(),
                   initialEndDate: endThisDay(),
@@ -212,9 +220,11 @@ final GoRouter router = GoRouter(
                   path: 'history',
                   builder: (context, state) => BlocProvider(
                     create: (_) => TransactionHistoryBloc(
-                      getTransactions: UseCaseGetTransactionsByPeriod(
-                        context.read<MockedTransactionRepository>(),
-                        context.read<MockedCategoryRepository>(),
+                      getTransactions: GetTransactionsByPeriodUseCase(
+                        transactionRepository: context
+                            .read<MockedTransactionRepository>(),
+                        categoryRepository: context
+                            .read<MockedCategoryRepository>(),
                       ),
                       initialStartDate: startThisMonth(),
                       initialEndDate: endThisDay(),
@@ -245,9 +255,11 @@ final GoRouter router = GoRouter(
                       path: 'analysis',
                       builder: (context, state) => BlocProvider(
                         create: (_) => TransactionHistoryBloc(
-                          getTransactions: UseCaseGetTransactionsByPeriod(
-                            context.read<MockedTransactionRepository>(),
-                            context.read<MockedCategoryRepository>(),
+                          getTransactions: GetTransactionsByPeriodUseCase(
+                            transactionRepository: context
+                                .read<MockedTransactionRepository>(),
+                            categoryRepository: context
+                                .read<MockedCategoryRepository>(),
                           ),
                           initialStartDate: startThisMonth(),
                           initialEndDate: endThisDay(),
@@ -268,9 +280,11 @@ final GoRouter router = GoRouter(
               path: '/account',
               builder: (context, state) => BlocProvider(
                 create: (_) => TransactionHistoryBloc(
-                  getTransactions: UseCaseGetTransactionsByPeriod(
-                    context.read<MockedTransactionRepository>(),
-                    context.read<MockedCategoryRepository>(),
+                  getTransactions: GetTransactionsByPeriodUseCase(
+                    transactionRepository: context
+                        .read<MockedTransactionRepository>(),
+                    categoryRepository: context
+                        .read<MockedCategoryRepository>(),
                   ),
                   initialStartDate: startThisDay(),
                   initialEndDate: endThisDay(),
