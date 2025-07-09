@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/domain/entities/account_state.dart';
+import 'package:flutter_finances/domain/entities/category.dart';
 import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
 import 'package:flutter_finances/ui/blocs/account/account_state.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
-import 'package:flutter_finances/ui/blocs/categories/category_event.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
 import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_event.dart';
 import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_state.dart';
+import 'package:flutter_finances/ui/widgets/selection_bottom_sheet.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
 import 'package:flutter_finances/utils/number_utils.dart';
 
@@ -80,7 +82,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 ],
               ),
               onTap: () {
-                _showAccountSelectionSheet(context);
+                _showAccountSelection(context);
               },
             ),
 
@@ -110,7 +112,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 ],
               ),
               onTap: () {
-                _showCategoriesSelectionSheet(context, widget.isIncome);
+                _showCategorySelection(context, widget.isIncome);
               },
             ),
 
@@ -256,132 +258,72 @@ class _TransactionFormState extends State<TransactionForm> {
     );
   }
 
-  void _showAccountSelectionSheet(BuildContext outerContext) {
-    showModalBottomSheet(
-      context: outerContext,
-      builder: (modalContext) {
-        final screenHeight = MediaQuery.of(modalContext).size.height;
-        return SizedBox(
-          height: screenHeight * 0.4,
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text(
-                  'Выберите счёт',
-                  style: Theme.of(modalContext).textTheme.titleMedium,
-                ),
-              ),
-              Divider(height: 1, color: Theme.of(modalContext).dividerColor),
-              Expanded(
-                child: BlocBuilder<AccountBloc, AccountBlocState>(
-                  builder: (context, state) {
-                    return switch (state) {
-                      AccountBlocInitial() || AccountBlocLoading() =>
-                        const Center(child: CircularProgressIndicator()),
-                      AccountBlocError(:final message) => Center(
-                        child: Text('Ошибка: $message'),
-                      ),
-                      AccountBlocLoaded(:final account) => ListView.separated(
-                        itemCount: 1,
-                        separatorBuilder: (_, __) => Divider(
-                          height: 1,
-                          color: Theme.of(context).dividerColor,
-                        ),
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(account.name),
-                            subtitle: Text(
-                              'Баланс: ${account.moneyDetails.balance} ${account.moneyDetails.currency}',
-                            ),
-                            onTap: () {
-                              outerContext.read<TransactionCreationBloc>().add(
-                                TransactionAccountChanged(account),
-                              );
-                              Navigator.of(modalContext).pop();
-                            },
-                          );
-                        },
-                      ),
-                    };
-                  },
-                ),
-              ),
-            ],
+  void _showAccountSelection(BuildContext context) {
+    showSelectionBottomSheet<AccountState>(
+      context: context,
+      title: 'Выберите счёт',
+      stateSelector: (ctx) {
+        final state = ctx.watch<AccountBloc>().state;
+        return switch (state) {
+          AccountBlocLoading() => (items: [], isLoading: true, error: null),
+          AccountBlocLoaded(:final account) => (
+            items: [account],
+            isLoading: false,
+            error: null,
           ),
+          AccountBlocError(:final message) => (
+            items: [],
+            isLoading: false,
+            error: message,
+          ),
+          _ => (items: [], isLoading: true, error: null),
+        };
+      },
+      itemBuilder: (ctx, account) => ListTile(
+        title: Text(account.name),
+        subtitle: Text(
+          'Баланс: ${account.moneyDetails.balance} ${account.moneyDetails.currency}',
+        ),
+      ),
+      onItemSelected: (account) {
+        context.read<TransactionCreationBloc>().add(
+          TransactionAccountChanged(account),
         );
       },
     );
   }
 
-  void _showCategoriesSelectionSheet(BuildContext outerContext, bool isIncome) {
-    showModalBottomSheet(
-      context: outerContext,
-      builder: (modalContext) {
-        final screenHeight = MediaQuery.of(modalContext).size.height;
-        return SizedBox(
-          height: screenHeight * 0.4,
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text(
-                  'Выберите статью',
-                  style: Theme.of(modalContext).textTheme.titleMedium,
-                ),
-              ),
-              Divider(height: 1, color: Theme.of(modalContext).dividerColor),
-              Expanded(
-                child: BlocBuilder<CategoryBloc, CategoryState>(
-                  builder: (context, state) {
-                    if (state is CategoryLoaded) {
-                      final categories = state.categories
-                          .where((c) => c.isIncome == isIncome)
-                          .toList();
-                      return ListView.separated(
-                        itemCount: categories.length,
-                        separatorBuilder: (_, __) => Divider(
-                          height: 1,
-                          color: Theme.of(context).dividerColor,
-                        ),
-                        itemBuilder: (context, index) {
-                          final category = categories[index];
-                          return ListTile(
-                            title: Text(category.name),
-                            leading: CircleAvatar(
-                              radius: 20,
-                              backgroundColor: Theme.of(
-                                context,
-                              ).colorScheme.secondary,
-                              child: Text(
-                                category.emoji,
-                                style: const TextStyle(fontSize: 18),
-                              ),
-                            ),
-                            onTap: () {
-                              outerContext.read<TransactionCreationBloc>().add(
-                                TransactionCategoryChanged(category),
-                              );
-                              Navigator.of(modalContext).pop();
-                            },
-                          );
-                        },
-                      );
-                    } else if (state is CategoryLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (state is CategoryError) {
-                      return const Center(
-                        child: Text('Ошибка загрузки категорий'),
-                      );
-                    } else {
-                      outerContext.read<CategoryBloc>().add(LoadCategories());
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                  },
-                ),
-              ),
-            ],
+  void _showCategorySelection(BuildContext context, bool isIncome) {
+    showSelectionBottomSheet<Category>(
+      context: context,
+      title: 'Выберите статью',
+      stateSelector: (ctx) {
+        final state = ctx.watch<CategoryBloc>().state;
+        return switch (state) {
+          CategoryLoading() => (items: [], isLoading: true, error: null),
+          CategoryError() => (
+            items: [],
+            isLoading: false,
+            error: 'Ошибка загрузки категорий',
           ),
+          CategoryLoaded(:final categories) => (
+            items: categories.where((c) => c.isIncome == isIncome).toList(),
+            isLoading: false,
+            error: null,
+          ),
+          _ => (items: [], isLoading: true, error: null),
+        };
+      },
+      itemBuilder: (ctx, category) => ListTile(
+        title: Text(category.name),
+        leading: CircleAvatar(
+          backgroundColor: Theme.of(ctx).colorScheme.secondary,
+          child: Text(category.emoji),
+        ),
+      ),
+      onItemSelected: (category) {
+        context.read<TransactionCreationBloc>().add(
+          TransactionCategoryChanged(category),
         );
       },
     );
