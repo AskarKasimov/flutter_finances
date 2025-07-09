@@ -1,11 +1,12 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_finances/data/repositories/mocks/mocked_category_repository.dart';
 import 'package:flutter_finances/domain/entities/category.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
 import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
 import 'package:flutter_finances/ui/blocs/account/account_state.dart';
+import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
+import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
@@ -20,20 +21,8 @@ class TransactionsAnalysisScreen extends StatefulWidget {
 }
 
 class _TransactionsAnalysisViewState extends State<TransactionsAnalysisScreen> {
-  List<Category> _categories = [];
-
-  late DateTime start;
-  late DateTime end;
-
-  Future<void> _loadCategories() async {
-    final categoryRepo = MockedCategoryRepository();
-    final cats = await categoryRepo.getAllCategories();
-    if (mounted) {
-      setState(() {
-        _categories = cats;
-      });
-    }
-  }
+  late final DateTime start;
+  late final DateTime end;
 
   @override
   void initState() {
@@ -42,8 +31,6 @@ class _TransactionsAnalysisViewState extends State<TransactionsAnalysisScreen> {
     final now = DateTime.now();
     start = DateTime(now.year, now.month - 1, now.day);
     end = DateTime(now.year, now.month, now.day, 23, 59, 59);
-
-    _loadCategories();
   }
 
   Color _generateColorFromId(int id) {
@@ -72,351 +59,366 @@ class _TransactionsAnalysisViewState extends State<TransactionsAnalysisScreen> {
         builder: (transactionContext, transactionState) {
           return BlocBuilder<AccountBloc, AccountBlocState>(
             builder: (accountContext, accountState) {
-              if (transactionState is TransactionHistoryLoading ||
-                  accountState is AccountBlocLoading) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (transactionState is TransactionHistoryError) {
-                return Center(
-                  child: Text('Ошибка: ${transactionState.message}'),
-                );
-              } else if (accountState is AccountBlocError) {
-                return Center(child: Text('Ошибка: ${accountState.message}'));
-              } else if (transactionState is TransactionHistoryLoaded &&
-                  accountState is AccountBlocLoaded) {
-                final totalSum = transactionState.transactions.fold<double>(
-                  0,
-                  (sum, tx) => sum + tx.amount,
-                );
-
-                final Map<int, double> sumsByCategoryId = {};
-                for (final tx in transactionState.transactions) {
-                  sumsByCategoryId[tx.categoryId!] =
-                      (sumsByCategoryId[tx.categoryId] ?? 0) + tx.amount;
-                }
-
-                final sortedEntries = sumsByCategoryId.entries.toList()
-                  ..sort((a, b) => a.value.compareTo(b.value));
-
-                final sections = sortedEntries.map((entry) {
-                  final category = _categories.firstWhere(
-                    (c) => c.id == entry.key,
-                  );
-                  final value = entry.value;
-                  final percent = totalSum > 0 ? value / totalSum : 0.0;
-
-                  return PieChartSectionData(
-                    color: _generateColorFromId(entry.key),
-                    value: percent,
-                    title: '${(percent * 100).toStringAsFixed(1)}%',
-                    radius: 50,
-                    titleStyle: Theme.of(
-                      transactionContext,
-                    ).textTheme.bodySmall,
-                    badgeWidget: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Theme.of(
-                          transactionContext,
-                        ).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 4,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Text(
-                        '${category.emoji} ${category.name}',
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                    ),
-                    badgePositionPercentageOffset: 1.2,
-                  );
-                }).toList();
-
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    transactionContext.read<TransactionHistoryBloc>().add(
-                      LoadTransactionHistory(
-                        startDate: start,
-                        endDate: end,
-                        isIncome: transactionState.isIncome,
-                      ),
+              return BlocBuilder<CategoryBloc, CategoryState>(
+                builder: (categoriesContext, categoriesState) {
+                  if (transactionState is TransactionHistoryLoading ||
+                      accountState is AccountBlocLoading ||
+                      categoriesState is CategoryLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (transactionState is TransactionHistoryError) {
+                    return Center(
+                      child: Text('Ошибка: ${transactionState.message}'),
                     );
-                    await _loadCategories();
-                  },
-                  child: ListView(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Период: начало'),
-                            InkWell(
-                              onTap: () async {
-                                final result = await _pickDate(
-                                  transactionContext,
-                                  isStart: true,
-                                  currentStart: start,
-                                  currentEnd: end,
-                                );
-                                if (!transactionContext.mounted ||
-                                    result == null) {
-                                  return;
-                                }
+                  } else if (accountState is AccountBlocError) {
+                    return Center(
+                      child: Text('Ошибка: ${accountState.message}'),
+                    );
+                  } else if (categoriesState is CategoryError) {
+                    return Center(
+                      child: Text('Ошибка: ${categoriesState.message}'),
+                    );
+                  } else if (transactionState is TransactionHistoryLoaded &&
+                      accountState is AccountBlocLoaded &&
+                      categoriesState is CategoryLoaded) {
+                    final totalSum = transactionState.transactions.fold<double>(
+                      0,
+                      (sum, tx) => sum + tx.amount,
+                    );
 
-                                final (newStart, newEnd) = result;
-                                setState(() {
-                                  start = newStart;
-                                  end = newEnd;
-                                });
+                    final Map<int, double> sumsByCategoryId = {};
+                    for (final tx in transactionState.transactions) {
+                      sumsByCategoryId[tx.categoryId!] =
+                          (sumsByCategoryId[tx.categoryId] ?? 0) + tx.amount;
+                    }
 
-                                transactionContext
-                                    .read<TransactionHistoryBloc>()
-                                    .add(
-                                      LoadTransactionHistory(
-                                        startDate: start,
-                                        endDate: end,
-                                        isIncome: transactionState.isIncome,
-                                      ),
-                                    );
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(
-                                    transactionContext,
-                                  ).colorScheme.primary,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(formatDate(start)),
+                    final sortedEntries = sumsByCategoryId.entries.toList()
+                      ..sort((a, b) => a.value.compareTo(b.value));
+
+                    final sections = sortedEntries.map((entry) {
+                      final category = categoriesState.categories.firstWhere(
+                        (c) => c.id == entry.key,
+                      );
+                      final value = entry.value;
+                      final percent = totalSum > 0 ? value / totalSum : 0.0;
+
+                      return PieChartSectionData(
+                        color: _generateColorFromId(entry.key),
+                        value: percent,
+                        title: '${(percent * 100).toStringAsFixed(1)}%',
+                        radius: 50,
+                        titleStyle: Theme.of(
+                          transactionContext,
+                        ).textTheme.bodySmall,
+                        badgeWidget: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              transactionContext,
+                            ).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 4,
+                                offset: Offset(0, 2),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: 1,
-                        color: Theme.of(transactionContext).dividerColor,
-                      ),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Период: конец'),
-                            InkWell(
-                              onTap: () async {
-                                final result = await _pickDate(
-                                  transactionContext,
-                                  isStart: false,
-                                  currentStart: start,
-                                  currentEnd: end,
-                                );
-                                if (!transactionContext.mounted ||
-                                    result == null) {
-                                  return;
-                                }
-
-                                final (newStart, newEnd) = result;
-                                setState(() {
-                                  start = newStart;
-                                  end = newEnd;
-                                });
-
-                                transactionContext
-                                    .read<TransactionHistoryBloc>()
-                                    .add(
-                                      LoadTransactionHistory(
-                                        startDate: start,
-                                        endDate: end,
-                                        isIncome: transactionState.isIncome,
-                                      ),
-                                    );
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(
-                                    transactionContext,
-                                  ).colorScheme.primary,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(formatDate(end)),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: 1,
-                        color: Theme.of(transactionContext).dividerColor,
-                      ),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Сумма'),
-                            Text(
-                              '$totalSum ${accountState.account.moneyDetails.currency}',
-                              style: Theme.of(
-                                transactionContext,
-                              ).textTheme.bodyMedium,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: 1,
-                        color: Theme.of(transactionContext).dividerColor,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: AspectRatio(
-                          aspectRatio: 1.4,
-                          child: PieChart(
-                            PieChartData(
-                              sectionsSpace: 2,
-                              centerSpaceRadius: 40,
-                              sections: sections,
-                            ),
+                            ],
+                          ),
+                          child: Text(
+                            '${category.emoji} ${category.name}',
+                            style: const TextStyle(fontSize: 12),
                           ),
                         ),
-                      ),
-                      Divider(
-                        height: 1,
-                        color: Theme.of(transactionContext).dividerColor,
-                      ),
-                      if (_categories.isEmpty)
-                        const Center(child: CircularProgressIndicator())
-                      else
-                        ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: sortedEntries.length,
-                          itemBuilder: (context, index) {
-                            final entry = sortedEntries[index];
+                        badgePositionPercentageOffset: 1.2,
+                      );
+                    }).toList();
 
-                            final categoryId = entry.key;
-                            final totalAmount = entry.value;
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        transactionContext.read<TransactionHistoryBloc>().add(
+                          LoadTransactionHistory(
+                            startDate: start,
+                            endDate: end,
+                            isIncome: transactionState.isIncome,
+                          ),
+                        );
 
-                            final category = _categories.firstWhere(
-                              (c) => c.id == categoryId,
-                            );
+                      },
+                      child: ListView(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text('Период: начало'),
+                                InkWell(
+                                  onTap: () async {
+                                    final result = await _pickDate(
+                                      transactionContext,
+                                      isStart: true,
+                                      currentStart: start,
+                                      currentEnd: end,
+                                    );
+                                    if (!transactionContext.mounted ||
+                                        result == null) {
+                                      return;
+                                    }
 
-                            final percent = totalSum > 0
-                                ? (totalAmount / totalSum * 100)
-                                : 0;
+                                    final (newStart, newEnd) = result;
+                                    setState(() {
+                                      start = newStart;
+                                      end = newEnd;
+                                    });
 
-                            final categoryTransactions =
-                                transactionState.transactions
-                                    .where((tx) => tx.categoryId == categoryId)
-                                    .toList()
-                                  ..sort(
-                                    (a, b) =>
-                                        b.timestamp.compareTo(a.timestamp),
-                                  );
-
-                            final lastTransaction =
-                                categoryTransactions.isNotEmpty
-                                ? categoryTransactions.first
-                                : null;
-
-                            return Container(
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Theme.of(context).dividerColor,
-                                    width: 1,
+                                    transactionContext
+                                        .read<TransactionHistoryBloc>()
+                                        .add(
+                                          LoadTransactionHistory(
+                                            startDate: start,
+                                            endDate: end,
+                                            isIncome: transactionState.isIncome,
+                                          ),
+                                        );
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(
+                                        transactionContext,
+                                      ).colorScheme.primary,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(formatDate(start)),
                                   ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Divider(
+                            height: 1,
+                            color: Theme.of(transactionContext).dividerColor,
+                          ),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text('Период: конец'),
+                                InkWell(
+                                  onTap: () async {
+                                    final result = await _pickDate(
+                                      transactionContext,
+                                      isStart: false,
+                                      currentStart: start,
+                                      currentEnd: end,
+                                    );
+                                    if (!transactionContext.mounted ||
+                                        result == null) {
+                                      return;
+                                    }
+
+                                    final (newStart, newEnd) = result;
+                                    setState(() {
+                                      start = newStart;
+                                      end = newEnd;
+                                    });
+
+                                    transactionContext
+                                        .read<TransactionHistoryBloc>()
+                                        .add(
+                                          LoadTransactionHistory(
+                                            startDate: start,
+                                            endDate: end,
+                                            isIncome: transactionState.isIncome,
+                                          ),
+                                        );
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(
+                                        transactionContext,
+                                      ).colorScheme.primary,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(formatDate(end)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Divider(
+                            height: 1,
+                            color: Theme.of(transactionContext).dividerColor,
+                          ),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text('Сумма'),
+                                Text(
+                                  '$totalSum ${accountState.account.moneyDetails.currency}',
+                                  style: Theme.of(
+                                    transactionContext,
+                                  ).textTheme.bodyMedium,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Divider(
+                            height: 1,
+                            color: Theme.of(transactionContext).dividerColor,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            child: AspectRatio(
+                              aspectRatio: 1.4,
+                              child: PieChart(
+                                PieChartData(
+                                  sectionsSpace: 2,
+                                  centerSpaceRadius: 40,
+                                  sections: sections,
                                 ),
                               ),
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 10,
-                                ),
-                                title: Text(category.name),
-                                subtitle: lastTransaction != null
-                                    ? Text(
-                                        lastTransaction.comment ?? '',
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.bodySmall,
-                                      )
-                                    : null,
-                                leading: CircleAvatar(
-                                  backgroundColor: Theme.of(
-                                    context,
-                                  ).colorScheme.secondary,
-                                  radius: 16,
-                                  child: Text(
-                                    category.emoji,
-                                    style: const TextStyle(fontSize: 18),
+                            ),
+                          ),
+                          Divider(
+                            height: 1,
+                            color: Theme.of(transactionContext).dividerColor,
+                          ),
+                          if (categoriesState.categories.isEmpty)
+                            const Center(child: CircularProgressIndicator())
+                          else
+                            ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: sortedEntries.length,
+                              itemBuilder: (context, index) {
+                                final entry = sortedEntries[index];
+
+                                final categoryId = entry.key;
+                                final totalAmount = entry.value;
+
+                                final category = categoriesState.categories
+                                    .firstWhere((c) => c.id == categoryId);
+
+                                final percent = totalSum > 0
+                                    ? (totalAmount / totalSum * 100)
+                                    : 0;
+
+                                final categoryTransactions =
+                                    transactionState.transactions
+                                        .where(
+                                          (tx) => tx.categoryId == categoryId,
+                                        )
+                                        .toList()
+                                      ..sort(
+                                        (a, b) =>
+                                            b.timestamp.compareTo(a.timestamp),
+                                      );
+
+                                final lastTransaction =
+                                    categoryTransactions.isNotEmpty
+                                    ? categoryTransactions.first
+                                    : null;
+
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: Theme.of(context).dividerColor,
+                                        width: 1,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Column(
+                                  child: ListTile(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 10,
+                                    ),
+                                    title: Text(category.name),
+                                    subtitle: lastTransaction != null
+                                        ? Text(
+                                            lastTransaction.comment ?? '',
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.bodySmall,
+                                          )
+                                        : null,
+                                    leading: CircleAvatar(
+                                      backgroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.secondary,
+                                      radius: 16,
+                                      child: Text(
+                                        category.emoji,
+                                        style: const TextStyle(fontSize: 18),
+                                      ),
+                                    ),
+                                    trailing: Row(
                                       mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
                                       children: [
-                                        Text(
-                                          '${percent.toStringAsFixed(1)}%',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.bodyMedium,
+                                        Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              '${percent.toStringAsFixed(1)}%',
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.bodyMedium,
+                                            ),
+                                            Text(
+                                              '${entry.value.toStringAsFixed(2)} ${accountState.account.moneyDetails.currency}',
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.bodyMedium,
+                                            ),
+                                          ],
                                         ),
-                                        Text(
-                                          '${entry.value.toStringAsFixed(2)} ${accountState.account.moneyDetails.currency}',
-                                          style: Theme.of(
+                                        const SizedBox(width: 24),
+                                        Icon(
+                                          Icons.arrow_forward_ios_outlined,
+                                          size: 16,
+                                          color: Theme.of(
                                             context,
-                                          ).textTheme.bodyMedium,
+                                          ).iconTheme.color,
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(width: 24),
-                                    Icon(
-                                      Icons.arrow_forward_ios_outlined,
-                                      size: 16,
-                                      color: Theme.of(context).iconTheme.color,
-                                    ),
-                                  ],
-                                ),
-                                onTap: () {
-                                  _showTransactionsModal(
-                                    context,
-                                    category,
-                                    categoryTransactions,
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                        ),
-                    ],
-                  ),
-                );
-              } else {
-                return const Center(child: Text('Неизвестное состояние'));
-              }
+                                    onTap: () {
+                                      _showTransactionsModal(
+                                        context,
+                                        category,
+                                        categoryTransactions,
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    return const Center(child: Text('Неизвестное состояние'));
+                  }
+                },
+              );
             },
           );
         },
