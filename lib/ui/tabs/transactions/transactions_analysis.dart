@@ -12,26 +12,8 @@ import 'package:flutter_finances/ui/blocs/transactions/transactions_history_even
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
 
-class TransactionsAnalysisScreen extends StatefulWidget {
+class TransactionsAnalysisScreen extends StatelessWidget {
   const TransactionsAnalysisScreen({super.key});
-
-  @override
-  State<TransactionsAnalysisScreen> createState() =>
-      _TransactionsAnalysisViewState();
-}
-
-class _TransactionsAnalysisViewState extends State<TransactionsAnalysisScreen> {
-  late final DateTime start;
-  late final DateTime end;
-
-  @override
-  void initState() {
-    super.initState();
-
-    final now = DateTime.now();
-    start = DateTime(now.year, now.month - 1, now.day);
-    end = DateTime(now.year, now.month, now.day, 23, 59, 59);
-  }
 
   Color _generateColorFromId(int id) {
     final colors = [
@@ -140,12 +122,11 @@ class _TransactionsAnalysisViewState extends State<TransactionsAnalysisScreen> {
                       onRefresh: () async {
                         transactionContext.read<TransactionHistoryBloc>().add(
                           LoadTransactionHistory(
-                            startDate: start,
-                            endDate: end,
+                            startDate: transactionState.startDate,
+                            endDate: transactionState.endDate,
                             isIncome: transactionState.isIncome,
                           ),
                         );
-
                       },
                       child: ListView(
                         children: [
@@ -161,8 +142,8 @@ class _TransactionsAnalysisViewState extends State<TransactionsAnalysisScreen> {
                                     final result = await _pickDate(
                                       transactionContext,
                                       isStart: true,
-                                      currentStart: start,
-                                      currentEnd: end,
+                                      currentStart: transactionState.startDate,
+                                      currentEnd: transactionState.endDate,
                                     );
                                     if (!transactionContext.mounted ||
                                         result == null) {
@@ -170,17 +151,12 @@ class _TransactionsAnalysisViewState extends State<TransactionsAnalysisScreen> {
                                     }
 
                                     final (newStart, newEnd) = result;
-                                    setState(() {
-                                      start = newStart;
-                                      end = newEnd;
-                                    });
-
                                     transactionContext
                                         .read<TransactionHistoryBloc>()
                                         .add(
                                           LoadTransactionHistory(
-                                            startDate: start,
-                                            endDate: end,
+                                            startDate: newStart,
+                                            endDate: newEnd,
                                             isIncome: transactionState.isIncome,
                                           ),
                                         );
@@ -196,7 +172,9 @@ class _TransactionsAnalysisViewState extends State<TransactionsAnalysisScreen> {
                                       ).colorScheme.primary,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    child: Text(formatDate(start)),
+                                    child: Text(
+                                      formatDate(transactionState.startDate),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -218,8 +196,8 @@ class _TransactionsAnalysisViewState extends State<TransactionsAnalysisScreen> {
                                     final result = await _pickDate(
                                       transactionContext,
                                       isStart: false,
-                                      currentStart: start,
-                                      currentEnd: end,
+                                      currentStart: transactionState.startDate,
+                                      currentEnd: transactionState.endDate,
                                     );
                                     if (!transactionContext.mounted ||
                                         result == null) {
@@ -227,17 +205,12 @@ class _TransactionsAnalysisViewState extends State<TransactionsAnalysisScreen> {
                                     }
 
                                     final (newStart, newEnd) = result;
-                                    setState(() {
-                                      start = newStart;
-                                      end = newEnd;
-                                    });
-
                                     transactionContext
                                         .read<TransactionHistoryBloc>()
                                         .add(
                                           LoadTransactionHistory(
-                                            startDate: start,
-                                            endDate: end,
+                                            startDate: newStart,
+                                            endDate: newEnd,
                                             isIncome: transactionState.isIncome,
                                           ),
                                         );
@@ -253,7 +226,9 @@ class _TransactionsAnalysisViewState extends State<TransactionsAnalysisScreen> {
                                       ).colorScheme.primary,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    child: Text(formatDate(end)),
+                                    child: Text(
+                                      formatDate(transactionState.endDate),
+                                    ),
                                   ),
                                 ),
                               ],
