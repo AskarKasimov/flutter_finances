@@ -1,23 +1,32 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/domain/entities/account_state.dart';
 import 'package:flutter_finances/domain/entities/forms/transaction_form.dart';
-import 'package:flutter_finances/domain/repositories/account_repository.dart';
-import 'package:flutter_finances/domain/repositories/category_repository.dart';
-import 'package:flutter_finances/domain/repositories/transaction_repository.dart';
+import 'package:flutter_finances/domain/usecases/create_transaction_usecase.dart';
+import 'package:flutter_finances/domain/usecases/delete_transaction_usecase.dart';
+import 'package:flutter_finances/domain/usecases/get_all_accounts_usecase.dart';
+import 'package:flutter_finances/domain/usecases/get_all_categories_usecase.dart';
+import 'package:flutter_finances/domain/usecases/get_transaction_by_id_usecase.dart';
+import 'package:flutter_finances/domain/usecases/update_transaction_usecase.dart';
 import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_event.dart';
 import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_state.dart';
 
 class TransactionCreationBloc
     extends Bloc<TransactionCreationEvent, TransactionCreationState> {
-  final TransactionRepository transactionRepository;
-  final CategoryRepository categoryRepository;
-  final AccountRepository accountRepository;
+  final DeleteTransactionUseCase deleteTransactionUseCase;
+  final GetAllAccountsUseCase getAllAccountsUseCase;
+  final GetTransactionByIdUseCase getTransactionByIdUseCase;
+  final GetAllCategoriesUseCase getAllCategoriesUseCase;
+  final UpdateTransactionUseCase updateTransactionUseCase;
+  final CreateTransactionUseCase createTransactionUseCase;
 
-  TransactionCreationBloc(
-    this.transactionRepository,
-    this.categoryRepository,
-    this.accountRepository,
-  ) : super(TransactionDataState.initial()) {
+  TransactionCreationBloc({
+    required this.deleteTransactionUseCase,
+    required this.getAllAccountsUseCase,
+    required this.getTransactionByIdUseCase,
+    required this.getAllCategoriesUseCase,
+    required this.updateTransactionUseCase,
+    required this.createTransactionUseCase,
+  }) : super(TransactionDataState.initial()) {
     on<TransactionCreationEvent>((event, emit) async {
       final currentState = state;
       if (currentState is! TransactionDataState) return;
@@ -75,13 +84,12 @@ class TransactionCreationBloc
       final data = state as TransactionDataState;
 
       emit(TransactionProcessing());
-      final deletedTransaction = await transactionRepository.getTransactionById(
+      final deletedTransaction = await deleteTransactionUseCase(
         event.transactionId,
       );
-      await transactionRepository.deleteTransaction(event.transactionId);
       emit(TransactionDeletedSuccessfully(deletedTransaction, data));
     } catch (e) {
-      // Обработка ошибок
+      emit(TransactionError(message: e.toString()));
     }
   }
 
@@ -96,7 +104,7 @@ class TransactionCreationBloc
 
     try {
       emit(TransactionProcessing());
-      final transaction = await transactionRepository.updateTransaction(
+      final transaction = await updateTransactionUseCase(
         event.transactionId,
         TransactionForm(
           accountId: currentState.accountState!.id,
@@ -109,7 +117,7 @@ class TransactionCreationBloc
 
       emit(TransactionUpdatedSuccessfully(transaction, currentState));
     } catch (e) {
-      // Обработка ошибок
+      emit(TransactionError(message: e.toString()));
     }
   }
 
@@ -118,14 +126,12 @@ class TransactionCreationBloc
     Emitter<TransactionCreationState> emit,
   ) async {
     emit(TransactionProcessing());
-    final transaction = await transactionRepository.getTransactionById(
-      event.transactionId,
-    );
-    final categories = await categoryRepository.getAllCategories();
+    final transaction = await getTransactionByIdUseCase(event.transactionId);
+    final categories = await getAllCategoriesUseCase();
     final category = categories.firstWhere(
       (c) => c.id == transaction.categoryId,
     );
-    final accounts = await accountRepository.getAllAccounts();
+    final accounts = await getAllAccountsUseCase();
     final account = accounts.firstWhere((a) => a.id == transaction.accountId);
     emit(
       TransactionDataState(
@@ -153,7 +159,7 @@ class TransactionCreationBloc
 
     try {
       emit(TransactionProcessing());
-      final transaction = await transactionRepository.createTransaction(
+      final transaction = await createTransactionUseCase(
         TransactionForm(
           accountId: currentState.accountState!.id,
           categoryId: currentState.category!.id,
@@ -165,7 +171,7 @@ class TransactionCreationBloc
 
       emit(TransactionCreatedSuccessfully(transaction, currentState));
     } catch (e) {
-      // Обработка ошибок
+      emit(TransactionError(message: e.toString()));
     }
   }
 }

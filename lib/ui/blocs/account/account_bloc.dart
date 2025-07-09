@@ -1,14 +1,19 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/domain/entities/account_state.dart';
 import 'package:flutter_finances/domain/entities/forms/account_form.dart';
-import 'package:flutter_finances/domain/repositories/account_repository.dart';
+import 'package:flutter_finances/domain/usecases/get_account_by_id_usecase.dart';
+import 'package:flutter_finances/domain/usecases/update_account_usecase.dart';
 import 'package:flutter_finances/ui/blocs/account/account_event.dart';
 import 'package:flutter_finances/ui/blocs/account/account_state.dart';
 
 class AccountBloc extends Bloc<AccountEvent, AccountBlocState> {
-  final AccountRepository repository;
+  final GetAccountByIdUseCase getAccountByIdUseCase;
+  final UpdateAccountUseCase updateAccountUseCase;
 
-  AccountBloc(this.repository) : super(AccountBlocInitial()) {
+  AccountBloc({
+    required this.getAccountByIdUseCase,
+    required this.updateAccountUseCase,
+  }) : super(AccountBlocInitial()) {
     on<AccountEvent>((event, emit) async {
       switch (event) {
         case LoadAccount():
@@ -32,7 +37,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountBlocState> {
   ) async {
     emit(AccountBlocLoading());
     try {
-      final account = await repository.getAccountById(event.id);
+      final account = await getAccountByIdUseCase(event.id);
       emit(
         AccountBlocLoaded(
           AccountState(
@@ -58,7 +63,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountBlocState> {
         name: event.newName,
         moneyDetails: current.moneyDetails,
       );
-      final updatedAccount = await repository.updateAccount(
+      final updatedAccount = await updateAccountUseCase(
         current.id,
         updatedForm,
       );
@@ -66,8 +71,8 @@ class AccountBloc extends Bloc<AccountEvent, AccountBlocState> {
         AccountBlocLoaded(
           AccountState(
             id: current.id,
-            name: updatedAccount.name ?? current.name,
-            moneyDetails: updatedAccount.moneyDetails ?? current.moneyDetails,
+            name: updatedAccount.name,
+            moneyDetails: updatedAccount.moneyDetails,
           ),
         ),
       );
@@ -87,7 +92,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountBlocState> {
         name: current.name,
         moneyDetails: current.moneyDetails.copyWith(currency: event.currency),
       );
-      final updatedAccount = await repository.updateAccount(
+      final updatedAccount = await updateAccountUseCase(
         current.id,
         updatedForm,
       );
@@ -95,8 +100,8 @@ class AccountBloc extends Bloc<AccountEvent, AccountBlocState> {
         AccountBlocLoaded(
           AccountState(
             id: current.id,
-            name: updatedAccount.name ?? current.name,
-            moneyDetails: updatedAccount.moneyDetails ?? current.moneyDetails,
+            name: updatedAccount.name,
+            moneyDetails: updatedAccount.moneyDetails,
           ),
         ),
       );

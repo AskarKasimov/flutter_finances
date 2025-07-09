@@ -10,7 +10,7 @@ abstract interface class AccountRepository {
 
   Future<AccountResponse> getAccountById(int id);
 
-  Future<AccountForm> updateAccount(int id, AccountForm account);
+  Future<Account> updateAccount(int id, AccountForm account);
 
   Future<AccountHistory> getAccountHistory(int id);
 }

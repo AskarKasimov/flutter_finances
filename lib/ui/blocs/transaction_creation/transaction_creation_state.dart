@@ -55,6 +55,12 @@ class TransactionDataState extends TransactionCreationState {
 
 class TransactionProcessing extends TransactionCreationState {}
 
+class TransactionError extends TransactionCreationState {
+  final String message;
+
+  TransactionError({required this.message});
+}
+
 class TransactionCreatedSuccessfully extends TransactionCreationState {
   final TransactionDataState data;
   final Transaction createdTransaction;

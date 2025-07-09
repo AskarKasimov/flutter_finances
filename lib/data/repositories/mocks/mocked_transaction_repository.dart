@@ -96,13 +96,17 @@ class MockedTransactionRepository implements TransactionRepository {
   }
 
   @override
-  Future<bool> deleteTransaction(int id) async {
-    final index = _transactions.indexWhere((t) => t.id == id);
-    if (index == -1) {
-      throw RepositoryException('Транзакция с id $id не найдена');
+  Future<Transaction> deleteTransaction(int transactionId) async {
+    final transactionIndex = _transactions.indexWhere(
+      (t) => t.id == transactionId,
+    );
+
+    if (transactionIndex == -1) {
+      throw RepositoryException('Транзакция с id $transactionId не найдена');
     }
-    _transactions.removeAt(index);
-    return true;
+
+    final deletedTransaction = _transactions.removeAt(transactionIndex);
+    return deletedTransaction;
   }
 
   @override

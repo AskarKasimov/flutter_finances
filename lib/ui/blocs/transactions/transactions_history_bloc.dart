@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
-import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
+import 'package:flutter_finances/domain/usecases/get_transactions_by_period_usecase.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
 

@@ -83,8 +83,6 @@ class TransactionsHistoryScreen extends StatelessWidget {
                               isIncome
                                   ? '/incomes/history/transaction/${tx.id}'
                                   : '/expenses/history/transaction/${tx.id}',
-                              extra: transactionContext
-                                  .read<TransactionHistoryBloc>(),
                             );
                           },
                           currency: accountState.account.moneyDetails.currency,

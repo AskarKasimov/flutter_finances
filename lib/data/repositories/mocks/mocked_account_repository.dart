@@ -85,7 +85,7 @@ class MockedAccountRepository implements AccountRepository {
   }
 
   @override
-  Future<AccountForm> updateAccount(int id, AccountForm form) async {
+  Future<Account> updateAccount(int id, AccountForm form) async {
     final index = _accounts.indexWhere((a) => a.id == id);
     if (index == -1) {
       throw RepositoryException('Не удалось обновить: аккаунт не найден');
@@ -104,6 +104,6 @@ class MockedAccountRepository implements AccountRepository {
 
     _accounts[index] = updated;
 
-    return AccountForm(name: updated.name, moneyDetails: updated.moneyDetails);
+    return updated;
   }
 }

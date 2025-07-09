@@ -8,7 +8,7 @@ abstract interface class TransactionRepository {
 
   Future<Transaction> updateTransaction(int id, TransactionForm transaction);
 
-  Future<bool> deleteTransaction(int id);
+  Future<Transaction> deleteTransaction(int id);
 
   Future<List<Transaction>> getTransactionsByPeriod(
     int accountId,

@@ -2,8 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/data/repositories/mocks/mocked_category_repository.dart';
 import 'package:flutter_finances/data/repositories/mocks/mocked_transaction_repository.dart';
-import 'package:flutter_finances/domain/usecases/get_transactions_by_period.dart';
+import 'package:flutter_finances/domain/usecases/create_transaction_usecase.dart';
+import 'package:flutter_finances/domain/usecases/delete_transaction_usecase.dart';
+import 'package:flutter_finances/domain/usecases/get_all_accounts_usecase.dart';
+import 'package:flutter_finances/domain/usecases/get_all_categories_usecase.dart';
+import 'package:flutter_finances/domain/usecases/get_transaction_by_id_usecase.dart';
+import 'package:flutter_finances/domain/usecases/get_transactions_by_period_usecase.dart';
+import 'package:flutter_finances/domain/usecases/update_transaction_usecase.dart';
 import 'package:flutter_finances/gen/assets.gen.dart';
+import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_bloc.dart';
+import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_event.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/tabs/account/account_edit_name_screen.dart';
 import 'package:flutter_finances/ui/tabs/account/account_screen.dart';
@@ -22,7 +30,37 @@ ColorFilter? _navIconColor(BuildContext context, bool isSelected) {
       : null;
 }
 
-final GoRouter router = GoRouter(
+TransactionHistoryBloc _makeTransactionHistoryBloc({
+  required BuildContext context,
+  required DateTime initialStartDate,
+  required DateTime initialEndDate,
+  required bool? isIncome,
+}) {
+  return TransactionHistoryBloc(
+    getTransactions: GetTransactionsByPeriodUseCase(
+      transactionRepository: context.read<MockedTransactionRepository>(),
+      categoryRepository: context.read<MockedCategoryRepository>(),
+    ),
+    initialStartDate: initialStartDate,
+    initialEndDate: initialEndDate,
+    initialIsIncome: isIncome,
+  );
+}
+
+TransactionCreationBloc _makeTransactionCreationBloc({
+  required BuildContext context,
+}) {
+  return TransactionCreationBloc(
+    deleteTransactionUseCase: context.read<DeleteTransactionUseCase>(),
+    getAllAccountsUseCase: context.read<GetAllAccountsUseCase>(),
+    getTransactionByIdUseCase: context.read<GetTransactionByIdUseCase>(),
+    getAllCategoriesUseCase: context.read<GetAllCategoriesUseCase>(),
+    updateTransactionUseCase: context.read<UpdateTransactionUseCase>(),
+    createTransactionUseCase: context.read<CreateTransactionUseCase>(),
+  );
+}
+
+GoRouter createRouter(BuildContext context) => GoRouter(
   initialLocation: '/expenses',
   routes: [
     StatefulShellRoute.indexedStack(
@@ -89,16 +127,11 @@ final GoRouter router = GoRouter(
             GoRoute(
               path: '/expenses',
               builder: (context, state) => BlocProvider(
-                create: (_) => TransactionHistoryBloc(
-                  getTransactions: GetTransactionsByPeriodUseCase(
-                    transactionRepository: context
-                        .read<MockedTransactionRepository>(),
-                    categoryRepository: context
-                        .read<MockedCategoryRepository>(),
-                  ),
+                create: (_) => _makeTransactionHistoryBloc(
+                  context: context,
                   initialStartDate: startThisDay(),
                   initialEndDate: endThisDay(),
-                  initialIsIncome: false,
+                  isIncome: false,
                 ),
                 child: const TransactionsScreen(isIncome: false),
               ),
@@ -109,14 +142,10 @@ final GoRouter router = GoRouter(
                     final id = int.parse(
                       state.pathParameters['transactionId']!,
                     );
-                    final bloc = state.extra as TransactionHistoryBloc?;
-                    if (bloc == null) {
-                      throw Exception(
-                        'TransactionHistoryBloc must be passed as extra',
-                      );
-                    }
-                    return BlocProvider.value(
-                      value: bloc,
+                    return BlocProvider(
+                      create: (_) =>
+                          _makeTransactionCreationBloc(context: context)
+                            ..add(InitializeForEditing(transactionId: id)),
                       child: TransactionEditScreen(transactionId: id),
                     );
                   },
@@ -124,16 +153,11 @@ final GoRouter router = GoRouter(
                 GoRoute(
                   path: 'history',
                   builder: (context, state) => BlocProvider(
-                    create: (_) => TransactionHistoryBloc(
-                      getTransactions: GetTransactionsByPeriodUseCase(
-                        transactionRepository: context
-                            .read<MockedTransactionRepository>(),
-                        categoryRepository: context
-                            .read<MockedCategoryRepository>(),
-                      ),
+                    create: (_) => _makeTransactionHistoryBloc(
+                      context: context,
                       initialStartDate: startThisMonth(),
                       initialEndDate: endThisDay(),
-                      initialIsIncome: false,
+                      isIncome: false,
                     ),
                     child: const TransactionsHistoryScreen(isIncome: false),
                   ),
@@ -144,14 +168,10 @@ final GoRouter router = GoRouter(
                         final id = int.parse(
                           state.pathParameters['transactionId']!,
                         );
-                        final bloc = state.extra as TransactionHistoryBloc?;
-                        if (bloc == null) {
-                          throw Exception(
-                            'TransactionHistoryBloc must be passed as extra',
-                          );
-                        }
-                        return BlocProvider.value(
-                          value: bloc,
+                        return BlocProvider(
+                          create: (_) =>
+                              _makeTransactionCreationBloc(context: context)
+                                ..add(InitializeForEditing(transactionId: id)),
                           child: TransactionEditScreen(transactionId: id),
                         );
                       },
@@ -159,16 +179,11 @@ final GoRouter router = GoRouter(
                     GoRoute(
                       path: 'analysis',
                       builder: (context, state) => BlocProvider(
-                        create: (_) => TransactionHistoryBloc(
-                          getTransactions: GetTransactionsByPeriodUseCase(
-                            transactionRepository: context
-                                .read<MockedTransactionRepository>(),
-                            categoryRepository: context
-                                .read<MockedCategoryRepository>(),
-                          ),
+                        create: (_) => _makeTransactionHistoryBloc(
+                          context: context,
                           initialStartDate: startThisMonth(),
                           initialEndDate: endThisDay(),
-                          initialIsIncome: false,
+                          isIncome: false,
                         ),
                         child: const TransactionsAnalysisScreen(),
                       ),
@@ -184,16 +199,11 @@ final GoRouter router = GoRouter(
             GoRoute(
               path: '/incomes',
               builder: (context, state) => BlocProvider(
-                create: (_) => TransactionHistoryBloc(
-                  getTransactions: GetTransactionsByPeriodUseCase(
-                    transactionRepository: context
-                        .read<MockedTransactionRepository>(),
-                    categoryRepository: context
-                        .read<MockedCategoryRepository>(),
-                  ),
+                create: (_) => _makeTransactionHistoryBloc(
+                  context: context,
                   initialStartDate: startThisDay(),
                   initialEndDate: endThisDay(),
-                  initialIsIncome: true,
+                  isIncome: true,
                 ),
                 child: const TransactionsScreen(isIncome: true),
               ),
@@ -204,14 +214,10 @@ final GoRouter router = GoRouter(
                     final id = int.parse(
                       state.pathParameters['transactionId']!,
                     );
-                    final bloc = state.extra as TransactionHistoryBloc?;
-                    if (bloc == null) {
-                      throw Exception(
-                        'TransactionHistoryBloc must be passed as extra',
-                      );
-                    }
-                    return BlocProvider.value(
-                      value: bloc,
+                    return BlocProvider(
+                      create: (_) =>
+                          _makeTransactionCreationBloc(context: context)
+                            ..add(InitializeForEditing(transactionId: id)),
                       child: TransactionEditScreen(transactionId: id),
                     );
                   },
@@ -219,16 +225,11 @@ final GoRouter router = GoRouter(
                 GoRoute(
                   path: 'history',
                   builder: (context, state) => BlocProvider(
-                    create: (_) => TransactionHistoryBloc(
-                      getTransactions: GetTransactionsByPeriodUseCase(
-                        transactionRepository: context
-                            .read<MockedTransactionRepository>(),
-                        categoryRepository: context
-                            .read<MockedCategoryRepository>(),
-                      ),
+                    create: (_) => _makeTransactionHistoryBloc(
+                      context: context,
                       initialStartDate: startThisMonth(),
                       initialEndDate: endThisDay(),
-                      initialIsIncome: true,
+                      isIncome: true,
                     ),
                     child: const TransactionsHistoryScreen(isIncome: true),
                   ),
@@ -239,14 +240,10 @@ final GoRouter router = GoRouter(
                         final id = int.parse(
                           state.pathParameters['transactionId']!,
                         );
-                        final bloc = state.extra as TransactionHistoryBloc?;
-                        if (bloc == null) {
-                          throw Exception(
-                            'TransactionHistoryBloc must be passed as extra',
-                          );
-                        }
-                        return BlocProvider.value(
-                          value: bloc,
+                        return BlocProvider(
+                          create: (_) =>
+                              _makeTransactionCreationBloc(context: context)
+                                ..add(InitializeForEditing(transactionId: id)),
                           child: TransactionEditScreen(transactionId: id),
                         );
                       },
@@ -254,16 +251,11 @@ final GoRouter router = GoRouter(
                     GoRoute(
                       path: 'analysis',
                       builder: (context, state) => BlocProvider(
-                        create: (_) => TransactionHistoryBloc(
-                          getTransactions: GetTransactionsByPeriodUseCase(
-                            transactionRepository: context
-                                .read<MockedTransactionRepository>(),
-                            categoryRepository: context
-                                .read<MockedCategoryRepository>(),
-                          ),
+                        create: (_) => _makeTransactionHistoryBloc(
+                          context: context,
                           initialStartDate: startThisMonth(),
                           initialEndDate: endThisDay(),
-                          initialIsIncome: true,
+                          isIncome: true,
                         ),
                         child: const TransactionsAnalysisScreen(),
                       ),
@@ -279,16 +271,11 @@ final GoRouter router = GoRouter(
             GoRoute(
               path: '/account',
               builder: (context, state) => BlocProvider(
-                create: (_) => TransactionHistoryBloc(
-                  getTransactions: GetTransactionsByPeriodUseCase(
-                    transactionRepository: context
-                        .read<MockedTransactionRepository>(),
-                    categoryRepository: context
-                        .read<MockedCategoryRepository>(),
-                  ),
-                  initialStartDate: startThisDay(),
+                create: (_) => _makeTransactionHistoryBloc(
+                  context: context,
+                  initialStartDate: startThisMonth(),
                   initialEndDate: endThisDay(),
-                  initialIsIncome: null,
+                  isIncome: null,
                 ),
                 child: const AccountScreen(),
               ),

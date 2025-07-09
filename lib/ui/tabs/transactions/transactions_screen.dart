@@ -31,14 +31,7 @@ class TransactionsScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            builder: (sheetContext) => TransactionCreationSheet(
-              parentContext: context,
-              isIncome: isIncome,
-            ),
-          );
+          showTransactionCreationSheet(context: context, isIncome: isIncome);
         },
         child: const Icon(Icons.add),
       ),
@@ -119,8 +112,6 @@ class TransactionsScreen extends StatelessWidget {
                               isIncome
                                   ? '/incomes/transaction/${tx.id}'
                                   : '/expenses/transaction/${tx.id}',
-                              extra: transactionContext
-                                  .read<TransactionHistoryBloc>(),
                             );
                           },
                           currency: accountState.account.moneyDetails.currency,

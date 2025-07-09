@@ -1,12 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_finances/domain/repositories/category_repository.dart';
+import 'package:flutter_finances/domain/usecases/get_all_categories_usecase.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_event.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
 
 class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
-  final CategoryRepository repository;
+  final GetAllCategoriesUseCase getAllCategoriesUseCase;
 
-  CategoryBloc({required this.repository}) : super(CategoryInitial()) {
+  CategoryBloc({required this.getAllCategoriesUseCase})
+    : super(CategoryInitial()) {
     on<CategoryEvent>((event, emit) async {
       switch (event) {
         case LoadCategories():
@@ -26,7 +27,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   ) async {
     emit(CategoryLoading());
     try {
-      final categories = await repository.getAllCategories();
+      final categories = await getAllCategoriesUseCase();
       emit(CategoryLoaded(categories));
     } catch (_) {
       emit(CategoryError('Failed to load categories'));
@@ -38,7 +39,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     Emitter<CategoryState> emit,
   ) async {
     try {
-      final categories = await repository.getAllCategories();
+      final categories = await getAllCategoriesUseCase();
       emit(CategoryLoaded(categories));
     } catch (_) {
       emit(CategoryError('Failed to refresh categories'));
