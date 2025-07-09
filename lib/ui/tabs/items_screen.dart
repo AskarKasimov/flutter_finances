@@ -5,23 +5,14 @@ import 'package:flutter_finances/ui/blocs/categories/category_event.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
 import 'package:string_similarity/string_similarity.dart';
 
-class ItemsScreen extends StatelessWidget {
+class ItemsScreen extends StatefulWidget {
   const ItemsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const _ItemsView();
-  }
+  State<ItemsScreen> createState() => _ItemsScreen();
 }
 
-class _ItemsView extends StatefulWidget {
-  const _ItemsView();
-
-  @override
-  State<_ItemsView> createState() => _ItemsViewState();
-}
-
-class _ItemsViewState extends State<_ItemsView> {
+class _ItemsScreen extends State<ItemsScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
@@ -62,9 +53,7 @@ class _ItemsViewState extends State<_ItemsView> {
                         suffixIcon: Icon(Icons.search, size: 24),
                         border: InputBorder.none,
                         isDense: true,
-                        contentPadding: EdgeInsets.symmetric(
-                          vertical: 16,
-                        ), // выравнивание текста по центру
+                        contentPadding: EdgeInsets.symmetric(vertical: 16),
                       ),
                       onChanged: (value) {
                         setState(() {
