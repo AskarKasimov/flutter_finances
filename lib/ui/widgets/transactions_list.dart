@@ -3,19 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
+import 'package:flutter_finances/ui/widgets/sort_mode.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
 import 'package:flutter_finances/utils/number_utils.dart';
-
-enum SortMode {
-  dateDesc('Сначала новые'),
-  dateAsc('Сначала старые'),
-  amountDesc('Сначала большие суммы'),
-  amountAsc('Сначала меньшие суммы');
-
-  final String label;
-
-  const SortMode(this.label);
-}
 
 class TransactionsList extends StatefulWidget {
   final List<Transaction> transactions;
@@ -38,26 +28,16 @@ class TransactionsList extends StatefulWidget {
 }
 
 class _TransactionsListState extends State<TransactionsList> {
-  SortMode _sortMode = SortMode.dateDesc;
+  late SortMode _sortMode;
 
-  List<Transaction> get sortedTransactions {
-    final sorted = [...widget.transactions];
-    sorted.sort((a, b) {
-      switch (_sortMode) {
-        case SortMode.dateDesc:
-          return b.timestamp.compareTo(a.timestamp);
-        case SortMode.dateAsc:
-          return a.timestamp.compareTo(b.timestamp);
-        case SortMode.amountDesc:
-          return b.amount.compareTo(a.amount);
-        case SortMode.amountAsc:
-          return a.amount.compareTo(b.amount);
-      }
-    });
-    return sorted;
+  @override
+  void initState() {
+    super.initState();
+    _sortMode = SortMode.values.first;
   }
 
-  String get sortLabel => _sortMode.label;
+  List<Transaction> get sortedTransactions =>
+      _sortMode.sort(widget.transactions);
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +84,7 @@ class _TransactionsListState extends State<TransactionsList> {
                     const Icon(Icons.sort, size: 20),
                     const SizedBox(width: 4),
                     Text(
-                      sortLabel,
+                      _sortMode.label,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const Icon(Icons.arrow_drop_down),

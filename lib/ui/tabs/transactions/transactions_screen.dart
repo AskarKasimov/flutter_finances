@@ -6,7 +6,7 @@ import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transaction_creation_sheet.dart';
-import 'package:flutter_finances/ui/tabs/transactions/transactions_list.dart';
+import 'package:flutter_finances/ui/widgets/transactions_list.dart';
 import 'package:go_router/go_router.dart';
 
 class TransactionsScreen extends StatelessWidget {
