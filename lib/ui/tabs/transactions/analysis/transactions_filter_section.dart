@@ -2,40 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
-import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
 
 class TransactionsFilterSection extends StatelessWidget {
-  const TransactionsFilterSection({super.key});
+  final DateTime startDate;
+  final DateTime endDate;
+  final bool? isIncome;
+
+  const TransactionsFilterSection({
+    super.key,
+    required this.startDate,
+    required this.endDate,
+    required this.isIncome,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TransactionHistoryBloc, TransactionHistoryState>(
-      builder: (context, state) {
-        if (state is! TransactionHistoryLoaded) return const SizedBox.shrink();
-
-        return Column(
-          children: [
-            DateSelector(
-              title: 'Период: начало',
-              date: state.startDate,
-              isStart: true,
-              start: state.startDate,
-              end: state.endDate,
-              isIncome: state.isIncome,
-            ),
-            Divider(height: 1, color: Theme.of(context).dividerColor),
-            DateSelector(
-              title: 'Период: конец',
-              date: state.endDate,
-              isStart: false,
-              start: state.startDate,
-              end: state.endDate,
-              isIncome: state.isIncome,
-            ),
-          ],
-        );
-      },
+    return Column(
+      children: [
+        DateSelector(
+          title: 'Период: начало',
+          date: startDate,
+          isStart: true,
+          start: startDate,
+          end: endDate,
+          isIncome: isIncome,
+        ),
+        Divider(height: 1, color: Theme.of(context).dividerColor),
+        DateSelector(
+          title: 'Период: конец',
+          date: endDate,
+          isStart: false,
+          start: startDate,
+          end: endDate,
+          isIncome: isIncome,
+        ),
+      ],
     );
   }
 }

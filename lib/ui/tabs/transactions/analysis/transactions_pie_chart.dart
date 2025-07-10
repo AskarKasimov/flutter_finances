@@ -1,14 +1,18 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
-import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
-import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
-import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
+import 'package:flutter_finances/domain/entities/category.dart';
+import 'package:flutter_finances/domain/entities/transaction.dart';
 import 'package:flutter_finances/utils/color_utils.dart';
 
 class TransactionsPieChartSection extends StatefulWidget {
-  const TransactionsPieChartSection({super.key});
+  final List<Transaction> transactions;
+  final List<Category> categories;
+
+  const TransactionsPieChartSection({
+    super.key,
+    required this.transactions,
+    required this.categories,
+  });
 
   @override
   State<TransactionsPieChartSection> createState() =>
@@ -21,96 +25,77 @@ class _TransactionsPieChartSectionState
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TransactionHistoryBloc, TransactionHistoryState>(
-      builder: (context, txState) {
-        return BlocBuilder<CategoryBloc, CategoryState>(
-          builder: (context, catState) {
-            if (txState is! TransactionHistoryLoaded ||
-                catState is! CategoryLoaded) {
-              return const SizedBox.shrink();
-            }
+    final total = widget.transactions.fold<double>(
+      0,
+      (sum, tx) => sum + tx.amount,
+    );
 
-            final total = txState.transactions.fold<double>(
-              0,
-              (sum, tx) => sum + tx.amount,
-            );
+    final Map<int, double> sumsByCategory = {};
+    for (final tx in widget.transactions) {
+      sumsByCategory[tx.categoryId!] =
+          (sumsByCategory[tx.categoryId!] ?? 0) + tx.amount;
+    }
 
-            final Map<int, double> sumsByCategory = {};
-            for (final tx in txState.transactions) {
-              sumsByCategory[tx.categoryId!] =
-                  (sumsByCategory[tx.categoryId!] ?? 0) + tx.amount;
-            }
+    final sortedEntries = sumsByCategory.entries.toList()
+      ..sort((a, b) => a.value.compareTo(b.value));
 
-            final sortedEntries = sumsByCategory.entries.toList()
-              ..sort((a, b) => a.value.compareTo(b.value));
+    final top3Ids = sortedEntries.reversed.take(3).map((e) => e.key).toSet();
 
-            final top3Ids = sortedEntries.reversed
-                .take(3)
-                .map((e) => e.key)
-                .toSet();
+    final entries = sortedEntries.map((entry) {
+      final category = widget.categories.firstWhere((c) => c.id == entry.key);
+      final percent = total > 0 ? entry.value / total : 0.0;
+      final index = sortedEntries.indexOf(entry);
+      final color = generateColorFromId(entry.key);
 
-            final entries = sortedEntries.map((entry) {
-              final category = catState.categories.firstWhere(
-                (c) => c.id == entry.key,
-              );
-              final percent = total > 0 ? entry.value / total : 0.0;
-              final index = sortedEntries.indexOf(entry);
-              final color = generateColorFromId(entry.key);
-
-              return (
-                section: PieChartSectionData(
+      return (
+        section: PieChartSectionData(
+          color: color,
+          value: percent,
+          title: '',
+          radius: touchedIndex == index ? 42 : 36,
+          badgeWidget: touchedIndex == index
+              ? _BadgeWidget(
+                  emoji: category.emoji,
+                  name: category.name,
                   color: color,
-                  value: percent,
-                  title: '',
-                  radius: touchedIndex == index ? 42 : 36,
-                  badgeWidget: touchedIndex == index
-                      ? _BadgeWidget(
-                          emoji: category.emoji,
-                          name: category.name,
-                          color: color,
-                          percentage: top3Ids.contains(entry.key)
-                              ? null
-                              : '${(percent * 100).toStringAsFixed(2)}%',
-                        )
-                      : null,
-                  badgePositionPercentageOffset: 1.3,
-                ),
-                legendText:
-                    '${(percent * 100).toStringAsFixed(0)}% ${category.name}',
-                color: color,
-              );
-            }).toList();
+                  percentage: top3Ids.contains(entry.key)
+                      ? null
+                      : '${(percent * 100).toStringAsFixed(2)}%',
+                )
+              : null,
+          badgePositionPercentageOffset: 1.3,
+        ),
+        legendText: '${(percent * 100).toStringAsFixed(0)}% ${category.name}',
+        color: color,
+      );
+    }).toList();
 
-            final top3 = entries.reversed.take(3).toList();
+    final top3 = entries.reversed.take(3).toList();
 
-            return AspectRatio(
-              aspectRatio: 1.3,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  PieChart(
-                    PieChartData(
-                      sectionsSpace: 2,
-                      centerSpaceRadius: 90,
-                      startDegreeOffset: -90,
-                      sections: entries.map((e) => e.section).toList(),
-                      pieTouchData: PieTouchData(
-                        touchCallback: (event, response) {
-                          setState(() {
-                            touchedIndex =
-                                response?.touchedSection?.touchedSectionIndex;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                  _TopCategories(top3: top3),
-                ],
+    return AspectRatio(
+      aspectRatio: 1.3,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          PieChart(
+            PieChartData(
+              sectionsSpace: 2,
+              centerSpaceRadius: 90,
+              startDegreeOffset: -90,
+              sections: entries.map((e) => e.section).toList(),
+              pieTouchData: PieTouchData(
+                touchCallback: (event, response) {
+                  setState(() {
+                    touchedIndex =
+                        response?.touchedSection?.touchedSectionIndex;
+                  });
+                },
               ),
-            );
-          },
-        );
-      },
+            ),
+          ),
+          _TopCategories(top3: top3),
+        ],
+      ),
     );
   }
 }
@@ -139,7 +124,7 @@ class _BadgeWidget extends StatelessWidget {
           BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 4)),
         ],
       ),
-      constraints: const BoxConstraints(maxWidth: 120),
+      constraints: const BoxConstraints(maxWidth: 140),
       // лимит ширины
       child: Text(
         percentage == null ? '$emoji $name' : '$percentage $emoji $name',

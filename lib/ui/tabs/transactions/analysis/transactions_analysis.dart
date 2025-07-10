@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
+import 'package:flutter_finances/ui/blocs/account/account_state.dart';
+import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
+import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
@@ -33,16 +37,85 @@ class TransactionsAnalysisScreen extends StatelessWidget {
             );
           }
         },
-        child: ListView(
-          children: [
-            const TransactionsFilterSection(),
-            Divider(height: 1, color: Theme.of(context).dividerColor),
-            const TransactionsSummarySection(),
-            Divider(height: 1, color: Theme.of(context).dividerColor),
-            const TransactionsPieChartSection(),
-            Divider(height: 1, color: Theme.of(context).dividerColor),
-            const TransactionsCategoryList(),
-          ],
+        child: BlocBuilder<TransactionHistoryBloc, TransactionHistoryState>(
+          builder: (transactionContext, transactionState) {
+            return BlocBuilder<CategoryBloc, CategoryState>(
+              builder: (categoryContext, categoryState) {
+                return BlocBuilder<AccountBloc, AccountBlocState>(
+                  builder: (accountContext, accountState) {
+                    if (transactionState is TransactionHistoryLoading ||
+                        categoryState is CategoryLoading ||
+                        accountState is AccountBlocLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (transactionState is TransactionHistoryError) {
+                      return Center(
+                        child: Text('Ошибка: ${transactionState.message}'),
+                      );
+                    }
+
+                    if (categoryState is CategoryError) {
+                      return Center(
+                        child: Text('Ошибка: ${categoryState.message}'),
+                      );
+                    }
+
+                    if (accountState is AccountBlocError) {
+                      return Center(
+                        child: Text('Ошибка: ${accountState.message}'),
+                      );
+                    }
+
+                    if (transactionState is TransactionHistoryLoaded &&
+                        categoryState is CategoryLoaded &&
+                        accountState is AccountBlocLoaded) {
+                      return ListView(
+                        children: [
+                          TransactionsFilterSection(
+                            startDate: transactionState.startDate,
+                            endDate: transactionState.endDate,
+                            isIncome: transactionState.isIncome,
+                          ),
+                          Divider(
+                            height: 1,
+                            color: Theme.of(context).dividerColor,
+                          ),
+                          TransactionsSummarySection(
+                            transactions: transactionState.transactions,
+                            currency:
+                                accountState.account.moneyDetails.currency,
+                          ),
+                          Divider(
+                            height: 1,
+                            color: Theme.of(context).dividerColor,
+                          ),
+                          TransactionsPieChartSection(
+                            transactions: transactionState.transactions,
+                            categories: categoryState.categories,
+                          ),
+                          Divider(
+                            height: 1,
+                            color: Theme.of(context).dividerColor,
+                          ),
+                          TransactionsCategoryList(
+                            transactions: transactionState.transactions,
+                            categories: categoryState.categories,
+                            currency:
+                                accountState.account.moneyDetails.currency,
+                          ),
+                        ],
+                      );
+                    }
+
+                    return const Center(
+                      child: Text('Нет данных для отображения'),
+                    );
+                  },
+                );
+              },
+            );
+          },
         ),
       ),
     );

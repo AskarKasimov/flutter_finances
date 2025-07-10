@@ -44,7 +44,7 @@ class BalanceBarChart extends StatelessWidget {
           }
 
           final screenWidth = MediaQuery.of(context).size.width;
-          const minLabelWidth = 24.0;
+          const minLabelWidth = 50.0;
           final maxLabels = (screenWidth / minLabelWidth).floor();
           final step = (sortedEntries.length / maxLabels).ceil().clamp(
             1,
@@ -62,17 +62,28 @@ class BalanceBarChart extends StatelessWidget {
                     enabled: true,
                     touchTooltipData: BarTouchTooltipData(
                       getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                        final date = sortedEntries[group.x].key;
                         final value = sortedEntries[group.x].value;
+
+                        final dateLabel = selectedPeriod == StatsPeriod.day
+                            ? formatDateTimeShort(date)
+                            : '${date.year}-${date.month.toString().padLeft(2, '0')}';
+                        final amountLabel = formatCurrency(
+                          value: value,
+                          currency: currency,
+                        );
+
                         return BarTooltipItem(
-                          formatCurrency(value: value, currency: currency),
-                          const TextStyle(
-                            color: Colors.white,
+                          '$dateLabel\n$amountLabel',
+                          TextStyle(
+                            color: Theme.of(context).scaffoldBackgroundColor,
                             fontWeight: FontWeight.bold,
                           ),
                         );
                       },
                     ),
                   ),
+
                   titlesData: FlTitlesData(
                     topTitles: const AxisTitles(
                       sideTitles: SideTitles(showTitles: false),
@@ -99,9 +110,7 @@ class BalanceBarChart extends StatelessWidget {
                         interval: 1,
                         getTitlesWidget: (value, meta) {
                           final index = value.toInt();
-                          if (index < 0 ||
-                              index >= sortedEntries.length ||
-                              index % step != 0) {
+                          if (index % step != 0) {
                             return const SizedBox.shrink();
                           }
                           final date = sortedEntries[index].key;

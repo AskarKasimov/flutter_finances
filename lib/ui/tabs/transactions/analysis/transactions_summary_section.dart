@@ -1,45 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
-import 'package:flutter_finances/ui/blocs/account/account_state.dart';
-import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
-import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
+import 'package:flutter_finances/domain/entities/transaction.dart';
+import 'package:flutter_finances/utils/number_utils.dart';
 
 class TransactionsSummarySection extends StatelessWidget {
-  const TransactionsSummarySection({super.key});
+  final List<Transaction> transactions;
+  final String currency;
+
+  const TransactionsSummarySection({
+    super.key,
+    required this.transactions,
+    required this.currency,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TransactionHistoryBloc, TransactionHistoryState>(
-      builder: (context, txState) {
-        return BlocBuilder<AccountBloc, AccountBlocState>(
-          builder: (context, accState) {
-            if (txState is! TransactionHistoryLoaded ||
-                accState is! AccountBlocLoaded) {
-              return const SizedBox.shrink();
-            }
+    final total = transactions.fold<double>(0, (sum, tx) => sum + tx.amount);
 
-            final total = txState.transactions.fold<double>(
-              0,
-              (sum, tx) => sum + tx.amount,
-            );
-
-            return Container(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Сумма'),
-                  Text(
-                    '$total ${accState.account.moneyDetails.currency}',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text('Сумма'),
+          Text(
+            formatCurrency(value: total, currency: currency),
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ],
+      ),
     );
   }
 }

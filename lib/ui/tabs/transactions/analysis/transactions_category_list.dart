@@ -1,108 +1,66 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/domain/entities/category.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
-import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
-import 'package:flutter_finances/ui/blocs/account/account_state.dart';
-import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
-import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
-import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
-import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
 import 'package:flutter_finances/utils/color_utils.dart';
 import 'package:flutter_finances/utils/number_utils.dart';
 
 class TransactionsCategoryList extends StatelessWidget {
-  const TransactionsCategoryList({super.key});
+  final List<Transaction> transactions;
+  final List<Category> categories;
+  final String currency;
+
+  const TransactionsCategoryList({
+    super.key,
+    required this.transactions,
+    required this.categories,
+    required this.currency,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TransactionHistoryBloc, TransactionHistoryState>(
-      builder: (context, txState) {
-        return BlocBuilder<CategoryBloc, CategoryState>(
-          builder: (context, catState) {
-            return BlocBuilder<AccountBloc, AccountBlocState>(
-              builder: (context, state) {
-                switch (state) {
-                  case AccountBlocLoading():
-                    return const Center(child: CircularProgressIndicator());
+    final total = transactions.fold<double>(0, (sum, tx) => sum + tx.amount);
 
-                  case AccountBlocError():
-                    return const Center(
-                      child: Text('Ошибка загрузки данных. Попробуйте позже.'),
-                    );
+    final Map<int, List<Transaction>> transactionsByCategory = {};
+    for (final tx in transactions) {
+      final categoryId = tx.categoryId;
+      if (categoryId != null) {
+        transactionsByCategory.putIfAbsent(categoryId, () => []);
+        transactionsByCategory[categoryId]!.add(tx);
+      }
+    }
 
-                  case AccountBlocLoaded(:final account):
-                    if (txState is! TransactionHistoryLoaded ||
-                        catState is! CategoryLoaded) {
-                      return const SizedBox.shrink();
-                    }
+    final entries = transactionsByCategory.entries.toList()
+      ..sort((a, b) {
+        final sumA = a.value.fold<double>(0, (sum, tx) => sum + tx.amount);
+        final sumB = b.value.fold<double>(0, (sum, tx) => sum + tx.amount);
+        return sumB.compareTo(sumA);
+      });
 
-                    final transactions = txState.transactions;
-                    final total = transactions.fold<double>(
-                      0,
-                      (sum, tx) => sum + tx.amount,
-                    );
+    return Column(
+      children: entries.map((entry) {
+        final categoryId = entry.key;
+        final category = categories.firstWhere((c) => c.id == categoryId);
+        final categoryTransactions = entry.value;
 
-                    final Map<int, List<Transaction>> transactionsByCategory =
-                        {};
-                    for (final tx in transactions) {
-                      final categoryId = tx.categoryId;
-                      if (categoryId != null) {
-                        transactionsByCategory.putIfAbsent(
-                          categoryId,
-                          () => [],
-                        );
-                        transactionsByCategory[categoryId]!.add(tx);
-                      }
-                    }
-
-                    final entries = transactionsByCategory.entries.toList()
-                      ..sort((a, b) {
-                        final sumA = a.value.fold<double>(
-                          0,
-                          (sum, tx) => sum + tx.amount,
-                        );
-                        final sumB = b.value.fold<double>(
-                          0,
-                          (sum, tx) => sum + tx.amount,
-                        );
-                        return sumB.compareTo(sumA);
-                      });
-
-                    return Column(
-                      children: entries.map((entry) {
-                        final categoryId = entry.key;
-                        final category = catState.categories.firstWhere(
-                          (c) => c.id == categoryId,
-                        );
-                        final categoryTransactions = entry.value;
-
-                        final sum = categoryTransactions.fold<double>(
-                          0,
-                          (sum, tx) => sum + tx.amount,
-                        );
-                        final percent = total > 0 ? sum / total : 0.0;
-
-                        final lastTx = categoryTransactions.reduce(
-                          (a, b) => a.timestamp.isAfter(b.timestamp) ? a : b,
-                        );
-
-                        return _CategoryTile(
-                          category: category,
-                          transactions: categoryTransactions,
-                          totalSum: sum,
-                          percent: percent,
-                          comment: lastTx.comment,
-                          currency: account.moneyDetails.currency,
-                        );
-                      }).toList(),
-                    );
-                }
-              },
-            );
-          },
+        final sum = categoryTransactions.fold<double>(
+          0,
+          (sum, tx) => sum + tx.amount,
         );
-      },
+        final percent = total > 0 ? sum / total : 0.0;
+
+        final lastTx = categoryTransactions.reduce(
+          (a, b) => a.timestamp.isAfter(b.timestamp) ? a : b,
+        );
+
+        return _CategoryTile(
+          category: category,
+          transactions: categoryTransactions,
+          totalSum: sum,
+          percent: percent,
+          comment: lastTx.comment,
+          currency: currency,
+        );
+      }).toList(),
     );
   }
 }
