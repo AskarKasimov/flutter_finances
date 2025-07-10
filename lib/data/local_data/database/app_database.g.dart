@@ -1243,17 +1243,460 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
   }
 }
 
+class $SyncEventsTable extends SyncEvents
+    with TableInfo<$SyncEventsTable, SyncEvent> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SyncEventsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<int> type = GeneratedColumn<int>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _entityTypeMeta = const VerificationMeta(
+    'entityType',
+  );
+  @override
+  late final GeneratedColumn<String> entityType = GeneratedColumn<String>(
+    'entity_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _entityIdMeta = const VerificationMeta(
+    'entityId',
+  );
+  @override
+  late final GeneratedColumn<int> entityId = GeneratedColumn<int>(
+    'entity_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadMeta = const VerificationMeta(
+    'payload',
+  );
+  @override
+  late final GeneratedColumn<String> payload = GeneratedColumn<String>(
+    'payload',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<int> status = GeneratedColumn<int>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    type,
+    entityType,
+    entityId,
+    payload,
+    createdAt,
+    status,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sync_events';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SyncEvent> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+        _typeMeta,
+        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    if (data.containsKey('entity_type')) {
+      context.handle(
+        _entityTypeMeta,
+        entityType.isAcceptableOrUnknown(data['entity_type']!, _entityTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_entityTypeMeta);
+    }
+    if (data.containsKey('entity_id')) {
+      context.handle(
+        _entityIdMeta,
+        entityId.isAcceptableOrUnknown(data['entity_id']!, _entityIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_entityIdMeta);
+    }
+    if (data.containsKey('payload')) {
+      context.handle(
+        _payloadMeta,
+        payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SyncEvent map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SyncEvent(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}type'],
+      )!,
+      entityType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity_type'],
+      )!,
+      entityId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}entity_id'],
+      )!,
+      payload: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}status'],
+      )!,
+    );
+  }
+
+  @override
+  $SyncEventsTable createAlias(String alias) {
+    return $SyncEventsTable(attachedDatabase, alias);
+  }
+}
+
+class SyncEvent extends DataClass implements Insertable<SyncEvent> {
+  final int id;
+  final int type;
+  final String entityType;
+  final int entityId;
+  final String payload;
+  final DateTime createdAt;
+  final int status;
+  const SyncEvent({
+    required this.id,
+    required this.type,
+    required this.entityType,
+    required this.entityId,
+    required this.payload,
+    required this.createdAt,
+    required this.status,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['type'] = Variable<int>(type);
+    map['entity_type'] = Variable<String>(entityType);
+    map['entity_id'] = Variable<int>(entityId);
+    map['payload'] = Variable<String>(payload);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['status'] = Variable<int>(status);
+    return map;
+  }
+
+  SyncEventsCompanion toCompanion(bool nullToAbsent) {
+    return SyncEventsCompanion(
+      id: Value(id),
+      type: Value(type),
+      entityType: Value(entityType),
+      entityId: Value(entityId),
+      payload: Value(payload),
+      createdAt: Value(createdAt),
+      status: Value(status),
+    );
+  }
+
+  factory SyncEvent.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SyncEvent(
+      id: serializer.fromJson<int>(json['id']),
+      type: serializer.fromJson<int>(json['type']),
+      entityType: serializer.fromJson<String>(json['entityType']),
+      entityId: serializer.fromJson<int>(json['entityId']),
+      payload: serializer.fromJson<String>(json['payload']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      status: serializer.fromJson<int>(json['status']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'type': serializer.toJson<int>(type),
+      'entityType': serializer.toJson<String>(entityType),
+      'entityId': serializer.toJson<int>(entityId),
+      'payload': serializer.toJson<String>(payload),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'status': serializer.toJson<int>(status),
+    };
+  }
+
+  SyncEvent copyWith({
+    int? id,
+    int? type,
+    String? entityType,
+    int? entityId,
+    String? payload,
+    DateTime? createdAt,
+    int? status,
+  }) => SyncEvent(
+    id: id ?? this.id,
+    type: type ?? this.type,
+    entityType: entityType ?? this.entityType,
+    entityId: entityId ?? this.entityId,
+    payload: payload ?? this.payload,
+    createdAt: createdAt ?? this.createdAt,
+    status: status ?? this.status,
+  );
+  SyncEvent copyWithCompanion(SyncEventsCompanion data) {
+    return SyncEvent(
+      id: data.id.present ? data.id.value : this.id,
+      type: data.type.present ? data.type.value : this.type,
+      entityType: data.entityType.present
+          ? data.entityType.value
+          : this.entityType,
+      entityId: data.entityId.present ? data.entityId.value : this.entityId,
+      payload: data.payload.present ? data.payload.value : this.payload,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      status: data.status.present ? data.status.value : this.status,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncEvent(')
+          ..write('id: $id, ')
+          ..write('type: $type, ')
+          ..write('entityType: $entityType, ')
+          ..write('entityId: $entityId, ')
+          ..write('payload: $payload, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('status: $status')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, type, entityType, entityId, payload, createdAt, status);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SyncEvent &&
+          other.id == this.id &&
+          other.type == this.type &&
+          other.entityType == this.entityType &&
+          other.entityId == this.entityId &&
+          other.payload == this.payload &&
+          other.createdAt == this.createdAt &&
+          other.status == this.status);
+}
+
+class SyncEventsCompanion extends UpdateCompanion<SyncEvent> {
+  final Value<int> id;
+  final Value<int> type;
+  final Value<String> entityType;
+  final Value<int> entityId;
+  final Value<String> payload;
+  final Value<DateTime> createdAt;
+  final Value<int> status;
+  const SyncEventsCompanion({
+    this.id = const Value.absent(),
+    this.type = const Value.absent(),
+    this.entityType = const Value.absent(),
+    this.entityId = const Value.absent(),
+    this.payload = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.status = const Value.absent(),
+  });
+  SyncEventsCompanion.insert({
+    this.id = const Value.absent(),
+    required int type,
+    required String entityType,
+    required int entityId,
+    required String payload,
+    this.createdAt = const Value.absent(),
+    this.status = const Value.absent(),
+  }) : type = Value(type),
+       entityType = Value(entityType),
+       entityId = Value(entityId),
+       payload = Value(payload);
+  static Insertable<SyncEvent> custom({
+    Expression<int>? id,
+    Expression<int>? type,
+    Expression<String>? entityType,
+    Expression<int>? entityId,
+    Expression<String>? payload,
+    Expression<DateTime>? createdAt,
+    Expression<int>? status,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (type != null) 'type': type,
+      if (entityType != null) 'entity_type': entityType,
+      if (entityId != null) 'entity_id': entityId,
+      if (payload != null) 'payload': payload,
+      if (createdAt != null) 'created_at': createdAt,
+      if (status != null) 'status': status,
+    });
+  }
+
+  SyncEventsCompanion copyWith({
+    Value<int>? id,
+    Value<int>? type,
+    Value<String>? entityType,
+    Value<int>? entityId,
+    Value<String>? payload,
+    Value<DateTime>? createdAt,
+    Value<int>? status,
+  }) {
+    return SyncEventsCompanion(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      entityType: entityType ?? this.entityType,
+      entityId: entityId ?? this.entityId,
+      payload: payload ?? this.payload,
+      createdAt: createdAt ?? this.createdAt,
+      status: status ?? this.status,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<int>(type.value);
+    }
+    if (entityType.present) {
+      map['entity_type'] = Variable<String>(entityType.value);
+    }
+    if (entityId.present) {
+      map['entity_id'] = Variable<int>(entityId.value);
+    }
+    if (payload.present) {
+      map['payload'] = Variable<String>(payload.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<int>(status.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncEventsCompanion(')
+          ..write('id: $id, ')
+          ..write('type: $type, ')
+          ..write('entityType: $entityType, ')
+          ..write('entityId: $entityId, ')
+          ..write('payload: $payload, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('status: $status')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $AccountsTable accounts = $AccountsTable(this);
   late final $CategoriesTable categories = $CategoriesTable(this);
   late final $TransactionsTable transactions = $TransactionsTable(this);
+  late final $SyncEventsTable syncEvents = $SyncEventsTable(this);
   late final AccountDao accountDao = AccountDao(this as AppDatabase);
   late final CategoryDao categoryDao = CategoryDao(this as AppDatabase);
   late final TransactionDao transactionDao = TransactionDao(
     this as AppDatabase,
   );
+  late final SyncEventDao syncEventDao = SyncEventDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1262,6 +1705,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     accounts,
     categories,
     transactions,
+    syncEvents,
   ];
 }
 
@@ -1913,6 +2357,237 @@ typedef $$TransactionsTableProcessedTableManager =
       Transaction,
       PrefetchHooks Function()
     >;
+typedef $$SyncEventsTableCreateCompanionBuilder =
+    SyncEventsCompanion Function({
+      Value<int> id,
+      required int type,
+      required String entityType,
+      required int entityId,
+      required String payload,
+      Value<DateTime> createdAt,
+      Value<int> status,
+    });
+typedef $$SyncEventsTableUpdateCompanionBuilder =
+    SyncEventsCompanion Function({
+      Value<int> id,
+      Value<int> type,
+      Value<String> entityType,
+      Value<int> entityId,
+      Value<String> payload,
+      Value<DateTime> createdAt,
+      Value<int> status,
+    });
+
+class $$SyncEventsTableFilterComposer
+    extends Composer<_$AppDatabase, $SyncEventsTable> {
+  $$SyncEventsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get entityType => $composableBuilder(
+    column: $table.entityType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get entityId => $composableBuilder(
+    column: $table.entityId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SyncEventsTableOrderingComposer
+    extends Composer<_$AppDatabase, $SyncEventsTable> {
+  $$SyncEventsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get entityType => $composableBuilder(
+    column: $table.entityType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get entityId => $composableBuilder(
+    column: $table.entityId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SyncEventsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SyncEventsTable> {
+  $$SyncEventsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<String> get entityType => $composableBuilder(
+    column: $table.entityType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get entityId =>
+      $composableBuilder(column: $table.entityId, builder: (column) => column);
+
+  GeneratedColumn<String> get payload =>
+      $composableBuilder(column: $table.payload, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+}
+
+class $$SyncEventsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SyncEventsTable,
+          SyncEvent,
+          $$SyncEventsTableFilterComposer,
+          $$SyncEventsTableOrderingComposer,
+          $$SyncEventsTableAnnotationComposer,
+          $$SyncEventsTableCreateCompanionBuilder,
+          $$SyncEventsTableUpdateCompanionBuilder,
+          (
+            SyncEvent,
+            BaseReferences<_$AppDatabase, $SyncEventsTable, SyncEvent>,
+          ),
+          SyncEvent,
+          PrefetchHooks Function()
+        > {
+  $$SyncEventsTableTableManager(_$AppDatabase db, $SyncEventsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SyncEventsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SyncEventsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SyncEventsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> type = const Value.absent(),
+                Value<String> entityType = const Value.absent(),
+                Value<int> entityId = const Value.absent(),
+                Value<String> payload = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> status = const Value.absent(),
+              }) => SyncEventsCompanion(
+                id: id,
+                type: type,
+                entityType: entityType,
+                entityId: entityId,
+                payload: payload,
+                createdAt: createdAt,
+                status: status,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int type,
+                required String entityType,
+                required int entityId,
+                required String payload,
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> status = const Value.absent(),
+              }) => SyncEventsCompanion.insert(
+                id: id,
+                type: type,
+                entityType: entityType,
+                entityId: entityId,
+                payload: payload,
+                createdAt: createdAt,
+                status: status,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SyncEventsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SyncEventsTable,
+      SyncEvent,
+      $$SyncEventsTableFilterComposer,
+      $$SyncEventsTableOrderingComposer,
+      $$SyncEventsTableAnnotationComposer,
+      $$SyncEventsTableCreateCompanionBuilder,
+      $$SyncEventsTableUpdateCompanionBuilder,
+      (SyncEvent, BaseReferences<_$AppDatabase, $SyncEventsTable, SyncEvent>),
+      SyncEvent,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -1923,4 +2598,6 @@ class $AppDatabaseManager {
       $$CategoriesTableTableManager(_db, _db.categories);
   $$TransactionsTableTableManager get transactions =>
       $$TransactionsTableTableManager(_db, _db.transactions);
+  $$SyncEventsTableTableManager get syncEvents =>
+      $$SyncEventsTableTableManager(_db, _db.syncEvents);
 }
