@@ -124,9 +124,14 @@ void showTransactionCreationSheet({
   required BuildContext context,
   required bool isIncome,
 }) {
+  final mediaQuery = MediaQuery.of(context);
+  final statusBarHeight = mediaQuery.padding.top;
+
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    barrierColor: Colors.transparent,
     builder: (_) => BlocProvider(
       create: (_) => TransactionCreationBloc(
         deleteTransactionUseCase: context.read<DeleteTransactionUseCase>(),
@@ -136,7 +141,10 @@ void showTransactionCreationSheet({
         updateTransactionUseCase: context.read<UpdateTransactionUseCase>(),
         createTransactionUseCase: context.read<CreateTransactionUseCase>(),
       ),
-      child: _TransactionCreationSheet(isIncome: isIncome),
+      child: Padding(
+        padding: EdgeInsets.only(top: statusBarHeight),
+        child: _TransactionCreationSheet(isIncome: isIncome),
+      ),
     ),
   );
 }
