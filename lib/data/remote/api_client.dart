@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_finances/data/remote/retry_interceptor.dart';
 
 class ApiClient {
   static final ApiClient _instance = ApiClient._internal();
@@ -15,5 +16,6 @@ class ApiClient {
         receiveTimeout: const Duration(seconds: 3),
       ),
     );
+    dio.interceptors.add(RetryInterceptor(dio: dio));
   }
 }
