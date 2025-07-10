@@ -1264,11 +1264,11 @@ class $SyncEventsTable extends SyncEvents
   );
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
   @override
-  late final GeneratedColumn<int> type = GeneratedColumn<int>(
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
     'type',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
   static const VerificationMeta _entityTypeMeta = const VerificationMeta(
@@ -1318,13 +1318,13 @@ class $SyncEventsTable extends SyncEvents
   );
   static const VerificationMeta _statusMeta = const VerificationMeta('status');
   @override
-  late final GeneratedColumn<int> status = GeneratedColumn<int>(
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
     'status',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: false,
-    defaultValue: const Constant(0),
+    defaultValue: const Constant('new'),
   );
   @override
   List<GeneratedColumn> get $columns => [
@@ -1409,7 +1409,7 @@ class $SyncEventsTable extends SyncEvents
         data['${effectivePrefix}id'],
       )!,
       type: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}type'],
       )!,
       entityType: attachedDatabase.typeMapping.read(
@@ -1429,7 +1429,7 @@ class $SyncEventsTable extends SyncEvents
         data['${effectivePrefix}created_at'],
       )!,
       status: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}status'],
       )!,
     );
@@ -1443,12 +1443,12 @@ class $SyncEventsTable extends SyncEvents
 
 class SyncEvent extends DataClass implements Insertable<SyncEvent> {
   final int id;
-  final int type;
+  final String type;
   final String entityType;
   final int entityId;
   final String payload;
   final DateTime createdAt;
-  final int status;
+  final String status;
   const SyncEvent({
     required this.id,
     required this.type,
@@ -1462,12 +1462,12 @@ class SyncEvent extends DataClass implements Insertable<SyncEvent> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['type'] = Variable<int>(type);
+    map['type'] = Variable<String>(type);
     map['entity_type'] = Variable<String>(entityType);
     map['entity_id'] = Variable<int>(entityId);
     map['payload'] = Variable<String>(payload);
     map['created_at'] = Variable<DateTime>(createdAt);
-    map['status'] = Variable<int>(status);
+    map['status'] = Variable<String>(status);
     return map;
   }
 
@@ -1490,12 +1490,12 @@ class SyncEvent extends DataClass implements Insertable<SyncEvent> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return SyncEvent(
       id: serializer.fromJson<int>(json['id']),
-      type: serializer.fromJson<int>(json['type']),
+      type: serializer.fromJson<String>(json['type']),
       entityType: serializer.fromJson<String>(json['entityType']),
       entityId: serializer.fromJson<int>(json['entityId']),
       payload: serializer.fromJson<String>(json['payload']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      status: serializer.fromJson<int>(json['status']),
+      status: serializer.fromJson<String>(json['status']),
     );
   }
   @override
@@ -1503,23 +1503,23 @@ class SyncEvent extends DataClass implements Insertable<SyncEvent> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'type': serializer.toJson<int>(type),
+      'type': serializer.toJson<String>(type),
       'entityType': serializer.toJson<String>(entityType),
       'entityId': serializer.toJson<int>(entityId),
       'payload': serializer.toJson<String>(payload),
       'createdAt': serializer.toJson<DateTime>(createdAt),
-      'status': serializer.toJson<int>(status),
+      'status': serializer.toJson<String>(status),
     };
   }
 
   SyncEvent copyWith({
     int? id,
-    int? type,
+    String? type,
     String? entityType,
     int? entityId,
     String? payload,
     DateTime? createdAt,
-    int? status,
+    String? status,
   }) => SyncEvent(
     id: id ?? this.id,
     type: type ?? this.type,
@@ -1575,12 +1575,12 @@ class SyncEvent extends DataClass implements Insertable<SyncEvent> {
 
 class SyncEventsCompanion extends UpdateCompanion<SyncEvent> {
   final Value<int> id;
-  final Value<int> type;
+  final Value<String> type;
   final Value<String> entityType;
   final Value<int> entityId;
   final Value<String> payload;
   final Value<DateTime> createdAt;
-  final Value<int> status;
+  final Value<String> status;
   const SyncEventsCompanion({
     this.id = const Value.absent(),
     this.type = const Value.absent(),
@@ -1592,7 +1592,7 @@ class SyncEventsCompanion extends UpdateCompanion<SyncEvent> {
   });
   SyncEventsCompanion.insert({
     this.id = const Value.absent(),
-    required int type,
+    required String type,
     required String entityType,
     required int entityId,
     required String payload,
@@ -1604,12 +1604,12 @@ class SyncEventsCompanion extends UpdateCompanion<SyncEvent> {
        payload = Value(payload);
   static Insertable<SyncEvent> custom({
     Expression<int>? id,
-    Expression<int>? type,
+    Expression<String>? type,
     Expression<String>? entityType,
     Expression<int>? entityId,
     Expression<String>? payload,
     Expression<DateTime>? createdAt,
-    Expression<int>? status,
+    Expression<String>? status,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1624,12 +1624,12 @@ class SyncEventsCompanion extends UpdateCompanion<SyncEvent> {
 
   SyncEventsCompanion copyWith({
     Value<int>? id,
-    Value<int>? type,
+    Value<String>? type,
     Value<String>? entityType,
     Value<int>? entityId,
     Value<String>? payload,
     Value<DateTime>? createdAt,
-    Value<int>? status,
+    Value<String>? status,
   }) {
     return SyncEventsCompanion(
       id: id ?? this.id,
@@ -1649,7 +1649,7 @@ class SyncEventsCompanion extends UpdateCompanion<SyncEvent> {
       map['id'] = Variable<int>(id.value);
     }
     if (type.present) {
-      map['type'] = Variable<int>(type.value);
+      map['type'] = Variable<String>(type.value);
     }
     if (entityType.present) {
       map['entity_type'] = Variable<String>(entityType.value);
@@ -1664,7 +1664,7 @@ class SyncEventsCompanion extends UpdateCompanion<SyncEvent> {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
     if (status.present) {
-      map['status'] = Variable<int>(status.value);
+      map['status'] = Variable<String>(status.value);
     }
     return map;
   }
@@ -2360,22 +2360,22 @@ typedef $$TransactionsTableProcessedTableManager =
 typedef $$SyncEventsTableCreateCompanionBuilder =
     SyncEventsCompanion Function({
       Value<int> id,
-      required int type,
+      required String type,
       required String entityType,
       required int entityId,
       required String payload,
       Value<DateTime> createdAt,
-      Value<int> status,
+      Value<String> status,
     });
 typedef $$SyncEventsTableUpdateCompanionBuilder =
     SyncEventsCompanion Function({
       Value<int> id,
-      Value<int> type,
+      Value<String> type,
       Value<String> entityType,
       Value<int> entityId,
       Value<String> payload,
       Value<DateTime> createdAt,
-      Value<int> status,
+      Value<String> status,
     });
 
 class $$SyncEventsTableFilterComposer
@@ -2392,7 +2392,7 @@ class $$SyncEventsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get type => $composableBuilder(
+  ColumnFilters<String> get type => $composableBuilder(
     column: $table.type,
     builder: (column) => ColumnFilters(column),
   );
@@ -2417,7 +2417,7 @@ class $$SyncEventsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get status => $composableBuilder(
+  ColumnFilters<String> get status => $composableBuilder(
     column: $table.status,
     builder: (column) => ColumnFilters(column),
   );
@@ -2437,7 +2437,7 @@ class $$SyncEventsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get type => $composableBuilder(
+  ColumnOrderings<String> get type => $composableBuilder(
     column: $table.type,
     builder: (column) => ColumnOrderings(column),
   );
@@ -2462,7 +2462,7 @@ class $$SyncEventsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get status => $composableBuilder(
+  ColumnOrderings<String> get status => $composableBuilder(
     column: $table.status,
     builder: (column) => ColumnOrderings(column),
   );
@@ -2480,7 +2480,7 @@ class $$SyncEventsTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<int> get type =>
+  GeneratedColumn<String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
 
   GeneratedColumn<String> get entityType => $composableBuilder(
@@ -2497,7 +2497,7 @@ class $$SyncEventsTableAnnotationComposer
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
-  GeneratedColumn<int> get status =>
+  GeneratedColumn<String> get status =>
       $composableBuilder(column: $table.status, builder: (column) => column);
 }
 
@@ -2533,12 +2533,12 @@ class $$SyncEventsTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int> type = const Value.absent(),
+                Value<String> type = const Value.absent(),
                 Value<String> entityType = const Value.absent(),
                 Value<int> entityId = const Value.absent(),
                 Value<String> payload = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
-                Value<int> status = const Value.absent(),
+                Value<String> status = const Value.absent(),
               }) => SyncEventsCompanion(
                 id: id,
                 type: type,
@@ -2551,12 +2551,12 @@ class $$SyncEventsTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                required int type,
+                required String type,
                 required String entityType,
                 required int entityId,
                 required String payload,
                 Value<DateTime> createdAt = const Value.absent(),
-                Value<int> status = const Value.absent(),
+                Value<String> status = const Value.absent(),
               }) => SyncEventsCompanion.insert(
                 id: id,
                 type: type,

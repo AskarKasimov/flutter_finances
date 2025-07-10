@@ -12,14 +12,17 @@ class SyncEventDao extends DatabaseAccessor<AppDatabase>
   Future<int> insertEvent(SyncEventsCompanion event) =>
       db.into(db.syncEvents).insert(event);
 
-  Future<List<SyncEvent>> getPendingEvents() =>
-      (db.select(db.syncEvents)..where((tbl) => tbl.status.equals(0))).get();
+  Future<List<SyncEvent>> getPendingEvents() => (db.select(
+    db.syncEvents,
+  )..where((tbl) => tbl.status.equals('new'))).get();
 
   Future<void> markEventSynced(int id) =>
       (db.update(db.syncEvents)..where((tbl) => tbl.id.equals(id))).write(
-        const SyncEventsCompanion(status: Value(1)),
+        const SyncEventsCompanion(status: Value('synced')),
       );
 
-  Future<void> deleteEvent(int id) =>
-      (db.delete(db.syncEvents)..where((tbl) => tbl.id.equals(id))).go();
+  Future<void> markEventFailed(int id) =>
+      (db.update(db.syncEvents)..where((tbl) => tbl.id.equals(id))).write(
+        const SyncEventsCompanion(status: Value('failed')),
+      );
 }
