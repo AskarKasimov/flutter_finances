@@ -3,7 +3,7 @@ import 'package:flutter_finances/domain/entities/value_objects/time_interval.dar
 class Transaction {
   final int id;
   final int accountId;
-  final int? categoryId;
+  final int categoryId;
   final double amount;
   final DateTime timestamp;
   final String? comment;

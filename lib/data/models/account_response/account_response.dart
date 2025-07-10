@@ -1,4 +1,3 @@
-import 'package:flutter_finances/data/models/stat_item/stat_item.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'account_response.freezed.dart';
@@ -11,8 +10,6 @@ abstract class AccountResponseDTO with _$AccountResponseDTO {
     required String name,
     required String balance,
     required String currency,
-    required List<StatItemDTO> incomeStats,
-    required List<StatItemDTO> expenseStats,
     required String createdAt,
     required String updatedAt,
   }) = _AccountResponseDTO;

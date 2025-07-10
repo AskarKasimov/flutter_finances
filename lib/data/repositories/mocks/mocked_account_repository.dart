@@ -1,5 +1,4 @@
 import 'package:flutter_finances/domain/entities/account.dart';
-import 'package:flutter_finances/domain/entities/account_history.dart';
 import 'package:flutter_finances/domain/entities/account_response.dart';
 import 'package:flutter_finances/domain/entities/forms/account_form.dart';
 import 'package:flutter_finances/domain/entities/value_objects/money_details.dart';
@@ -59,23 +58,7 @@ class MockedAccountRepository implements AccountRepository {
       id: account.id,
       name: account.name,
       moneyDetails: account.moneyDetails,
-      incomeStats: [],
-      expenseStats: [],
       auditInfoTime: account.auditInfoTime,
-    );
-  }
-
-  @override
-  Future<AccountHistory> getAccountHistory(int id) async {
-    final account = _accounts.where((a) => a.id == id).firstOrNull;
-    if (account == null) {
-      throw RepositoryException('Аккаунт с id $id не найден');
-    }
-    return AccountHistory(
-      accountId: account.id,
-      accountName: account.name,
-      moneyDetails: account.moneyDetails,
-      history: [],
     );
   }
 
