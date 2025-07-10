@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_event.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
+import 'package:flutter_finances/utils/color_utils.dart';
 import 'package:string_similarity/string_similarity.dart';
 
 class ItemsScreen extends StatefulWidget {
@@ -93,9 +94,9 @@ class _ItemsScreen extends State<ItemsScreen> {
                           ),
                           child: ListTile(
                             leading: CircleAvatar(
-                              backgroundColor: Theme.of(
-                                context,
-                              ).colorScheme.secondary,
+                              backgroundColor: generateLightColorFromId(
+                                category.id,
+                              ),
                               radius: 16,
                               child: Text(
                                 category.emoji,

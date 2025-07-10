@@ -6,6 +6,7 @@ import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
+import 'package:flutter_finances/utils/color_utils.dart';
 
 class TransactionsCategoryList extends StatelessWidget {
   const TransactionsCategoryList({super.key});
@@ -125,9 +126,9 @@ class _CategoryTileState extends State<_CategoryTile> {
               child: Row(
                 children: [
                   CircleAvatar(
-                    backgroundColor: _generateColorFromId(
+                    backgroundColor: generateLightColorFromId(
                       widget.category.id,
-                    ).withValues(alpha: 0.15),
+                    ),
                     child: Text(widget.category.emoji),
                   ),
                   const SizedBox(width: 12),
@@ -202,19 +203,5 @@ class _CategoryTileState extends State<_CategoryTile> {
           ),
       ],
     );
-  }
-
-  Color _generateColorFromId(int id) {
-    final colors = [
-      Colors.blue,
-      Colors.red,
-      Colors.green,
-      Colors.orange,
-      Colors.purple,
-      Colors.teal,
-      Colors.indigo,
-      Colors.brown,
-    ];
-    return colors[id % colors.length];
   }
 }

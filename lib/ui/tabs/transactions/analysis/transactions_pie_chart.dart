@@ -42,7 +42,7 @@ class _TransactionsPieChartSectionState
             }
 
             final sortedEntries = sumsByCategory.entries.toList()
-              ..sort((a, b) => b.value.compareTo(a.value));
+              ..sort((a, b) => a.value.compareTo(b.value));
 
             final top3Ids = sortedEntries.take(3).map((e) => e.key).toSet();
 
@@ -89,6 +89,7 @@ class _TransactionsPieChartSectionState
                     PieChartData(
                       sectionsSpace: 2,
                       centerSpaceRadius: 90,
+                      startDegreeOffset: -90,
                       sections: entries.map((e) => e.section).toList(),
                       pieTouchData: PieTouchData(
                         touchCallback: (event, response) {
