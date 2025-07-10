@@ -5,9 +5,19 @@ import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
+import 'package:flutter_finances/utils/color_utils.dart';
 
-class TransactionsPieChartSection extends StatelessWidget {
+class TransactionsPieChartSection extends StatefulWidget {
   const TransactionsPieChartSection({super.key});
+
+  @override
+  State<TransactionsPieChartSection> createState() =>
+      _TransactionsPieChartSectionState();
+}
+
+class _TransactionsPieChartSectionState
+    extends State<TransactionsPieChartSection> {
+  int? touchedIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -31,54 +41,40 @@ class TransactionsPieChartSection extends StatelessWidget {
                   (sumsByCategory[tx.categoryId!] ?? 0) + tx.amount;
             }
 
-            final entries =
-                sumsByCategory.entries.map((entry) {
-                  final category = catState.categories.firstWhere(
-                    (c) => c.id == entry.key,
-                  );
-                  final percent = total > 0 ? entry.value / total : 0.0;
-                  final color = _generateColorFromId(entry.key);
+            final sortedEntries = sumsByCategory.entries.toList()
+              ..sort((a, b) => b.value.compareTo(a.value));
 
-                  return (
-                    categoryId: entry.key,
-                    percent: percent,
-                    legendText:
-                        '${(percent * 100).toStringAsFixed(0)}% ${category.name}',
-                    color: color,
-                    emoji: category.emoji,
-                  );
-                }).toList()..sort(
-                  (a, b) => b.percent.compareTo(a.percent),
-                ); // Top 3 first
+            final top3Ids = sortedEntries.take(3).map((e) => e.key).toSet();
 
-            final sections = entries.map((entry) {
-              return PieChartSectionData(
-                color: entry.color,
-                value: entry.percent,
-                radius: 36,
-                title: '',
-                badgeWidget: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    entry.legendText,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
+            final entries = sortedEntries.map((entry) {
+              final category = catState.categories.firstWhere(
+                (c) => c.id == entry.key,
+              );
+              final percent = total > 0 ? entry.value / total : 0.0;
+              final index = sortedEntries.indexOf(entry);
+              final color = generateColorFromId(entry.key);
+
+              return (
+                section: PieChartSectionData(
+                  color: color,
+                  value: percent,
+                  title: '',
+                  radius: touchedIndex == index ? 42 : 36,
+                  badgeWidget: touchedIndex == index
+                      ? _BadgeWidget(
+                          emoji: category.emoji,
+                          name: category.name,
+                          color: color,
+                          percentage: top3Ids.contains(entry.key)
+                              ? null
+                              : '${(percent * 100).toStringAsFixed(0)}%',
+                        )
+                      : null,
+                  badgePositionPercentageOffset: 1.3,
                 ),
-                badgePositionPercentageOffset: 1.3,
+                legendText:
+                    '${(percent * 100).toStringAsFixed(0)}% ${category.name}',
+                color: color,
               );
             }).toList();
 
@@ -92,34 +88,19 @@ class TransactionsPieChartSection extends StatelessWidget {
                   PieChart(
                     PieChartData(
                       sectionsSpace: 2,
-                      centerSpaceRadius: 80,
-                      sections: sections,
+                      centerSpaceRadius: 90,
+                      sections: entries.map((e) => e.section).toList(),
+                      pieTouchData: PieTouchData(
+                        touchCallback: (event, response) {
+                          setState(() {
+                            touchedIndex =
+                                response?.touchedSection?.touchedSectionIndex;
+                          });
+                        },
+                      ),
                     ),
                   ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: top3
-                        .map(
-                          (e) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 2),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  e.emoji,
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  e.legendText,
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
+                  _TopCategories(top3: top3),
                 ],
               ),
             );
@@ -128,19 +109,77 @@ class TransactionsPieChartSection extends StatelessWidget {
       },
     );
   }
+}
 
-  Color _generateColorFromId(int id) {
-    final colors = [
-      Colors.green,
-      Colors.yellow,
-      Colors.blue,
-      Colors.orange,
-      Colors.purple,
-      Colors.teal,
-      Colors.red,
-      Colors.indigo,
-      Colors.brown,
-    ];
-    return colors[id % colors.length];
+class _BadgeWidget extends StatelessWidget {
+  final String emoji;
+  final String name;
+  final Color color;
+  final String? percentage;
+
+  const _BadgeWidget({
+    required this.emoji,
+    required this.name,
+    required this.color,
+    required this.percentage,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 4)),
+        ],
+      ),
+      constraints: const BoxConstraints(maxWidth: 120),
+      // лимит ширины
+      child: Text(
+        percentage == null ? '$emoji $name' : '$percentage $emoji $name',
+        style: const TextStyle(fontSize: 12),
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
+      ),
+    );
+  }
+}
+
+class _TopCategories extends StatelessWidget {
+  final List<({Color color, String legendText, PieChartSectionData section})>
+  top3;
+
+  const _TopCategories({required this.top3});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: top3
+          .map(
+            (e) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.circle, size: 10, color: e.color),
+                  const SizedBox(width: 4),
+                  SizedBox(
+                    width: 130, // можно адаптировать
+                    child: Text(
+                      e.legendText,
+                      style: Theme.of(context).textTheme.bodySmall,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+          .toList(),
+    );
   }
 }
