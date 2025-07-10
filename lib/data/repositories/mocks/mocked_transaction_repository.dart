@@ -164,10 +164,10 @@ class MockedTransactionRepository implements TransactionRepository {
   Future<Transaction> createTransaction(TransactionForm form) async {
     final transaction = Transaction(
       id: _nextId(),
-      accountId: form.accountId!,
-      categoryId: form.categoryId!,
+      accountId: form.accountId,
+      categoryId: form.categoryId,
       comment: form.comment ?? '',
-      amount: form.amount ?? 0.0,
+      amount: form.amount,
       timestamp: DateTime.now(),
       auditInfoTime: AuditInfoTime(
         createdAt: DateTime.now(),
@@ -230,11 +230,11 @@ class MockedTransactionRepository implements TransactionRepository {
     final existing = _transactions[index];
     final updated = Transaction(
       id: id,
-      accountId: form.accountId ?? existing.accountId,
-      categoryId: form.categoryId ?? existing.categoryId,
+      accountId: form.accountId,
+      categoryId: form.categoryId,
       comment: form.comment ?? existing.comment,
-      amount: form.amount ?? existing.amount,
-      timestamp: form.timestamp ?? existing.timestamp,
+      amount: form.amount,
+      timestamp: form.timestamp,
       auditInfoTime: AuditInfoTime(
         createdAt: existing.auditInfoTime.createdAt,
         updatedAt: DateTime.now(),

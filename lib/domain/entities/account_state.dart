@@ -11,11 +11,4 @@ class AccountState {
     required this.moneyDetails,
   });
 
-  AccountState copyWith({int? id, String? name, MoneyDetails? moneyDetails}) {
-    return AccountState(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      moneyDetails: moneyDetails ?? this.moneyDetails,
-    );
-  }
 }

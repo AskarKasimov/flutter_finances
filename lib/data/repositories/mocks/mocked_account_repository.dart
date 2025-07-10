@@ -20,32 +20,6 @@ class MockedAccountRepository implements AccountRepository {
     ),
   ];
 
-  int _nextId() {
-    final usedIds = _accounts.map((a) => a.id).toSet();
-    int id = 1;
-    while (usedIds.contains(id)) {
-      id++;
-    }
-    return id;
-  }
-
-  @override
-  Future<Account> createAccount(AccountForm form) async {
-    final account = Account(
-      id: _nextId(),
-      userId: 1,
-      name: form.name ?? 'Mocked Account',
-      moneyDetails:
-          form.moneyDetails ?? MoneyDetails(balance: 0, currency: '₽'),
-      auditInfoTime: AuditInfoTime(
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      ),
-    );
-    _accounts.add(account);
-    return account;
-  }
-
   @override
   Future<AccountResponse> getAccountById(int id) async {
     final account = _accounts.where((a) => a.id == id).firstOrNull;
@@ -77,7 +51,7 @@ class MockedAccountRepository implements AccountRepository {
     final updated = Account(
       id: id,
       userId: _accounts[index].userId,
-      name: form.name ?? _accounts[index].name,
+      name: form.name,
       moneyDetails: form.moneyDetails ?? _accounts[index].moneyDetails,
       auditInfoTime: AuditInfoTime(
         createdAt: _accounts[index].auditInfoTime.createdAt,
