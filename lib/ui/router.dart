@@ -18,7 +18,7 @@ import 'package:flutter_finances/ui/tabs/account/account_screen.dart';
 import 'package:flutter_finances/ui/tabs/items_screen.dart';
 import 'package:flutter_finances/ui/tabs/settings_screen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transaction_edit_screen.dart';
-import 'package:flutter_finances/ui/tabs/transactions/transactions_analysis.dart';
+import 'package:flutter_finances/ui/tabs/transactions/analysis/transactions_analysis.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_history_screen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_screen.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
