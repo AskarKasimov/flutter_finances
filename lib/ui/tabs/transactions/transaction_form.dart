@@ -40,9 +40,6 @@ class _TransactionFormState extends State<TransactionForm> {
 
   @override
   Widget build(BuildContext context) {
-    final locale = Localizations.localeOf(context);
-    final decimalSeparator = getDecimalSeparator(locale);
-
     return BlocBuilder<TransactionCreationBloc, TransactionCreationState>(
       builder: (context, state) {
         if (state is! TransactionDataState) {
@@ -130,7 +127,9 @@ class _TransactionFormState extends State<TransactionForm> {
               ),
               onTap: () {
                 final controller = TextEditingController(
-                  text: state.amount == 0 ? '' : state.amount.toString(),
+                  text: state.amount == 0
+                      ? ''
+                      : formatCurrency(value: state.amount, currency: null),
                 );
                 showDialog(
                   context: context,
@@ -141,7 +140,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       keyboardType: TextInputType.number,
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
-                          RegExp('^\\d*[$decimalSeparator]?\\d{0,2}'),
+                          RegExp('^\\d*,?\\d{0,2}'),
                         ),
                       ],
                     ),
@@ -276,7 +275,6 @@ class _TransactionFormState extends State<TransactionForm> {
             isLoading: false,
             error: message,
           ),
-          _ => (items: [], isLoading: true, error: null),
         };
       },
       itemBuilder: (ctx, account) => ListTile(

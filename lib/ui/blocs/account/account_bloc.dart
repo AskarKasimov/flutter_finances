@@ -13,7 +13,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountBlocState> {
   AccountBloc({
     required this.getAccountByIdUseCase,
     required this.updateAccountUseCase,
-  }) : super(AccountBlocInitial()) {
+  }) : super(AccountBlocLoading()) {
     on<AccountEvent>((event, emit) async {
       switch (event) {
         case LoadAccount():

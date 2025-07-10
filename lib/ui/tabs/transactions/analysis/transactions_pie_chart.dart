@@ -44,7 +44,10 @@ class _TransactionsPieChartSectionState
             final sortedEntries = sumsByCategory.entries.toList()
               ..sort((a, b) => a.value.compareTo(b.value));
 
-            final top3Ids = sortedEntries.take(3).map((e) => e.key).toSet();
+            final top3Ids = sortedEntries.reversed
+                .take(3)
+                .map((e) => e.key)
+                .toSet();
 
             final entries = sortedEntries.map((entry) {
               final category = catState.categories.firstWhere(
@@ -67,7 +70,7 @@ class _TransactionsPieChartSectionState
                           color: color,
                           percentage: top3Ids.contains(entry.key)
                               ? null
-                              : '${(percent * 100).toStringAsFixed(0)}%',
+                              : '${(percent * 100).toStringAsFixed(2)}%',
                         )
                       : null,
                   badgePositionPercentageOffset: 1.3,
@@ -78,7 +81,7 @@ class _TransactionsPieChartSectionState
               );
             }).toList();
 
-            final top3 = entries.take(3).toList();
+            final top3 = entries.reversed.take(3).toList();
 
             return AspectRatio(
               aspectRatio: 1.3,
@@ -168,7 +171,7 @@ class _TopCategories extends StatelessWidget {
                   Icon(Icons.circle, size: 10, color: e.color),
                   const SizedBox(width: 4),
                   SizedBox(
-                    width: 130, // можно адаптировать
+                    width: 140,
                     child: Text(
                       e.legendText,
                       style: Theme.of(context).textTheme.bodySmall,

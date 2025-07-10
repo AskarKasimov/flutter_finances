@@ -13,10 +13,10 @@ import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transaction_form.dart';
 
-class TransactionCreationSheet extends StatelessWidget {
+class _TransactionCreationSheet extends StatelessWidget {
   final bool isIncome;
 
-  const TransactionCreationSheet({super.key, required this.isIncome});
+  const _TransactionCreationSheet({required this.isIncome});
 
   void _onSubmit(BuildContext context) {
     final bloc = context.read<TransactionCreationBloc>();
@@ -136,7 +136,7 @@ void showTransactionCreationSheet({
         updateTransactionUseCase: context.read<UpdateTransactionUseCase>(),
         createTransactionUseCase: context.read<CreateTransactionUseCase>(),
       ),
-      child: TransactionCreationSheet(isIncome: isIncome),
+      child: _TransactionCreationSheet(isIncome: isIncome),
     ),
   );
 }

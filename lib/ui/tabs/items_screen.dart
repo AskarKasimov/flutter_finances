@@ -42,9 +42,7 @@ class _ItemsScreen extends State<ItemsScreen> {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color:
-                          Theme.of(context).inputDecorationTheme.fillColor ??
-                          Colors.grey[200],
+                      color: Theme.of(context).inputDecorationTheme.fillColor,
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 18),
                     child: TextField(
@@ -63,6 +61,7 @@ class _ItemsScreen extends State<ItemsScreen> {
                       },
                     ),
                   ),
+                  Divider(height: 1, color: Theme.of(context).dividerColor),
                   Expanded(
                     child: ListView.builder(
                       physics: const AlwaysScrollableScrollPhysics(),

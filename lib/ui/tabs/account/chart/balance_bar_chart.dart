@@ -64,7 +64,7 @@ class BalanceBarChart extends StatelessWidget {
                       getTooltipItem: (group, groupIndex, rod, rodIndex) {
                         final value = sortedEntries[group.x].value;
                         return BarTooltipItem(
-                          '${value.toString()} $currency',
+                          formatCurrency(value: value, currency: currency),
                           const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -84,7 +84,7 @@ class BalanceBarChart extends StatelessWidget {
                         getTitlesWidget: (value, meta) {
                           if (value % 10 != 0) return const SizedBox.shrink();
                           return Text(
-                            formatNumber(value),
+                            formatNumber(value: value),
                             style: Theme.of(context).textTheme.bodySmall,
                           );
                         },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
 import 'package:flutter_finances/ui/blocs/account/account_state.dart';
+import 'package:flutter_finances/utils/number_utils.dart';
 import 'package:go_router/go_router.dart';
 
 class AccountBalanceTile extends StatelessWidget {
@@ -38,7 +39,7 @@ class AccountBalanceTile extends StatelessWidget {
                   final currency = state.account.moneyDetails.currency;
                   return Row(
                     children: [
-                      Text('${balance.toStringAsFixed(0)} $currency'),
+                      Text(formatCurrency(value: balance, currency: currency)),
                       const SizedBox(width: 16),
                       const Icon(Icons.arrow_forward_ios_outlined, size: 16),
                     ],

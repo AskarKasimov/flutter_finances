@@ -1,15 +1,4 @@
-import 'dart:ui';
-
-String getDecimalSeparator(Locale locale) {
-  // простейшая проверка: если язык русский, белорусский — запятая, иначе точка
-  const commaLocales = ['ru', 'by'];
-  if (commaLocales.contains(locale.languageCode)) {
-    return ',';
-  }
-  return '.';
-}
-
-String formatNumber(double value) {
+String formatNumber({required double value}) {
   String formatDouble(double val) {
     // если целое число — без десятичных, иначе с одним знаком
     if (val % 1 == 0) {
@@ -26,4 +15,26 @@ String formatNumber(double value) {
   } else {
     return value.toInt().toString();
   }
+}
+
+String formatCurrency({required double value, required String? currency}) {
+  final intPart = value.truncate();
+  final fracPart = value.remainder(1);
+
+  final intStr = intPart.toString().replaceAllMapped(
+    RegExp(r'\B(?=(\d{3})+(?!\d))'),
+    (match) => ' ',
+  );
+
+  String result = intStr;
+  if (fracPart != 0) {
+    final fracStr = value.toStringAsFixed(2).split('.')[1];
+    result += ',$fracStr';
+  }
+
+  if (currency != null && currency.isNotEmpty) {
+    result += ' $currency';
+  }
+
+  return result;
 }

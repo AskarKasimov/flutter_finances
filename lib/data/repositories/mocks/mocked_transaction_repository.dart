@@ -10,32 +10,9 @@ class MockedTransactionRepository implements TransactionRepository {
       id: 1,
       accountId: 1,
       categoryId: 1,
-      comment: 'Магнит',
-      amount: 870.50,
-      timestamp: DateTime.now().subtract(const Duration(days: 1, hours: 2)),
-      auditInfoTime: AuditInfoTime(
-        createdAt: DateTime.now().subtract(const Duration(days: 1, hours: 2)),
-        updatedAt: DateTime.now().subtract(const Duration(days: 1, hours: 2)),
-      ),
-    ),
-    Transaction(
-      id: 2,
-      accountId: 1,
-      categoryId: 2,
-      comment: 'Аванс',
-      amount: 25000.00,
-      timestamp: DateTime.now().subtract(const Duration(days: 3)),
-      auditInfoTime: AuditInfoTime(
-        createdAt: DateTime.now().subtract(const Duration(days: 3)),
-        updatedAt: DateTime.now().subtract(const Duration(days: 3)),
-      ),
-    ),
-    Transaction(
-      id: 3,
-      accountId: 1,
-      categoryId: 3,
-      comment: 'Пиццерия',
-      amount: 1250.00,
+      // Зарплата
+      comment: 'Зарплата за июнь',
+      amount: 120000,
       timestamp: DateTime.now().subtract(const Duration(days: 2)),
       auditInfoTime: AuditInfoTime(
         createdAt: DateTime.now().subtract(const Duration(days: 2)),
@@ -43,11 +20,12 @@ class MockedTransactionRepository implements TransactionRepository {
       ),
     ),
     Transaction(
-      id: 4,
+      id: 2,
       accountId: 1,
-      categoryId: 4,
-      comment: 'Steam',
-      amount: 1900.99,
+      categoryId: 2,
+      // Подработка
+      comment: 'Фриланс проект',
+      amount: 25000,
       timestamp: DateTime.now().subtract(const Duration(days: 5)),
       auditInfoTime: AuditInfoTime(
         createdAt: DateTime.now().subtract(const Duration(days: 5)),
@@ -55,15 +33,120 @@ class MockedTransactionRepository implements TransactionRepository {
       ),
     ),
     Transaction(
+      id: 3,
+      accountId: 1,
+      categoryId: 3,
+      // Подарок
+      comment: 'На день рождения',
+      amount: 7000,
+      timestamp: DateTime.now().subtract(const Duration(days: 10)),
+      auditInfoTime: AuditInfoTime(
+        createdAt: DateTime.now().subtract(const Duration(days: 10)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 10)),
+      ),
+    ),
+    Transaction(
+      id: 4,
+      accountId: 1,
+      categoryId: 4,
+      // Пенсия
+      comment: 'Пенсия за июль',
+      amount: 18000,
+      timestamp: DateTime.now().subtract(const Duration(days: 1)),
+      auditInfoTime: AuditInfoTime(
+        createdAt: DateTime.now().subtract(const Duration(days: 1)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 1)),
+      ),
+    ),
+    Transaction(
       id: 5,
       accountId: 1,
       categoryId: 5,
-      comment: 'От мамы',
-      amount: 3000.00,
-      timestamp: DateTime.now().subtract(const Duration(days: 7)),
+      // Аренда
+      comment: 'Аренда квартиры',
+      amount: 35000,
+      timestamp: DateTime.now().subtract(const Duration(days: 1)),
       auditInfoTime: AuditInfoTime(
-        createdAt: DateTime.now().subtract(const Duration(days: 7)),
-        updatedAt: DateTime.now().subtract(const Duration(days: 7)),
+        createdAt: DateTime.now().subtract(const Duration(days: 1)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 1)),
+      ),
+    ),
+    Transaction(
+      id: 6,
+      accountId: 1,
+      categoryId: 6,
+      // Одежда
+      comment: 'Куртка',
+      amount: 7000,
+      timestamp: DateTime.now().subtract(const Duration(days: 3)),
+      auditInfoTime: AuditInfoTime(
+        createdAt: DateTime.now().subtract(const Duration(days: 3)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 3)),
+      ),
+    ),
+    Transaction(
+      id: 7,
+      accountId: 1,
+      categoryId: 7,
+      // На собачку
+      comment: 'Ветклиника и корм',
+      amount: 3000,
+      timestamp: DateTime.now().subtract(const Duration(days: 6)),
+      auditInfoTime: AuditInfoTime(
+        createdAt: DateTime.now().subtract(const Duration(days: 6)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 6)),
+      ),
+    ),
+    Transaction(
+      id: 8,
+      accountId: 1,
+      categoryId: 8,
+      // Ремонт
+      comment: 'Кран и плитка',
+      amount: 15000,
+      timestamp: DateTime.now().subtract(const Duration(days: 8)),
+      auditInfoTime: AuditInfoTime(
+        createdAt: DateTime.now().subtract(const Duration(days: 8)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 8)),
+      ),
+    ),
+    Transaction(
+      id: 9,
+      accountId: 1,
+      categoryId: 9,
+      // Продукты
+      comment: 'Магнит + Пятерочка',
+      amount: 870.50,
+      timestamp: DateTime.now().subtract(const Duration(days: 2, hours: 3)),
+      auditInfoTime: AuditInfoTime(
+        createdAt: DateTime.now().subtract(const Duration(days: 2, hours: 3)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 2, hours: 3)),
+      ),
+    ),
+    Transaction(
+      id: 10,
+      accountId: 1,
+      categoryId: 10,
+      // Спортзал
+      comment: 'Абонемент на месяц',
+      amount: 2200,
+      timestamp: DateTime.now().subtract(const Duration(days: 4)),
+      auditInfoTime: AuditInfoTime(
+        createdAt: DateTime.now().subtract(const Duration(days: 4)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 4)),
+      ),
+    ),
+    Transaction(
+      id: 11,
+      accountId: 1,
+      categoryId: 11,
+      // Медицина
+      comment: 'Аптека',
+      amount: 900,
+      timestamp: DateTime.now().subtract(const Duration(days: 9)),
+      auditInfoTime: AuditInfoTime(
+        createdAt: DateTime.now().subtract(const Duration(days: 9)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 9)),
       ),
     ),
   ];
@@ -92,6 +175,9 @@ class MockedTransactionRepository implements TransactionRepository {
       ),
     );
     _transactions.add(transaction);
+    await Future.delayed(
+      const Duration(milliseconds: 1000),
+    ); // Simulate network delay
     return transaction;
   }
 

@@ -2,8 +2,6 @@ import 'package:flutter_finances/domain/entities/account_state.dart';
 
 sealed class AccountBlocState {}
 
-class AccountBlocInitial extends AccountBlocState {}
-
 class AccountBlocLoading extends AccountBlocState {}
 
 class AccountBlocLoaded extends AccountBlocState {

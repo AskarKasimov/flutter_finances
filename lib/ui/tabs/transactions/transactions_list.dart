@@ -4,6 +4,7 @@ import 'package:flutter_finances/domain/entities/transaction.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
+import 'package:flutter_finances/utils/number_utils.dart';
 
 enum SortMode {
   dateDesc('Сначала новые'),
@@ -123,7 +124,7 @@ class _TransactionsListState extends State<TransactionsList> {
             children: [
               const Text('Всего'),
               Text(
-                '$totalSum ${widget.currency}',
+                formatCurrency(value: totalSum, currency: widget.currency),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
@@ -197,7 +198,10 @@ class _TransactionsListState extends State<TransactionsList> {
                                             CrossAxisAlignment.end,
                                         children: [
                                           Text(
-                                            '${item.amount.toStringAsFixed(2)} ${widget.currency}',
+                                            formatCurrency(
+                                              value: item.amount,
+                                              currency: widget.currency,
+                                            ),
                                             style: Theme.of(
                                               context,
                                             ).textTheme.bodyMedium,
@@ -211,7 +215,10 @@ class _TransactionsListState extends State<TransactionsList> {
                                         ],
                                       )
                                     : Text(
-                                        '${item.amount.toStringAsFixed(2)} ${widget.currency}',
+                                        formatCurrency(
+                                          value: item.amount,
+                                          currency: widget.currency,
+                                        ),
                                         style: Theme.of(
                                           context,
                                         ).textTheme.bodyMedium,
