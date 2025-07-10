@@ -1,4 +1,4 @@
-import 'package:flutter_finances/data/models/transaction_request/transaction_request.dart';
+import 'package:flutter_finances/data/remote/models/transaction_request/transaction_request.dart';
 import 'package:flutter_finances/domain/entities/forms/transaction_form.dart';
 
 extension TransactionFormMapper on TransactionForm {
@@ -6,7 +6,7 @@ extension TransactionFormMapper on TransactionForm {
     return TransactionRequestDTO(
       accountId: accountId,
       categoryId: categoryId,
-      amount: amount?.toString(),
+      amount: amount.toString(),
       transactionDate: timestamp.toString(),
       comment: comment,
     );

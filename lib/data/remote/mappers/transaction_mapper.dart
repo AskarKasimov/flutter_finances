@@ -1,7 +1,7 @@
-import 'package:flutter_finances/data/mappers/types/try_parse_datetime.dart';
-import 'package:flutter_finances/data/mappers/types/try_parse_double.dart';
-import 'package:flutter_finances/data/models/transaction/transaction.dart';
-import 'package:flutter_finances/data/models/transaction_response/transaction_response.dart';
+import 'package:flutter_finances/data/remote/mappers/types/try_parse_datetime.dart';
+import 'package:flutter_finances/data/remote/mappers/types/try_parse_double.dart';
+import 'package:flutter_finances/data/remote/models/transaction/transaction.dart';
+import 'package:flutter_finances/data/remote/models/transaction_response/transaction_response.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
 import 'package:flutter_finances/domain/entities/value_objects/time_interval.dart';
 

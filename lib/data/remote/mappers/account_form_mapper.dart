@@ -1,4 +1,4 @@
-import 'package:flutter_finances/data/models/account_create/account_request.dart';
+import 'package:flutter_finances/data/remote/models/account_request/account_request.dart';
 import 'package:flutter_finances/domain/entities/forms/account_form.dart';
 
 extension AccountFormCreateMapper on AccountForm {

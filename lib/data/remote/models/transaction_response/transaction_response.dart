@@ -1,5 +1,5 @@
-import 'package:flutter_finances/data/models/account_brief/account_brief.dart';
-import 'package:flutter_finances/data/models/category/category.dart';
+import 'package:flutter_finances/data/remote/models/account_brief/account_brief.dart';
+import 'package:flutter_finances/data/remote/models/category/category.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'transaction_response.freezed.dart';
