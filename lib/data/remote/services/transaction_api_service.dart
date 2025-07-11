@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_finances/data/remote/api_client.dart';
+import 'package:flutter_finances/data/remote/json_deserializer.dart';
 import 'package:flutter_finances/data/remote/models/transaction/transaction.dart';
 import 'package:flutter_finances/data/remote/models/transaction_request/transaction_request.dart';
 import 'package:flutter_finances/data/remote/models/transaction_response/transaction_response.dart';
@@ -9,8 +10,9 @@ class TransactionApiService {
 
   Future<TransactionResponseDTO> getTransactionById(int id) async {
     final response = await _dio.get('/transactions/$id');
-    return TransactionResponseDTO.fromJson(
+    return deserializeInIsolate(
       response.data as Map<String, dynamic>,
+      TransactionResponseDTO.fromJson,
     );
   }
 
@@ -27,19 +29,20 @@ class TransactionApiService {
       },
     );
     final List data = response.data as List;
-    return data
-        .map(
-          (json) =>
-              TransactionResponseDTO.fromJson(json as Map<String, dynamic>),
-        )
-        .toList();
+    return deserializeListInIsolate(
+      data.cast<Map<String, dynamic>>(),
+      TransactionResponseDTO.fromJson,
+    );
   }
 
   Future<TransactionDTO> createTransaction(
     TransactionRequestDTO request,
   ) async {
     final response = await _dio.post('/transactions', data: request.toJson());
-    return TransactionDTO.fromJson(response.data as Map<String, dynamic>);
+    return deserializeInIsolate(
+      response.data as Map<String, dynamic>,
+      TransactionDTO.fromJson,
+    );
   }
 
   Future<TransactionResponseDTO> updateTransaction(
@@ -50,8 +53,9 @@ class TransactionApiService {
       '/transactions/$id',
       data: request.toJson(),
     );
-    return TransactionResponseDTO.fromJson(
+    return deserializeInIsolate(
       response.data as Map<String, dynamic>,
+      TransactionResponseDTO.fromJson,
     );
   }
 

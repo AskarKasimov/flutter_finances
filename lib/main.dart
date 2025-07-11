@@ -16,8 +16,11 @@ import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
 import 'package:flutter_finances/ui/router.dart';
 import 'package:flutter_finances/ui/theme.dart';
+import 'package:worker_manager/worker_manager.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await workerManager.init();
   runApp(const MyApp());
 }
 
