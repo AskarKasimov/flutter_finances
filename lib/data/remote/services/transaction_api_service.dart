@@ -25,8 +25,8 @@ class TransactionApiService {
     final response = await _dio.get(
       '/transactions/account/$accountId/period',
       queryParameters: {
-        'startDate': from.toIso8601String(),
-        'endDate': to.toIso8601String(),
+        'startDate': from.toIso8601String().split('T').first,
+        'endDate': to.toIso8601String().split('T').first,
       },
     );
     final List data = response.data as List;

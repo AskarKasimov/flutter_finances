@@ -13,12 +13,13 @@ class GetTransactionsByPeriodUseCase {
   });
 
   Future<List<Transaction>> call({
+    required int userId,
     required DateTime startDate,
     required DateTime endDate,
     required bool? isIncome,
   }) async {
     final transactions = await transactionRepository.getTransactionsByPeriod(
-      1,
+      userId,
       startDate,
       endDate,
     );

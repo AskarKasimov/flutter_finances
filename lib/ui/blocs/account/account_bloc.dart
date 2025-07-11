@@ -28,7 +28,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountBlocState> {
       }
     });
 
-    add(LoadAccount(1)); // загрузка дефолтного аккаунта
+    add(LoadAccount(154)); // загрузка дефолтного аккаунта
   }
 
   Future<void> _onLoadAccount(
