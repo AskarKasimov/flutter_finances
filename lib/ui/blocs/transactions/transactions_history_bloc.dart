@@ -59,7 +59,7 @@ class TransactionHistoryBloc
     if (state is! TransactionHistoryLoaded) return;
     final currentState = state as TransactionHistoryLoaded;
     final updatedList = currentState.transactions
-        .where((transaction) => transaction.id != event.transaction.id)
+        .where((transaction) => transaction.id != event.transactionId)
         .toList();
 
     emit(

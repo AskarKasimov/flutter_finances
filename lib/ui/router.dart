@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_finances/data/repositories/mocks/mocked_category_repository.dart';
-import 'package:flutter_finances/data/repositories/mocks/mocked_transaction_repository.dart';
+import 'package:flutter_finances/domain/repositories/category_repository.dart';
+import 'package:flutter_finances/domain/repositories/transaction_repository.dart';
 import 'package:flutter_finances/domain/usecases/create_transaction_usecase.dart';
 import 'package:flutter_finances/domain/usecases/delete_transaction_usecase.dart';
 import 'package:flutter_finances/domain/usecases/get_all_accounts_usecase.dart';
@@ -17,8 +17,8 @@ import 'package:flutter_finances/ui/tabs/account/account_edit_name_screen.dart';
 import 'package:flutter_finances/ui/tabs/account/account_screen.dart';
 import 'package:flutter_finances/ui/tabs/items_screen.dart';
 import 'package:flutter_finances/ui/tabs/settings_screen.dart';
-import 'package:flutter_finances/ui/tabs/transactions/transaction_edit_screen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/analysis/transactions_analysis.dart';
+import 'package:flutter_finances/ui/tabs/transactions/transaction_edit_screen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_history_screen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_screen.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
@@ -38,8 +38,8 @@ TransactionHistoryBloc _makeTransactionHistoryBloc({
 }) {
   return TransactionHistoryBloc(
     getTransactions: GetTransactionsByPeriodUseCase(
-      transactionRepository: context.read<MockedTransactionRepository>(),
-      categoryRepository: context.read<MockedCategoryRepository>(),
+      transactionRepository: context.read<TransactionRepository>(),
+      categoryRepository: context.read<CategoryRepository>(),
     ),
     initialStartDate: initialStartDate,
     initialEndDate: initialEndDate,

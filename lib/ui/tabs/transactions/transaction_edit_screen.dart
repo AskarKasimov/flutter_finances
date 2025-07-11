@@ -56,7 +56,7 @@ class TransactionEditScreen extends StatelessWidget {
             context.pop();
             break;
           case TransactionDeletedSuccessfully():
-            historyBloc.add(DeleteTransaction(state.deletedTransaction));
+            historyBloc.add(DeleteTransaction(state.deletedTransactionId));
             context.pop();
             break;
           case TransactionError(:final message):

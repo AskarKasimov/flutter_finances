@@ -8,11 +8,11 @@ abstract interface class TransactionRepository {
 
   Future<Transaction> updateTransaction(int id, TransactionForm transaction);
 
-  Future<Transaction> deleteTransaction(int id);
+  Future<void> deleteTransaction(int id);
 
   Future<List<Transaction>> getTransactionsByPeriod(
     int accountId,
-    DateTime? startDate,
-    DateTime? endDate,
+    DateTime startDate,
+    DateTime endDate,
   );
 }

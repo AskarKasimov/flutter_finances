@@ -27,9 +27,9 @@ class UpdateTransaction extends TransactionHistoryEvent {
 }
 
 class DeleteTransaction extends TransactionHistoryEvent {
-  final Transaction transaction;
+  final int transactionId;
 
-  DeleteTransaction(this.transaction);
+  DeleteTransaction(this.transactionId);
 }
 
 class ChangeTransactionFilter extends TransactionHistoryEvent {

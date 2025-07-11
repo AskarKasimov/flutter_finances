@@ -1,12 +1,13 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_finances/data/remote/api_client.dart';
 import 'package:flutter_finances/data/remote/json_deserializer.dart';
 import 'package:flutter_finances/data/remote/models/transaction/transaction.dart';
 import 'package:flutter_finances/data/remote/models/transaction_request/transaction_request.dart';
 import 'package:flutter_finances/data/remote/models/transaction_response/transaction_response.dart';
 
 class TransactionApiService {
-  final Dio _dio = ApiClient().dio;
+  final Dio _dio;
+
+  TransactionApiService({required Dio dio}) : _dio = dio;
 
   Future<TransactionResponseDTO> getTransactionById(int id) async {
     final response = await _dio.get('/transactions/$id');

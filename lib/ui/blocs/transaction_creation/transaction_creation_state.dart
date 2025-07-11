@@ -70,9 +70,9 @@ class TransactionCreatedSuccessfully extends TransactionCreationState {
 
 class TransactionDeletedSuccessfully extends TransactionCreationState {
   final TransactionDataState data;
-  final Transaction deletedTransaction;
+  final int deletedTransactionId;
 
-  TransactionDeletedSuccessfully(this.deletedTransaction, this.data);
+  TransactionDeletedSuccessfully(this.deletedTransactionId, this.data);
 }
 
 class TransactionUpdatedSuccessfully extends TransactionCreationState {

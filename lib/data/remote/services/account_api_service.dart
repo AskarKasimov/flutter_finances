@@ -1,11 +1,13 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_finances/data/remote/api_client.dart';
 import 'package:flutter_finances/data/remote/json_deserializer.dart';
 import 'package:flutter_finances/data/remote/models/account/account.dart';
 import 'package:flutter_finances/data/remote/models/account_request/account_request.dart';
+import 'package:flutter_finances/data/remote/models/account_response/account_response.dart';
 
 class AccountApiService {
-  final Dio _dio = ApiClient().dio;
+  final Dio _dio;
+
+  AccountApiService({required Dio dio}) : _dio = dio;
 
   Future<List<AccountDTO>> fetchAccounts() async {
     final response = await _dio.get('/accounts');
@@ -16,11 +18,11 @@ class AccountApiService {
     );
   }
 
-  Future<AccountDTO> getAccountById(int id) async {
+  Future<AccountResponseDTO> getAccountById(int id) async {
     final response = await _dio.get('/accounts/$id');
     return deserializeInIsolate(
       response.data as Map<String, dynamic>,
-      AccountDTO.fromJson,
+      AccountResponseDTO.fromJson,
     );
   }
 

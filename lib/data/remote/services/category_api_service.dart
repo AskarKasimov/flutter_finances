@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_finances/data/remote/api_client.dart';
 import 'package:flutter_finances/data/remote/json_deserializer.dart';
 import 'package:flutter_finances/data/remote/models/category/category.dart';
 
 class CategoryApiService {
-  final Dio _dio = ApiClient().dio;
+  final Dio _dio;
+
+  CategoryApiService({required Dio dio}) : _dio = dio;
 
   Future<List<CategoryDTO>> fetchCategories() async {
     final response = await _dio.get('/categories');
