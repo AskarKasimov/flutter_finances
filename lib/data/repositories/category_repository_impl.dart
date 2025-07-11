@@ -16,7 +16,10 @@ class CategoryRepositoryImpl implements CategoryRepository {
 
   @override
   Future<List<Category>> getCategoriesByIsIncome(bool isIncome) async {
-    final dtos = await _api.fetchCategoriesByIsIncome(isIncome);
-    return dtos.map((dto) => dto.toDomain()).toList();
+    final dtos = await _api.fetchCategories();
+    final filteredByIsIncome = dtos.where(
+      (category) => category.isIncome == isIncome,
+    );
+    return filteredByIsIncome.map((dto) => dto.toDomain()).toList();
   }
 }

@@ -22,18 +22,25 @@ class TransactionApiService {
     DateTime from,
     DateTime to,
   ) async {
-    final response = await _dio.get(
-      '/transactions/account/$accountId/period',
-      queryParameters: {
-        'startDate': from.toIso8601String().split('T').first,
-        'endDate': to.toIso8601String().split('T').first,
-      },
-    );
-    final List data = response.data as List;
-    return deserializeListInIsolate(
-      data.cast<Map<String, dynamic>>(),
-      TransactionResponseDTO.fromJson,
-    );
+    try {
+      final response = await _dio.get(
+        '/transactions/account/$accountId/period',
+        queryParameters: {
+          'startDate': from.toIso8601String().split('T').first,
+          'endDate': to.toIso8601String().split('T').first,
+        },
+      );
+      final List data = response.data as List;
+      return deserializeListInIsolate(
+        data.cast<Map<String, dynamic>>(),
+        TransactionResponseDTO.fromJson,
+      );
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        return [];
+      }
+      rethrow;
+    }
   }
 
   Future<TransactionDTO> createTransaction(

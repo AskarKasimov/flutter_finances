@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/gen/assets.gen.dart';
 import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
+import 'package:flutter_finances/ui/blocs/account/account_event.dart';
 import 'package:flutter_finances/ui/blocs/account/account_state.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
@@ -52,6 +53,7 @@ class _AccountScreenState extends State<AccountScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
+          context.read<AccountBloc>().add(LoadAccount(154));
           context.read<TransactionHistoryBloc>().add(
             LoadTransactionHistory(
               startDate: startThisMonth(),
@@ -68,7 +70,11 @@ class _AccountScreenState extends State<AccountScreen> {
                 builder: (categoriesContext, categoriesState) {
                   if (accountState is AccountBlocLoading ||
                       categoriesState is CategoryLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return Container(
+                      height: MediaQuery.of(context).size.height,
+                      alignment: Alignment.center,
+                      child: const CircularProgressIndicator(),
+                    );
                   }
                   if (accountState is AccountBlocError) {
                     return Center(

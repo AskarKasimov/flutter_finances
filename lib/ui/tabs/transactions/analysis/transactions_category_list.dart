@@ -23,10 +23,8 @@ class TransactionsCategoryList extends StatelessWidget {
     final Map<int, List<Transaction>> transactionsByCategory = {};
     for (final tx in transactions) {
       final categoryId = tx.categoryId;
-      if (categoryId != null) {
-        transactionsByCategory.putIfAbsent(categoryId, () => []);
-        transactionsByCategory[categoryId]!.add(tx);
-      }
+      transactionsByCategory.putIfAbsent(categoryId, () => []);
+      transactionsByCategory[categoryId]!.add(tx);
     }
 
     final entries = transactionsByCategory.entries.toList()

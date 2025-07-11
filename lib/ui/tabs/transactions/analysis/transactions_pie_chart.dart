@@ -32,8 +32,8 @@ class _TransactionsPieChartSectionState
 
     final Map<int, double> sumsByCategory = {};
     for (final tx in widget.transactions) {
-      sumsByCategory[tx.categoryId!] =
-          (sumsByCategory[tx.categoryId!] ?? 0) + tx.amount;
+      sumsByCategory[tx.categoryId] =
+          (sumsByCategory[tx.categoryId] ?? 0) + tx.amount;
     }
 
     final sortedEntries = sumsByCategory.entries.toList()
