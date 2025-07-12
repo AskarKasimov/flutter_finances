@@ -5,8 +5,8 @@ extension AccountFormCreateMapper on AccountForm {
   AccountRequestDTO toDTO() {
     return AccountRequestDTO(
       name: name,
-      balance: moneyDetails?.balance.toString(),
-      currency: moneyDetails?.currency,
+      balance: moneyDetails.balance.toString(),
+      currency: moneyDetails.currency,
     );
   }
 }

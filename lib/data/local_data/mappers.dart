@@ -1,31 +1,27 @@
 import 'package:drift/drift.dart';
 import 'package:flutter_finances/data/local_data/database/app_database.dart'
     as db;
-import 'package:flutter_finances/domain/entities/account.dart';
+import 'package:flutter_finances/domain/entities/account_response.dart';
 import 'package:flutter_finances/domain/entities/category.dart';
+import 'package:flutter_finances/domain/entities/forms/account_form.dart';
+import 'package:flutter_finances/domain/entities/forms/transaction_form.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
 import 'package:flutter_finances/domain/entities/value_objects/money_details.dart';
-import 'package:flutter_finances/domain/entities/value_objects/time_interval.dart';
 
 extension AccountDataMapper on db.Account {
-  Account toDomain() => Account(
+  AccountResponse toDomain() => AccountResponse(
     id: id,
-    userId: userId,
     name: name,
     moneyDetails: MoneyDetails(balance: balance, currency: currency),
-    auditInfoTime: AuditInfoTime(createdAt: createdAt, updatedAt: updatedAt),
   );
 }
 
-extension AccountMapper on Account {
-  db.Account toCompanion() => db.Account(
-    id: id,
-    userId: userId,
-    name: name,
-    balance: moneyDetails.balance,
-    currency: moneyDetails.currency,
-    createdAt: auditInfoTime.createdAt,
-    updatedAt: auditInfoTime.updatedAt,
+extension AccountMapper on AccountResponse {
+  db.AccountsCompanion toCompanion() => db.AccountsCompanion(
+    id: Value(id),
+    name: Value(name),
+    balance: Value(moneyDetails.balance),
+    currency: Value(moneyDetails.currency),
   );
 }
 
@@ -35,10 +31,11 @@ extension CategoryDataMapper on db.Category {
 }
 
 extension CategoryMapper on Category {
-  db.CategoriesCompanion toCompanion() => db.CategoriesCompanion.insert(
-    name: name,
-    emoji: emoji,
-    isIncome: isIncome,
+  db.CategoriesCompanion toCompanion() => db.CategoriesCompanion(
+    id: Value(id),
+    name: Value(name),
+    emoji: Value(emoji),
+    isIncome: Value(isIncome),
   );
 }
 
@@ -50,18 +47,41 @@ extension TransactionDataMapper on db.Transaction {
     amount: amount,
     timestamp: timestamp,
     comment: comment,
-    auditInfoTime: AuditInfoTime(createdAt: createdAt, updatedAt: updatedAt),
   );
 }
 
 extension TransactionMapper on Transaction {
-  db.TransactionsCompanion toCompanion() => db.TransactionsCompanion.insert(
-    accountId: accountId,
-    categoryId: categoryId,
-    amount: amount,
-    timestamp: timestamp,
-    comment: Value(comment),
-    createdAt: auditInfoTime.createdAt,
-    updatedAt: auditInfoTime.updatedAt,
-  );
+  db.TransactionsCompanion toCompanion({bool forUpdate = false}) {
+    final companion = db.TransactionsCompanion(
+      id: forUpdate ? Value(id) : const Value.absent(),
+      accountId: Value(accountId),
+      categoryId: Value(categoryId),
+      amount: Value(amount),
+      timestamp: Value(timestamp),
+      comment: Value(comment),
+    );
+    return companion;
+  }
+}
+
+extension TransactionFormMapper on TransactionForm {
+  db.TransactionsCompanion toCompanion() {
+    return db.TransactionsCompanion(
+      accountId: Value(accountId),
+      categoryId: Value(categoryId),
+      amount: Value(amount),
+      timestamp: Value(timestamp),
+      comment: comment == null ? const Value.absent() : Value(comment!),
+    );
+  }
+}
+
+extension AccountFormExtension on AccountForm {
+  db.AccountsCompanion toCompanion({Value<int>? id}) {
+    return db.AccountsCompanion(
+      id: id ?? const Value.absent(),
+      name: Value(name),
+      currency: Value(moneyDetails.currency),
+    );
+  }
 }

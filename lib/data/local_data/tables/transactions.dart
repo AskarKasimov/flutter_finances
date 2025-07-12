@@ -12,8 +12,4 @@ class Transactions extends Table {
   DateTimeColumn get timestamp => dateTime()();
 
   TextColumn get comment => text().nullable()();
-
-  DateTimeColumn get createdAt => dateTime()();
-
-  DateTimeColumn get updatedAt => dateTime()();
 }

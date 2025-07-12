@@ -1,4 +1,3 @@
-import 'package:flutter_finances/domain/entities/category.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
 import 'package:flutter_finances/domain/repositories/category_repository.dart';
 import 'package:flutter_finances/domain/repositories/transaction_repository.dart';
@@ -23,12 +22,11 @@ class GetTransactionsByPeriodUseCase {
       startDate,
       endDate,
     );
-    final List<Category> categories;
-    if (isIncome != null) {
-      categories = await categoryRepository.getCategoriesByIsIncome(isIncome);
-    } else {
-      categories = await categoryRepository.getAllCategories();
-    }
+
+    final categories = (await categoryRepository.getAllCategories()).where(
+      (category) => category.isIncome == isIncome,
+    );
+
     final categoryIds = categories.map((c) => c.id).toSet();
 
     return transactions

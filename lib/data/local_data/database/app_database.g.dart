@@ -21,15 +21,6 @@ class $AccountsTable extends Accounts with TableInfo<$AccountsTable, Account> {
       'PRIMARY KEY AUTOINCREMENT',
     ),
   );
-  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
-  @override
-  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
-    'user_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -61,38 +52,8 @@ class $AccountsTable extends Accounts with TableInfo<$AccountsTable, Account> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _createdAtMeta = const VerificationMeta(
-    'createdAt',
-  );
   @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-    'created_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
-    'updatedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-    'updated_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    userId,
-    name,
-    balance,
-    currency,
-    createdAt,
-    updatedAt,
-  ];
+  List<GeneratedColumn> get $columns => [id, name, balance, currency];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -107,14 +68,6 @@ class $AccountsTable extends Accounts with TableInfo<$AccountsTable, Account> {
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('user_id')) {
-      context.handle(
-        _userIdMeta,
-        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_userIdMeta);
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -140,22 +93,6 @@ class $AccountsTable extends Accounts with TableInfo<$AccountsTable, Account> {
     } else if (isInserting) {
       context.missing(_currencyMeta);
     }
-    if (data.containsKey('created_at')) {
-      context.handle(
-        _createdAtMeta,
-        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_createdAtMeta);
-    }
-    if (data.containsKey('updated_at')) {
-      context.handle(
-        _updatedAtMeta,
-        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_updatedAtMeta);
-    }
     return context;
   }
 
@@ -169,10 +106,6 @@ class $AccountsTable extends Accounts with TableInfo<$AccountsTable, Account> {
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
-      userId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}user_id'],
-      )!,
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -185,14 +118,6 @@ class $AccountsTable extends Accounts with TableInfo<$AccountsTable, Account> {
         DriftSqlType.string,
         data['${effectivePrefix}currency'],
       )!,
-      createdAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}created_at'],
-      )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}updated_at'],
-      )!,
     );
   }
 
@@ -204,43 +129,31 @@ class $AccountsTable extends Accounts with TableInfo<$AccountsTable, Account> {
 
 class Account extends DataClass implements Insertable<Account> {
   final int id;
-  final int userId;
   final String name;
   final double balance;
   final String currency;
-  final DateTime createdAt;
-  final DateTime updatedAt;
   const Account({
     required this.id,
-    required this.userId,
     required this.name,
     required this.balance,
     required this.currency,
-    required this.createdAt,
-    required this.updatedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['user_id'] = Variable<int>(userId);
     map['name'] = Variable<String>(name);
     map['balance'] = Variable<double>(balance);
     map['currency'] = Variable<String>(currency);
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
   }
 
   AccountsCompanion toCompanion(bool nullToAbsent) {
     return AccountsCompanion(
       id: Value(id),
-      userId: Value(userId),
       name: Value(name),
       balance: Value(balance),
       currency: Value(currency),
-      createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
     );
   }
 
@@ -251,12 +164,9 @@ class Account extends DataClass implements Insertable<Account> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Account(
       id: serializer.fromJson<int>(json['id']),
-      userId: serializer.fromJson<int>(json['userId']),
       name: serializer.fromJson<String>(json['name']),
       balance: serializer.fromJson<double>(json['balance']),
       currency: serializer.fromJson<String>(json['currency']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
   @override
@@ -264,41 +174,29 @@ class Account extends DataClass implements Insertable<Account> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'userId': serializer.toJson<int>(userId),
       'name': serializer.toJson<String>(name),
       'balance': serializer.toJson<double>(balance),
       'currency': serializer.toJson<String>(currency),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
   }
 
   Account copyWith({
     int? id,
-    int? userId,
     String? name,
     double? balance,
     String? currency,
-    DateTime? createdAt,
-    DateTime? updatedAt,
   }) => Account(
     id: id ?? this.id,
-    userId: userId ?? this.userId,
     name: name ?? this.name,
     balance: balance ?? this.balance,
     currency: currency ?? this.currency,
-    createdAt: createdAt ?? this.createdAt,
-    updatedAt: updatedAt ?? this.updatedAt,
   );
   Account copyWithCompanion(AccountsCompanion data) {
     return Account(
       id: data.id.present ? data.id.value : this.id,
-      userId: data.userId.present ? data.userId.value : this.userId,
       name: data.name.present ? data.name.value : this.name,
       balance: data.balance.present ? data.balance.value : this.balance,
       currency: data.currency.present ? data.currency.value : this.currency,
-      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
 
@@ -306,100 +204,69 @@ class Account extends DataClass implements Insertable<Account> {
   String toString() {
     return (StringBuffer('Account(')
           ..write('id: $id, ')
-          ..write('userId: $userId, ')
           ..write('name: $name, ')
           ..write('balance: $balance, ')
-          ..write('currency: $currency, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('currency: $currency')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, userId, name, balance, currency, createdAt, updatedAt);
+  int get hashCode => Object.hash(id, name, balance, currency);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Account &&
           other.id == this.id &&
-          other.userId == this.userId &&
           other.name == this.name &&
           other.balance == this.balance &&
-          other.currency == this.currency &&
-          other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.currency == this.currency);
 }
 
 class AccountsCompanion extends UpdateCompanion<Account> {
   final Value<int> id;
-  final Value<int> userId;
   final Value<String> name;
   final Value<double> balance;
   final Value<String> currency;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
   const AccountsCompanion({
     this.id = const Value.absent(),
-    this.userId = const Value.absent(),
     this.name = const Value.absent(),
     this.balance = const Value.absent(),
     this.currency = const Value.absent(),
-    this.createdAt = const Value.absent(),
-    this.updatedAt = const Value.absent(),
   });
   AccountsCompanion.insert({
     this.id = const Value.absent(),
-    required int userId,
     required String name,
     required double balance,
     required String currency,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-  }) : userId = Value(userId),
-       name = Value(name),
+  }) : name = Value(name),
        balance = Value(balance),
-       currency = Value(currency),
-       createdAt = Value(createdAt),
-       updatedAt = Value(updatedAt);
+       currency = Value(currency);
   static Insertable<Account> custom({
     Expression<int>? id,
-    Expression<int>? userId,
     Expression<String>? name,
     Expression<double>? balance,
     Expression<String>? currency,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (userId != null) 'user_id': userId,
       if (name != null) 'name': name,
       if (balance != null) 'balance': balance,
       if (currency != null) 'currency': currency,
-      if (createdAt != null) 'created_at': createdAt,
-      if (updatedAt != null) 'updated_at': updatedAt,
     });
   }
 
   AccountsCompanion copyWith({
     Value<int>? id,
-    Value<int>? userId,
     Value<String>? name,
     Value<double>? balance,
     Value<String>? currency,
-    Value<DateTime>? createdAt,
-    Value<DateTime>? updatedAt,
   }) {
     return AccountsCompanion(
       id: id ?? this.id,
-      userId: userId ?? this.userId,
       name: name ?? this.name,
       balance: balance ?? this.balance,
       currency: currency ?? this.currency,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -408,9 +275,6 @@ class AccountsCompanion extends UpdateCompanion<Account> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
-    }
-    if (userId.present) {
-      map['user_id'] = Variable<int>(userId.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -421,12 +285,6 @@ class AccountsCompanion extends UpdateCompanion<Account> {
     if (currency.present) {
       map['currency'] = Variable<String>(currency.value);
     }
-    if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
-    }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
-    }
     return map;
   }
 
@@ -434,12 +292,9 @@ class AccountsCompanion extends UpdateCompanion<Account> {
   String toString() {
     return (StringBuffer('AccountsCompanion(')
           ..write('id: $id, ')
-          ..write('userId: $userId, ')
           ..write('name: $name, ')
           ..write('balance: $balance, ')
-          ..write('currency: $currency, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('currency: $currency')
           ..write(')'))
         .toString();
   }
@@ -812,28 +667,6 @@ class $TransactionsTable extends Transactions
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _createdAtMeta = const VerificationMeta(
-    'createdAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-    'created_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
-    'updatedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-    'updated_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -842,8 +675,6 @@ class $TransactionsTable extends Transactions
     amount,
     timestamp,
     comment,
-    createdAt,
-    updatedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -898,22 +729,6 @@ class $TransactionsTable extends Transactions
         comment.isAcceptableOrUnknown(data['comment']!, _commentMeta),
       );
     }
-    if (data.containsKey('created_at')) {
-      context.handle(
-        _createdAtMeta,
-        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_createdAtMeta);
-    }
-    if (data.containsKey('updated_at')) {
-      context.handle(
-        _updatedAtMeta,
-        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_updatedAtMeta);
-    }
     return context;
   }
 
@@ -947,14 +762,6 @@ class $TransactionsTable extends Transactions
         DriftSqlType.string,
         data['${effectivePrefix}comment'],
       ),
-      createdAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}created_at'],
-      )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}updated_at'],
-      )!,
     );
   }
 
@@ -971,8 +778,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   final double amount;
   final DateTime timestamp;
   final String? comment;
-  final DateTime createdAt;
-  final DateTime updatedAt;
   const Transaction({
     required this.id,
     required this.accountId,
@@ -980,8 +785,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     required this.amount,
     required this.timestamp,
     this.comment,
-    required this.createdAt,
-    required this.updatedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -994,8 +797,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     if (!nullToAbsent || comment != null) {
       map['comment'] = Variable<String>(comment);
     }
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
   }
 
@@ -1009,8 +810,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       comment: comment == null && nullToAbsent
           ? const Value.absent()
           : Value(comment),
-      createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
     );
   }
 
@@ -1026,8 +825,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       amount: serializer.fromJson<double>(json['amount']),
       timestamp: serializer.fromJson<DateTime>(json['timestamp']),
       comment: serializer.fromJson<String?>(json['comment']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
   @override
@@ -1040,8 +837,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       'amount': serializer.toJson<double>(amount),
       'timestamp': serializer.toJson<DateTime>(timestamp),
       'comment': serializer.toJson<String?>(comment),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
   }
 
@@ -1052,8 +847,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     double? amount,
     DateTime? timestamp,
     Value<String?> comment = const Value.absent(),
-    DateTime? createdAt,
-    DateTime? updatedAt,
   }) => Transaction(
     id: id ?? this.id,
     accountId: accountId ?? this.accountId,
@@ -1061,8 +854,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     amount: amount ?? this.amount,
     timestamp: timestamp ?? this.timestamp,
     comment: comment.present ? comment.value : this.comment,
-    createdAt: createdAt ?? this.createdAt,
-    updatedAt: updatedAt ?? this.updatedAt,
   );
   Transaction copyWithCompanion(TransactionsCompanion data) {
     return Transaction(
@@ -1074,8 +865,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       amount: data.amount.present ? data.amount.value : this.amount,
       timestamp: data.timestamp.present ? data.timestamp.value : this.timestamp,
       comment: data.comment.present ? data.comment.value : this.comment,
-      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
 
@@ -1087,24 +876,14 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           ..write('categoryId: $categoryId, ')
           ..write('amount: $amount, ')
           ..write('timestamp: $timestamp, ')
-          ..write('comment: $comment, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('comment: $comment')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
-    id,
-    accountId,
-    categoryId,
-    amount,
-    timestamp,
-    comment,
-    createdAt,
-    updatedAt,
-  );
+  int get hashCode =>
+      Object.hash(id, accountId, categoryId, amount, timestamp, comment);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1114,9 +893,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           other.categoryId == this.categoryId &&
           other.amount == this.amount &&
           other.timestamp == this.timestamp &&
-          other.comment == this.comment &&
-          other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.comment == this.comment);
 }
 
 class TransactionsCompanion extends UpdateCompanion<Transaction> {
@@ -1126,8 +903,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
   final Value<double> amount;
   final Value<DateTime> timestamp;
   final Value<String?> comment;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
   const TransactionsCompanion({
     this.id = const Value.absent(),
     this.accountId = const Value.absent(),
@@ -1135,8 +910,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     this.amount = const Value.absent(),
     this.timestamp = const Value.absent(),
     this.comment = const Value.absent(),
-    this.createdAt = const Value.absent(),
-    this.updatedAt = const Value.absent(),
   });
   TransactionsCompanion.insert({
     this.id = const Value.absent(),
@@ -1145,14 +918,10 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     required double amount,
     required DateTime timestamp,
     this.comment = const Value.absent(),
-    required DateTime createdAt,
-    required DateTime updatedAt,
   }) : accountId = Value(accountId),
        categoryId = Value(categoryId),
        amount = Value(amount),
-       timestamp = Value(timestamp),
-       createdAt = Value(createdAt),
-       updatedAt = Value(updatedAt);
+       timestamp = Value(timestamp);
   static Insertable<Transaction> custom({
     Expression<int>? id,
     Expression<int>? accountId,
@@ -1160,8 +929,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     Expression<double>? amount,
     Expression<DateTime>? timestamp,
     Expression<String>? comment,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1170,8 +937,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       if (amount != null) 'amount': amount,
       if (timestamp != null) 'timestamp': timestamp,
       if (comment != null) 'comment': comment,
-      if (createdAt != null) 'created_at': createdAt,
-      if (updatedAt != null) 'updated_at': updatedAt,
     });
   }
 
@@ -1182,8 +947,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     Value<double>? amount,
     Value<DateTime>? timestamp,
     Value<String?>? comment,
-    Value<DateTime>? createdAt,
-    Value<DateTime>? updatedAt,
   }) {
     return TransactionsCompanion(
       id: id ?? this.id,
@@ -1192,8 +955,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       amount: amount ?? this.amount,
       timestamp: timestamp ?? this.timestamp,
       comment: comment ?? this.comment,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -1218,12 +979,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     if (comment.present) {
       map['comment'] = Variable<String>(comment.value);
     }
-    if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
-    }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
-    }
     return map;
   }
 
@@ -1235,9 +990,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
           ..write('categoryId: $categoryId, ')
           ..write('amount: $amount, ')
           ..write('timestamp: $timestamp, ')
-          ..write('comment: $comment, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('comment: $comment')
           ..write(')'))
         .toString();
   }
@@ -1712,22 +1465,16 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 typedef $$AccountsTableCreateCompanionBuilder =
     AccountsCompanion Function({
       Value<int> id,
-      required int userId,
       required String name,
       required double balance,
       required String currency,
-      required DateTime createdAt,
-      required DateTime updatedAt,
     });
 typedef $$AccountsTableUpdateCompanionBuilder =
     AccountsCompanion Function({
       Value<int> id,
-      Value<int> userId,
       Value<String> name,
       Value<double> balance,
       Value<String> currency,
-      Value<DateTime> createdAt,
-      Value<DateTime> updatedAt,
     });
 
 class $$AccountsTableFilterComposer
@@ -1744,11 +1491,6 @@ class $$AccountsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get userId => $composableBuilder(
-    column: $table.userId,
-    builder: (column) => ColumnFilters(column),
-  );
-
   ColumnFilters<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnFilters(column),
@@ -1761,16 +1503,6 @@ class $$AccountsTableFilterComposer
 
   ColumnFilters<String> get currency => $composableBuilder(
     column: $table.currency,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -1789,11 +1521,6 @@ class $$AccountsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get userId => $composableBuilder(
-    column: $table.userId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnOrderings(column),
@@ -1806,16 +1533,6 @@ class $$AccountsTableOrderingComposer
 
   ColumnOrderings<String> get currency => $composableBuilder(
     column: $table.currency,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -1832,9 +1549,6 @@ class $$AccountsTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<int> get userId =>
-      $composableBuilder(column: $table.userId, builder: (column) => column);
-
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
 
@@ -1843,12 +1557,6 @@ class $$AccountsTableAnnotationComposer
 
   GeneratedColumn<String> get currency =>
       $composableBuilder(column: $table.currency, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get createdAt =>
-      $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get updatedAt =>
-      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 }
 
 class $$AccountsTableTableManager
@@ -1880,38 +1588,26 @@ class $$AccountsTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int> userId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<double> balance = const Value.absent(),
                 Value<String> currency = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
               }) => AccountsCompanion(
                 id: id,
-                userId: userId,
                 name: name,
                 balance: balance,
                 currency: currency,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
               ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                required int userId,
                 required String name,
                 required double balance,
                 required String currency,
-                required DateTime createdAt,
-                required DateTime updatedAt,
               }) => AccountsCompanion.insert(
                 id: id,
-                userId: userId,
                 name: name,
                 balance: balance,
                 currency: currency,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -2112,8 +1808,6 @@ typedef $$TransactionsTableCreateCompanionBuilder =
       required double amount,
       required DateTime timestamp,
       Value<String?> comment,
-      required DateTime createdAt,
-      required DateTime updatedAt,
     });
 typedef $$TransactionsTableUpdateCompanionBuilder =
     TransactionsCompanion Function({
@@ -2123,8 +1817,6 @@ typedef $$TransactionsTableUpdateCompanionBuilder =
       Value<double> amount,
       Value<DateTime> timestamp,
       Value<String?> comment,
-      Value<DateTime> createdAt,
-      Value<DateTime> updatedAt,
     });
 
 class $$TransactionsTableFilterComposer
@@ -2163,16 +1855,6 @@ class $$TransactionsTableFilterComposer
 
   ColumnFilters<String> get comment => $composableBuilder(
     column: $table.comment,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -2215,16 +1897,6 @@ class $$TransactionsTableOrderingComposer
     column: $table.comment,
     builder: (column) => ColumnOrderings(column),
   );
-
-  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
 }
 
 class $$TransactionsTableAnnotationComposer
@@ -2255,12 +1927,6 @@ class $$TransactionsTableAnnotationComposer
 
   GeneratedColumn<String> get comment =>
       $composableBuilder(column: $table.comment, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get createdAt =>
-      $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get updatedAt =>
-      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 }
 
 class $$TransactionsTableTableManager
@@ -2300,8 +1966,6 @@ class $$TransactionsTableTableManager
                 Value<double> amount = const Value.absent(),
                 Value<DateTime> timestamp = const Value.absent(),
                 Value<String?> comment = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
               }) => TransactionsCompanion(
                 id: id,
                 accountId: accountId,
@@ -2309,8 +1973,6 @@ class $$TransactionsTableTableManager
                 amount: amount,
                 timestamp: timestamp,
                 comment: comment,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
               ),
           createCompanionCallback:
               ({
@@ -2320,8 +1982,6 @@ class $$TransactionsTableTableManager
                 required double amount,
                 required DateTime timestamp,
                 Value<String?> comment = const Value.absent(),
-                required DateTime createdAt,
-                required DateTime updatedAt,
               }) => TransactionsCompanion.insert(
                 id: id,
                 accountId: accountId,
@@ -2329,8 +1989,6 @@ class $$TransactionsTableTableManager
                 amount: amount,
                 timestamp: timestamp,
                 comment: comment,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

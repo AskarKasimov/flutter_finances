@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/data/local_data/database/app_database.dart';
 import 'package:flutter_finances/data/remote/api_client.dart';
 import 'package:flutter_finances/data/remote/services/account_api_service.dart';
 import 'package:flutter_finances/data/remote/services/category_api_service.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_finances/data/remote/services/transaction_api_service.da
 import 'package:flutter_finances/data/repositories/account_repository_impl.dart';
 import 'package:flutter_finances/data/repositories/category_repository_impl.dart';
 import 'package:flutter_finances/data/repositories/transaction_repository_impl.dart';
+import 'package:flutter_finances/data/sync/sync_service.dart';
 import 'package:flutter_finances/domain/repositories/account_repository.dart';
 import 'package:flutter_finances/domain/repositories/category_repository.dart';
 import 'package:flutter_finances/domain/repositories/transaction_repository.dart';
@@ -27,8 +29,16 @@ import 'package:worker_manager/worker_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Инициализация worker_manager
   await workerManager.init();
+
+  // Инициализация базы данных
+  await AppDatabase.instance.ensureInitialized();
+
+  // Инициализация API клиента
   final apiClient = ApiClient();
+
   runApp(MyApp(apiClient: apiClient));
 }
 
@@ -43,18 +53,49 @@ class MyApp extends StatelessWidget {
 
     return MultiRepositoryProvider(
       providers: [
+        RepositoryProvider<ApiClient>(create: (_) => ApiClient()),
+        RepositoryProvider<TransactionApiService>(
+          create: (context) =>
+              TransactionApiService(dio: context.read<ApiClient>().dio),
+        ),
+        RepositoryProvider<AccountApiService>(
+          create: (context) =>
+              AccountApiService(dio: context.read<ApiClient>().dio),
+        ),
+        RepositoryProvider<CategoryApiService>(
+          create: (context) =>
+              CategoryApiService(dio: context.read<ApiClient>().dio),
+        ),
+        RepositoryProvider<SyncService>(
+          create: (context) => SyncService(
+            syncEventDao: AppDatabase.instance.syncEventDao,
+            transactionApi: context.read<TransactionApiService>(),
+            accountApi: context.read<AccountApiService>(),
+            categoryApi: context.read<CategoryApiService>(),
+          ),
+        ),
         RepositoryProvider<TransactionRepository>(
-          create: (_) => TransactionRepositoryImpl(
-            TransactionApiService(dio: apiClient.dio),
+          create: (context) => TransactionRepositoryImpl(
+            context.read<TransactionApiService>(),
+            AppDatabase.instance.transactionDao,
+            AppDatabase.instance.syncEventDao,
+            context.read<SyncService>(),
           ),
         ),
         RepositoryProvider<AccountRepository>(
-          create: (_) =>
-              AccountRepositoryImpl(AccountApiService(dio: apiClient.dio)),
+          create: (context) => AccountRepositoryImpl(
+            AppDatabase.instance.accountDao,
+            context.read<AccountApiService>(),
+            AppDatabase.instance.syncEventDao,
+            context.read<SyncService>(),
+          ),
         ),
         RepositoryProvider<CategoryRepository>(
-          create: (_) =>
-              CategoryRepositoryImpl(CategoryApiService(dio: apiClient.dio)),
+          create: (context) => CategoryRepositoryImpl(
+            context.read<CategoryApiService>(),
+            AppDatabase.instance.categoryDao,
+            context.read<SyncService>(),
+          ),
         ),
         RepositoryProvider(
           create: (context) => CreateTransactionUseCase(

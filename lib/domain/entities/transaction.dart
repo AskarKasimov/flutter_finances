@@ -1,5 +1,3 @@
-import 'package:flutter_finances/domain/entities/value_objects/time_interval.dart';
-
 class Transaction {
   final int id;
   final int accountId;
@@ -7,7 +5,6 @@ class Transaction {
   final double amount;
   final DateTime timestamp;
   final String? comment;
-  final AuditInfoTime auditInfoTime;
 
   Transaction({
     required this.id,
@@ -16,6 +13,5 @@ class Transaction {
     required this.amount,
     required this.timestamp,
     required this.comment,
-    required this.auditInfoTime,
   });
 }

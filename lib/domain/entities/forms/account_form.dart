@@ -2,7 +2,7 @@ import 'package:flutter_finances/domain/entities/value_objects/money_details.dar
 
 class AccountForm {
   final String name;
-  final MoneyDetails? moneyDetails;
+  final MoneyDetails moneyDetails;
 
   AccountForm({required this.name, required this.moneyDetails});
 }

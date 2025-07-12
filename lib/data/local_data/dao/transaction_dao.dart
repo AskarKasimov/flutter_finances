@@ -39,6 +39,10 @@ class TransactionDao extends DatabaseAccessor<AppDatabase>
   Future<bool> updateTransaction(TransactionsCompanion tx) =>
       update(transactions).replace(tx);
 
+  Future<void> insertOrUpdateTransaction(TransactionsCompanion tx) async {
+    await into(transactions).insertOnConflictUpdate(tx);
+  }
+
   Future<int> deleteTransaction(int id) =>
       (delete(transactions)..where((t) => t.id.equals(id))).go();
 }

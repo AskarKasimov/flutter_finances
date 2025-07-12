@@ -26,6 +26,8 @@ class AppDatabase extends _$AppDatabase {
     return AppDatabase._internal();
   }
 
+  static final AppDatabase instance = AppDatabase._internal();
+
   @override
   int get schemaVersion => 1;
 }
@@ -36,4 +38,11 @@ LazyDatabase _openConnection() {
     final file = File(p.join(dir.path, 'app.db'));
     return NativeDatabase(file);
   });
+}
+
+extension AppDatabaseInit on AppDatabase {
+  Future<void> ensureInitialized() async {
+    // Принудительно доступ к dao, чтобы база создалась
+    await customSelect('SELECT 1').getSingle();
+  }
 }

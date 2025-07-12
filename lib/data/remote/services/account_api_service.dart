@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_finances/data/remote/json_deserializer.dart';
-import 'package:flutter_finances/data/remote/models/account/account.dart';
 import 'package:flutter_finances/data/remote/models/account_request/account_request.dart';
 import 'package:flutter_finances/data/remote/models/account_response/account_response.dart';
 
@@ -9,12 +8,12 @@ class AccountApiService {
 
   AccountApiService({required Dio dio}) : _dio = dio;
 
-  Future<List<AccountDTO>> fetchAccounts() async {
+  Future<List<AccountResponseDTO>> fetchAccounts() async {
     final response = await _dio.get('/accounts');
     final List data = response.data as List;
     return deserializeListInIsolate(
       data.cast<Map<String, dynamic>>(),
-      AccountDTO.fromJson,
+      AccountResponseDTO.fromJson,
     );
   }
 
@@ -26,11 +25,14 @@ class AccountApiService {
     );
   }
 
-  Future<AccountDTO> updateAccount(int id, AccountRequestDTO request) async {
+  Future<AccountResponseDTO> updateAccount(
+    int id,
+    AccountRequestDTO request,
+  ) async {
     final response = await _dio.put('/accounts/$id', data: request.toJson());
     return deserializeInIsolate(
       response.data as Map<String, dynamic>,
-      AccountDTO.fromJson,
+      AccountResponseDTO.fromJson,
     );
   }
 }

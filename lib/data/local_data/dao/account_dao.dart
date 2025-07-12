@@ -17,8 +17,12 @@ class AccountDao extends DatabaseAccessor<AppDatabase> with _$AccountDaoMixin {
   Future<int> insertAccount(AccountsCompanion account) =>
       into(accounts).insert(account);
 
-  Future<bool> updateAccount(AccountsCompanion account) =>
+  Future<bool> updateAccountById(AccountsCompanion account) =>
       update(accounts).replace(account);
+
+  Future<void> insertOrUpdateAccount(AccountsCompanion account) async {
+    await into(accounts).insertOnConflictUpdate(account);
+  }
 
   Future<int> deleteAccount(int id) =>
       (delete(accounts)..where((t) => t.id.equals(id))).go();
