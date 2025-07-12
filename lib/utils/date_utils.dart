@@ -28,3 +28,16 @@ DateTime endThisDay() {
   final now = DateTime.now();
   return DateTime(now.year, now.month, now.day, 23, 59, 59);
 }
+
+extension ToTimeZoneAwareIso on DateTime {
+  String toTimeZoneAwareIso() {
+    final local = toLocal();
+    final offset = local.timeZoneOffset;
+    final hours = offset.inHours.abs().toString().padLeft(2, '0');
+    final minutes = (offset.inMinutes.abs() % 60).toString().padLeft(2, '0');
+    final sign = offset.isNegative ? '-' : '+';
+
+    final isoWithoutZ = local.toIso8601String().split('.').first;
+    return '$isoWithoutZ$sign$hours:$minutes';
+  }
+}

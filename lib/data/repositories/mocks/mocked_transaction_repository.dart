@@ -1,6 +1,5 @@
 import 'package:flutter_finances/domain/entities/forms/transaction_form.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
-import 'package:flutter_finances/domain/entities/value_objects/time_interval.dart';
 import 'package:flutter_finances/domain/exceptions/repository_exception.dart';
 import 'package:flutter_finances/domain/repositories/transaction_repository.dart';
 
@@ -14,10 +13,6 @@ class MockedTransactionRepository implements TransactionRepository {
       comment: 'Зарплата за июнь',
       amount: 120000,
       timestamp: DateTime.now().subtract(const Duration(days: 2)),
-      auditInfoTime: AuditInfoTime(
-        createdAt: DateTime.now().subtract(const Duration(days: 2)),
-        updatedAt: DateTime.now().subtract(const Duration(days: 2)),
-      ),
     ),
     Transaction(
       id: 2,
@@ -27,10 +22,6 @@ class MockedTransactionRepository implements TransactionRepository {
       comment: 'Фриланс проект',
       amount: 25000,
       timestamp: DateTime.now().subtract(const Duration(days: 5)),
-      auditInfoTime: AuditInfoTime(
-        createdAt: DateTime.now().subtract(const Duration(days: 5)),
-        updatedAt: DateTime.now().subtract(const Duration(days: 5)),
-      ),
     ),
     Transaction(
       id: 3,
@@ -40,10 +31,6 @@ class MockedTransactionRepository implements TransactionRepository {
       comment: 'На день рождения',
       amount: 7000,
       timestamp: DateTime.now().subtract(const Duration(days: 10)),
-      auditInfoTime: AuditInfoTime(
-        createdAt: DateTime.now().subtract(const Duration(days: 10)),
-        updatedAt: DateTime.now().subtract(const Duration(days: 10)),
-      ),
     ),
     Transaction(
       id: 4,
@@ -53,10 +40,6 @@ class MockedTransactionRepository implements TransactionRepository {
       comment: 'Пенсия за июль',
       amount: 18000,
       timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      auditInfoTime: AuditInfoTime(
-        createdAt: DateTime.now().subtract(const Duration(days: 1)),
-        updatedAt: DateTime.now().subtract(const Duration(days: 1)),
-      ),
     ),
     Transaction(
       id: 5,
@@ -66,10 +49,6 @@ class MockedTransactionRepository implements TransactionRepository {
       comment: 'Аренда квартиры',
       amount: 35000,
       timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      auditInfoTime: AuditInfoTime(
-        createdAt: DateTime.now().subtract(const Duration(days: 1)),
-        updatedAt: DateTime.now().subtract(const Duration(days: 1)),
-      ),
     ),
     Transaction(
       id: 6,
@@ -79,10 +58,6 @@ class MockedTransactionRepository implements TransactionRepository {
       comment: 'Куртка',
       amount: 7000,
       timestamp: DateTime.now().subtract(const Duration(days: 3)),
-      auditInfoTime: AuditInfoTime(
-        createdAt: DateTime.now().subtract(const Duration(days: 3)),
-        updatedAt: DateTime.now().subtract(const Duration(days: 3)),
-      ),
     ),
     Transaction(
       id: 7,
@@ -92,10 +67,6 @@ class MockedTransactionRepository implements TransactionRepository {
       comment: 'Ветклиника и корм',
       amount: 3000,
       timestamp: DateTime.now().subtract(const Duration(days: 6)),
-      auditInfoTime: AuditInfoTime(
-        createdAt: DateTime.now().subtract(const Duration(days: 6)),
-        updatedAt: DateTime.now().subtract(const Duration(days: 6)),
-      ),
     ),
     Transaction(
       id: 8,
@@ -105,10 +76,6 @@ class MockedTransactionRepository implements TransactionRepository {
       comment: 'Кран и плитка',
       amount: 15000,
       timestamp: DateTime.now().subtract(const Duration(days: 8)),
-      auditInfoTime: AuditInfoTime(
-        createdAt: DateTime.now().subtract(const Duration(days: 8)),
-        updatedAt: DateTime.now().subtract(const Duration(days: 8)),
-      ),
     ),
     Transaction(
       id: 9,
@@ -118,10 +85,6 @@ class MockedTransactionRepository implements TransactionRepository {
       comment: 'Магнит + Пятерочка',
       amount: 870.50,
       timestamp: DateTime.now().subtract(const Duration(days: 2, hours: 3)),
-      auditInfoTime: AuditInfoTime(
-        createdAt: DateTime.now().subtract(const Duration(days: 2, hours: 3)),
-        updatedAt: DateTime.now().subtract(const Duration(days: 2, hours: 3)),
-      ),
     ),
     Transaction(
       id: 10,
@@ -131,10 +94,6 @@ class MockedTransactionRepository implements TransactionRepository {
       comment: 'Абонемент на месяц',
       amount: 2200,
       timestamp: DateTime.now().subtract(const Duration(days: 4)),
-      auditInfoTime: AuditInfoTime(
-        createdAt: DateTime.now().subtract(const Duration(days: 4)),
-        updatedAt: DateTime.now().subtract(const Duration(days: 4)),
-      ),
     ),
     Transaction(
       id: 11,
@@ -144,10 +103,6 @@ class MockedTransactionRepository implements TransactionRepository {
       comment: 'Аптека',
       amount: 900,
       timestamp: DateTime.now().subtract(const Duration(days: 9)),
-      auditInfoTime: AuditInfoTime(
-        createdAt: DateTime.now().subtract(const Duration(days: 9)),
-        updatedAt: DateTime.now().subtract(const Duration(days: 9)),
-      ),
     ),
   ];
 
@@ -164,15 +119,11 @@ class MockedTransactionRepository implements TransactionRepository {
   Future<Transaction> createTransaction(TransactionForm form) async {
     final transaction = Transaction(
       id: _nextId(),
-      accountId: form.accountId!,
-      categoryId: form.categoryId!,
+      accountId: form.accountId,
+      categoryId: form.categoryId,
       comment: form.comment ?? '',
-      amount: form.amount ?? 0.0,
+      amount: form.amount,
       timestamp: DateTime.now(),
-      auditInfoTime: AuditInfoTime(
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      ),
     );
     _transactions.add(transaction);
     await Future.delayed(
@@ -230,15 +181,11 @@ class MockedTransactionRepository implements TransactionRepository {
     final existing = _transactions[index];
     final updated = Transaction(
       id: id,
-      accountId: form.accountId ?? existing.accountId,
-      categoryId: form.categoryId ?? existing.categoryId,
+      accountId: form.accountId,
+      categoryId: form.categoryId,
       comment: form.comment ?? existing.comment,
-      amount: form.amount ?? existing.amount,
-      timestamp: form.timestamp ?? existing.timestamp,
-      auditInfoTime: AuditInfoTime(
-        createdAt: existing.auditInfoTime.createdAt,
-        updatedAt: DateTime.now(),
-      ),
+      amount: form.amount,
+      timestamp: form.timestamp,
     );
 
     _transactions[index] = updated;

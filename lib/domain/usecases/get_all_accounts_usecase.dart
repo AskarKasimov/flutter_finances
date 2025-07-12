@@ -1,4 +1,4 @@
-import 'package:flutter_finances/domain/entities/account.dart';
+import 'package:flutter_finances/domain/entities/account_response.dart';
 import 'package:flutter_finances/domain/repositories/account_repository.dart';
 
 class GetAllAccountsUseCase {
@@ -6,7 +6,7 @@ class GetAllAccountsUseCase {
 
   GetAllAccountsUseCase({required this.accountRepository});
 
-  Future<List<Account>> call() {
+  Future<List<AccountResponse>> call() {
     return accountRepository.getAllAccounts();
   }
 }

@@ -84,10 +84,8 @@ class TransactionCreationBloc
       final data = state as TransactionDataState;
 
       emit(TransactionProcessing());
-      final deletedTransaction = await deleteTransactionUseCase(
-        event.transactionId,
-      );
-      emit(TransactionDeletedSuccessfully(deletedTransaction, data));
+      await deleteTransactionUseCase(event.transactionId);
+      emit(TransactionDeletedSuccessfully(event.transactionId, data));
     } catch (e) {
       emit(TransactionError(message: e.toString()));
     }

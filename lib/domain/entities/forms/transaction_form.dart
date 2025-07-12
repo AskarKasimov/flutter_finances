@@ -1,8 +1,8 @@
 class TransactionForm {
-  final int? accountId;
-  final int? categoryId;
-  final double? amount;
-  final DateTime? timestamp;
+  final int accountId;
+  final int categoryId;
+  final double amount;
+  final DateTime timestamp;
   final String? comment;
 
   TransactionForm({

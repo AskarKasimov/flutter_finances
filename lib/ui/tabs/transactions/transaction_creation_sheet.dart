@@ -9,8 +9,6 @@ import 'package:flutter_finances/domain/usecases/update_transaction_usecase.dart
 import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_event.dart';
 import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_state.dart';
-import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
-import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transaction_form.dart';
 
 class _TransactionCreationSheet extends StatelessWidget {
@@ -48,19 +46,19 @@ class _TransactionCreationSheet extends StatelessWidget {
       listener: (context, state) {
         switch (state) {
           case TransactionCreatedSuccessfully(:final createdTransaction):
-            BlocProvider.of<TransactionHistoryBloc>(
-              context,
-            ).add(AddSingleTransaction(createdTransaction));
-            Navigator.of(context).pop();
+            // context.read<TransactionHistoryBloc>().add(
+            //   AddSingleTransaction(createdTransaction),
+            // );
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Транзакция успешно добавлена')),
             );
+            Navigator.of(context).pop();
             break;
 
           case TransactionProcessing():
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('Загрузка...')));
+            // ScaffoldMessenger.of(
+            //   context,
+            // ).showSnackBar(const SnackBar(content: Text('Загрузка...')));
             break;
 
           case TransactionError(:final message):
@@ -89,33 +87,31 @@ class _TransactionCreationSheet extends StatelessWidget {
             break;
         }
       },
-      builder: (context, state) {
-        return switch (state) {
+      builder: (context, state) => Scaffold(
+        appBar: AppBar(
+          title: Text(isIncome ? 'Добавить доход' : 'Добавить расход'),
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          actions: [
+            Builder(
+              builder: (localContext) => IconButton(
+                icon: const Icon(Icons.check),
+                onPressed: () => _onSubmit(localContext),
+              ),
+            ),
+          ],
+          automaticallyImplyLeading: false,
+        ),
+        body: switch (state) {
           TransactionProcessing() => const Center(
             child: CircularProgressIndicator(),
           ),
-          _ => Scaffold(
-            appBar: AppBar(
-              title: Text(isIncome ? 'Добавить доход' : 'Добавить расход'),
-              centerTitle: true,
-              leading: IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-              actions: [
-                Builder(
-                  builder: (localContext) => IconButton(
-                    icon: const Icon(Icons.check),
-                    onPressed: () => _onSubmit(localContext),
-                  ),
-                ),
-              ],
-              automaticallyImplyLeading: false,
-            ),
-            body: TransactionForm(isIncome: isIncome),
-          ),
-        };
-      },
+          _ => TransactionForm(isIncome: isIncome),
+        },
+      ),
     );
   }
 }

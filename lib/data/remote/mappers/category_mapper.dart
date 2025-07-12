@@ -1,4 +1,4 @@
-import 'package:flutter_finances/data/models/category/category.dart';
+import 'package:flutter_finances/data/remote/models/category/category.dart';
 import 'package:flutter_finances/domain/entities/category.dart';
 
 extension CategoryMapper on CategoryDTO {

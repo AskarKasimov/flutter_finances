@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/domain/usecases/create_transaction_usecase.dart';
+import 'package:flutter_finances/domain/usecases/delete_transaction_usecase.dart';
+import 'package:flutter_finances/domain/usecases/get_all_accounts_usecase.dart';
+import 'package:flutter_finances/domain/usecases/get_all_categories_usecase.dart';
+import 'package:flutter_finances/domain/usecases/get_transaction_by_id_usecase.dart';
+import 'package:flutter_finances/domain/usecases/update_transaction_usecase.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
 import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_event.dart';
 import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_state.dart';
-import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
-import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transaction_form.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,6 +18,31 @@ class TransactionEditScreen extends StatelessWidget {
   final int transactionId;
 
   const TransactionEditScreen({super.key, required this.transactionId});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<TransactionCreationBloc>(
+      create: (_) {
+        final bloc = TransactionCreationBloc(
+          deleteTransactionUseCase: context.read<DeleteTransactionUseCase>(),
+          getAllAccountsUseCase: context.read<GetAllAccountsUseCase>(),
+          getTransactionByIdUseCase: context.read<GetTransactionByIdUseCase>(),
+          getAllCategoriesUseCase: context.read<GetAllCategoriesUseCase>(),
+          updateTransactionUseCase: context.read<UpdateTransactionUseCase>(),
+          createTransactionUseCase: context.read<CreateTransactionUseCase>(),
+        );
+        bloc.add(InitializeForEditing(transactionId: transactionId));
+        return bloc;
+      },
+      child: _TransactionEditScreen(transactionId: transactionId),
+    );
+  }
+}
+
+class _TransactionEditScreen extends StatelessWidget {
+  final int transactionId;
+
+  const _TransactionEditScreen({required this.transactionId});
 
   void _onSubmit(BuildContext context) {
     final bloc = context.read<TransactionCreationBloc>();
@@ -49,14 +78,14 @@ class TransactionEditScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<TransactionCreationBloc, TransactionCreationState>(
       listener: (context, state) {
-        final historyBloc = context.read<TransactionHistoryBloc>();
+        // final historyBloc = context.read<TransactionHistoryBloc>();
         switch (state) {
           case TransactionUpdatedSuccessfully():
-            historyBloc.add(UpdateTransaction(state.updatedTransaction));
+            // historyBloc.add(UpdateTransaction(state.updatedTransaction));
             context.pop();
             break;
           case TransactionDeletedSuccessfully():
-            historyBloc.add(DeleteTransaction(state.deletedTransaction));
+            // historyBloc.add(DeleteTransaction(state.deletedTransactionId));
             context.pop();
             break;
           case TransactionError(:final message):
