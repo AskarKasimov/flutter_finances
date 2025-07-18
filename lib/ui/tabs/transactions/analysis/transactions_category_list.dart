@@ -170,9 +170,14 @@ class _CategoryTileState extends State<_CategoryTile> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (tx.comment != null)
+                      if (tx.comment != null && tx.comment!.isNotEmpty)
                         Text(
                           tx.comment!,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        )
+                      else
+                        Text(
+                          '<нет комментария>',
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       Text(
