@@ -140,35 +140,49 @@ class _TransactionsListState extends State<TransactionsList> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 20,
-                                  backgroundColor: Theme.of(
-                                    context,
-                                  ).colorScheme.secondary,
-                                  child: Text(
-                                    category.emoji,
-                                    style: const TextStyle(fontSize: 18),
+                            Expanded(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 20,
+                                    backgroundColor: Theme.of(
+                                      context,
+                                    ).colorScheme.secondary,
+                                    child: Text(
+                                      category.emoji,
+                                      style: const TextStyle(fontSize: 18),
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 16),
-                                item.comment != null && item.comment!.isNotEmpty
-                                    ? Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(category.name),
-                                          Text(
-                                            item.comment!,
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.bodySmall,
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child:
+                                        item.comment != null &&
+                                            item.comment!.isNotEmpty
+                                        ? Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                category.name,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              Text(
+                                                item.comment!,
+                                                style: Theme.of(
+                                                  context,
+                                                ).textTheme.bodySmall,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ],
+                                          )
+                                        : Text(
+                                            category.name,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                        ],
-                                      )
-                                    : Text(category.name),
-                              ],
+                                  ),
+                                ],
+                              ),
                             ),
                             Row(
                               children: [
