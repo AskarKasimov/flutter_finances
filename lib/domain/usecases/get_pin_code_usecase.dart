@@ -1,4 +1,4 @@
-import 'package:flutter_finances/data/local_data/pin_code_storage.dart';
+import 'package:flutter_finances/domain/repositories/pin_code_storage.dart';
 
 class GetPinCodeUseCase {
   final PinCodeStorage _pinCodeStorage;

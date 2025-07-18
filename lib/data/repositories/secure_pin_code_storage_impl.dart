@@ -1,20 +1,13 @@
+import 'package:flutter_finances/domain/repositories/pin_code_storage.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-abstract class PinCodeStorage {
-  Future<void> savePinCode(String pinCode);
-
-  Future<String?> getPinCode();
-
-  Future<void> deletePinCode();
-}
-
-class SecurePinCodeStorage implements PinCodeStorage {
+class SecurePinCodeStorageImpl implements PinCodeStorage {
   final FlutterSecureStorage _secureStorage;
 
   static const _pinCodeKey = 'pin_code_key';
 
-  SecurePinCodeStorage({FlutterSecureStorage? secureStorage})
-    : _secureStorage = secureStorage ?? const FlutterSecureStorage();
+  SecurePinCodeStorageImpl({required FlutterSecureStorage secureStorage})
+      : _secureStorage = secureStorage;
 
   @override
   Future<void> savePinCode(String pinCode) async {

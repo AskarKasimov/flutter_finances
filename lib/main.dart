@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/data/local_data/database/app_database.dart';
-import 'package:flutter_finances/data/local_data/pin_code_storage.dart';
 import 'package:flutter_finances/data/remote/api_client.dart';
 import 'package:flutter_finances/data/remote/services/account_api_service.dart';
 import 'package:flutter_finances/data/remote/services/category_api_service.dart';
 import 'package:flutter_finances/data/remote/services/transaction_api_service.dart';
 import 'package:flutter_finances/data/repositories/account_repository_impl.dart';
+import 'package:flutter_finances/data/repositories/biometric_settings_repository_impl.dart';
 import 'package:flutter_finances/data/repositories/category_repository_impl.dart';
+import 'package:flutter_finances/data/repositories/secure_pin_code_storage_impl.dart';
 import 'package:flutter_finances/data/repositories/transaction_repository_impl.dart';
 import 'package:flutter_finances/data/sync/sync_service.dart';
 import 'package:flutter_finances/domain/repositories/account_repository.dart';
+import 'package:flutter_finances/domain/repositories/biometric_settings_repository.dart';
 import 'package:flutter_finances/domain/repositories/category_repository.dart';
+import 'package:flutter_finances/domain/repositories/pin_code_storage.dart';
 import 'package:flutter_finances/domain/repositories/transaction_repository.dart';
 import 'package:flutter_finances/domain/usecases/create_transaction_usecase.dart';
 import 'package:flutter_finances/domain/usecases/delete_pin_code_usecase.dart';
@@ -22,7 +25,9 @@ import 'package:flutter_finances/domain/usecases/get_all_categories_usecase.dart
 import 'package:flutter_finances/domain/usecases/get_pin_code_usecase.dart';
 import 'package:flutter_finances/domain/usecases/get_transaction_by_id_usecase.dart';
 import 'package:flutter_finances/domain/usecases/get_transactions_by_period_usecase.dart';
+import 'package:flutter_finances/domain/usecases/is_biometric_enabled_usecase.dart';
 import 'package:flutter_finances/domain/usecases/save_pin_code_usecase.dart';
+import 'package:flutter_finances/domain/usecases/set_biometric_enabled_usecase.dart';
 import 'package:flutter_finances/domain/usecases/update_account_usecase.dart';
 import 'package:flutter_finances/domain/usecases/update_transaction_usecase.dart';
 import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
@@ -30,6 +35,7 @@ import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
 import 'package:flutter_finances/ui/router.dart';
 import 'package:flutter_finances/ui/theme/theme.dart';
 import 'package:flutter_finances/ui/theme/theme_controller.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:worker_manager/worker_manager.dart';
 
@@ -52,13 +58,20 @@ void main() async {
   await themeController.loadThemeMode();
 
   // Инициализация PinCodeStorage
-  final pinCodeStorage = SecurePinCodeStorage();
+  final pinCodeStorage = SecurePinCodeStorageImpl(
+    secureStorage: const FlutterSecureStorage(),
+  );
+
+  final biometricSettingsRepository = BiometricSettingsRepositoryImpl(
+    secureStorage: const FlutterSecureStorage(),
+  );
 
   runApp(
     MyApp(
       apiClient: apiClient,
       themeController: themeController,
       pinCodeStorage: pinCodeStorage,
+      biometricSettingsRepository: biometricSettingsRepository,
     ),
   );
 }
@@ -67,12 +80,14 @@ class MyApp extends StatelessWidget {
   final ApiClient apiClient;
   final ThemeController themeController;
   final PinCodeStorage pinCodeStorage;
+  final BiometricSettingsRepository biometricSettingsRepository;
 
   const MyApp({
     super.key,
     required this.apiClient,
     required this.themeController,
     required this.pinCodeStorage,
+    required this.biometricSettingsRepository,
   });
 
   @override
@@ -81,6 +96,16 @@ class MyApp extends StatelessWidget {
 
     return MultiRepositoryProvider(
       providers: [
+        RepositoryProvider<IsBiometricEnabledUseCase>(
+          create: (_) => IsBiometricEnabledUseCase(
+            repository: biometricSettingsRepository,
+          ),
+        ),
+        RepositoryProvider<SetBiometricEnabledUseCase>(
+          create: (_) => SetBiometricEnabledUseCase(
+            repository: biometricSettingsRepository,
+          ),
+        ),
         RepositoryProvider<SavePinCodeUseCase>(
           create: (_) => SavePinCodeUseCase(pinCodeStorage),
         ),

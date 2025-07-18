@@ -1,16 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_finances/domain/usecases/get_pin_code_usecase.dart';
+import 'package:flutter_finances/domain/usecases/is_biometric_enabled_usecase.dart';
 import 'package:flutter_finances/domain/usecases/save_pin_code_usecase.dart';
+import 'package:flutter_finances/domain/usecases/set_biometric_enabled_usecase.dart';
 import 'package:flutter_finances/ui/tabs/settings/pin_code_screen.dart';
 import 'package:flutter_finances/ui/theme/theme_controller.dart';
 import 'package:provider/provider.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  bool _biometricEnabled = false;
+  bool _loading = true;
+  bool _hasPin = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final isBiometricEnabled = await context
+        .read<IsBiometricEnabledUseCase>()();
+    final pin = await context.read<GetPinCodeUseCase>()();
+    setState(() {
+      _biometricEnabled = isBiometricEnabled;
+      _hasPin = pin != null && pin.isNotEmpty;
+      _loading = false;
+    });
+  }
+
+  void _toggleBiometric(bool value) async {
+    if (!_hasPin) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Сначала установите пин-код')),
+      );
+      return;
+    }
+
+    final setUseCase = context.read<SetBiometricEnabledUseCase>();
+    await setUseCase(value);
+    setState(() {
+      _biometricEnabled = value;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return Scaffold(
       appBar: AppBar(title: const Text('Настройки'), centerTitle: true),
       body: Consumer<ThemeController>(
@@ -82,15 +129,35 @@ class SettingsScreen extends StatelessWidget {
                         mode: PinCodeMode.set,
                         savePinCodeUseCase: context.read<SavePinCodeUseCase>(),
                         getPinCodeUseCase: context.read<GetPinCodeUseCase>(),
+                        setBiometricEnabledUseCase: context
+                            .read<SetBiometricEnabledUseCase>(),
                       ),
                     ),
                   );
                   if (result == true) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Пин-код успешно установлен'),
-                      ),
-                    );
+                    // Перезагрузить флаг наличия PIN
+                    final pin = await context.read<GetPinCodeUseCase>()();
+                    final biometricEnabled = await context
+                        .read<IsBiometricEnabledUseCase>()();
+                    setState(() {
+                      _hasPin = pin != null && pin.isNotEmpty;
+                      _biometricEnabled = biometricEnabled;
+                    });
+                  }
+                },
+              ),
+              ListTile(
+                title: const Text('Биометрия'),
+                trailing: Switch(
+                  value: _biometricEnabled,
+                  onChanged: _toggleBiometric,
+                  thumbColor: WidgetStateProperty.resolveWith((states) {
+                    return !_hasPin ? Colors.grey : null;
+                  }),
+                ),
+                onTap: () {
+                  if (!_hasPin) {
+                    _toggleBiometric(false);
                   }
                 },
               ),

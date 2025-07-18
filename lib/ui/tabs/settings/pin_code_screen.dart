@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_finances/domain/usecases/get_pin_code_usecase.dart';
 import 'package:flutter_finances/domain/usecases/save_pin_code_usecase.dart';
+import 'package:flutter_finances/domain/usecases/set_biometric_enabled_usecase.dart';
 import 'package:go_router/go_router.dart';
 
 enum PinCodeMode { set, enter }
@@ -9,12 +10,14 @@ class PinCodeScreen extends StatefulWidget {
   final PinCodeMode mode;
   final SavePinCodeUseCase savePinCodeUseCase;
   final GetPinCodeUseCase getPinCodeUseCase;
+  final SetBiometricEnabledUseCase setBiometricEnabledUseCase;
 
   const PinCodeScreen({
     super.key,
     required this.mode,
     required this.savePinCodeUseCase,
     required this.getPinCodeUseCase,
+    required this.setBiometricEnabledUseCase,
   });
 
   @override
@@ -66,15 +69,18 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
 
   Future<void> _onDeletePin() async {
     await widget.savePinCodeUseCase.call('');
+    await widget.setBiometricEnabledUseCase(
+      false,
+    ); // отключаем биометрию при удалении пин-кода
     setState(() {
       _savedPin = null;
       _error = null;
       _pinController.clear();
     });
     Navigator.pop(context, true);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Пин-код удалён')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Пин-код удалён, биометрия отключена')),
+    );
   }
 
   @override
