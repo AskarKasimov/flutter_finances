@@ -37,6 +37,7 @@ import 'package:flutter_finances/ui/theme/theme.dart';
 import 'package:flutter_finances/ui/theme/theme_controller.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
+import 'package:secure_application/secure_application.dart';
 import 'package:worker_manager/worker_manager.dart';
 
 void main() async {
@@ -67,11 +68,13 @@ void main() async {
   );
 
   runApp(
-    MyApp(
-      apiClient: apiClient,
-      themeController: themeController,
-      pinCodeStorage: pinCodeStorage,
-      biometricSettingsRepository: biometricSettingsRepository,
+    SecureApplication(
+      child: MyApp(
+        apiClient: apiClient,
+        themeController: themeController,
+        pinCodeStorage: pinCodeStorage,
+        biometricSettingsRepository: biometricSettingsRepository,
+      ),
     ),
   );
 }
