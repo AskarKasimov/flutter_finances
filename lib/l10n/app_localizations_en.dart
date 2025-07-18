@@ -8,5 +8,15 @@ import 'app_localizations.dart';
 class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
+  @override
+  String get appTitle => 'Flutter Finances';
 
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageRussian => 'Russian';
+
+  @override
+  String get languageSystem => 'System language';
 }

@@ -30,11 +30,14 @@ import 'package:flutter_finances/domain/usecases/save_pin_code_usecase.dart';
 import 'package:flutter_finances/domain/usecases/set_biometric_enabled_usecase.dart';
 import 'package:flutter_finances/domain/usecases/update_account_usecase.dart';
 import 'package:flutter_finances/domain/usecases/update_transaction_usecase.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
+import 'package:flutter_finances/ui/locale_controller.dart';
 import 'package:flutter_finances/ui/router.dart';
 import 'package:flutter_finances/ui/theme/theme.dart';
 import 'package:flutter_finances/ui/theme/theme_controller.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:secure_application/secure_application.dart';
@@ -67,6 +70,8 @@ void main() async {
     secureStorage: const FlutterSecureStorage(),
   );
 
+  final localeController = LocaleController();
+
   runApp(
     SecureApplication(
       child: MyApp(
@@ -74,6 +79,7 @@ void main() async {
         themeController: themeController,
         pinCodeStorage: pinCodeStorage,
         biometricSettingsRepository: biometricSettingsRepository,
+        localeController: localeController,
       ),
     ),
   );
@@ -84,6 +90,7 @@ class MyApp extends StatelessWidget {
   final ThemeController themeController;
   final PinCodeStorage pinCodeStorage;
   final BiometricSettingsRepository biometricSettingsRepository;
+  final LocaleController localeController;
 
   const MyApp({
     super.key,
@@ -91,6 +98,7 @@ class MyApp extends StatelessWidget {
     required this.themeController,
     required this.pinCodeStorage,
     required this.biometricSettingsRepository,
+    required this.localeController,
   });
 
   @override
@@ -99,6 +107,7 @@ class MyApp extends StatelessWidget {
 
     return MultiRepositoryProvider(
       providers: [
+        ChangeNotifierProvider<LocaleController>.value(value: localeController),
         RepositoryProvider<IsBiometricEnabledUseCase>(
           create: (_) => IsBiometricEnabledUseCase(
             repository: biometricSettingsRepository,
@@ -226,13 +235,27 @@ class MyApp extends StatelessWidget {
         ],
         child: Consumer<ThemeController>(
           builder: (context, themeController, _) {
-            return MaterialApp.router(
-              title: 'Flutter Finance',
-              debugShowCheckedModeBanner: false,
-              theme: getLightTheme(themeController.tintColor),
-              darkTheme: getDarkTheme(themeController.tintColor),
-              themeMode: themeController.themeMode,
-              routerConfig: router,
+            return Consumer<LocaleController>(
+              builder: (context, localeController, _) {
+                return MaterialApp.router(
+                  title:
+                      AppLocalizations.of(context)?.appTitle ??
+                      'Flutter Finances',
+                  debugShowCheckedModeBanner: false,
+                  theme: getLightTheme(themeController.tintColor),
+                  darkTheme: getDarkTheme(themeController.tintColor),
+                  themeMode: themeController.themeMode,
+                  routerConfig: router,
+                  locale: localeController.locale,
+                  localizationsDelegates: const [
+                    AppLocalizations.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  supportedLocales: AppLocalizations.supportedLocales,
+                );
+              },
             );
           },
         ),

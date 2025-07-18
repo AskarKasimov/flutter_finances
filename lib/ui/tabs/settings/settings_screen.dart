@@ -4,8 +4,11 @@ import 'package:flutter_finances/domain/usecases/get_pin_code_usecase.dart';
 import 'package:flutter_finances/domain/usecases/is_biometric_enabled_usecase.dart';
 import 'package:flutter_finances/domain/usecases/save_pin_code_usecase.dart';
 import 'package:flutter_finances/domain/usecases/set_biometric_enabled_usecase.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
+import 'package:flutter_finances/ui/locale_controller.dart';
 import 'package:flutter_finances/ui/tabs/settings/pin_code_screen.dart';
 import 'package:flutter_finances/ui/theme/theme_controller.dart';
+import 'package:flutter_finances/ui/widgets/selection_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -159,6 +162,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   if (!_hasPin) {
                     _toggleBiometric(false);
                   }
+                },
+              ),
+              ListTile(
+                title: const Text('Язык приложения'),
+                trailing: Text(
+                  context.read<LocaleController>().localeDisplayName(
+                    context,
+                    context.read<LocaleController>().locale,
+                  ),
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                onTap: () {
+                  showSelectionBottomSheet<Locale>(
+                    context: context,
+                    title: 'Выберите язык',
+                    stateSelector: (_) => (
+                      items: AppLocalizations.supportedLocales,
+                      isLoading: false,
+                      error: null,
+                    ),
+                    itemBuilder: (ctx, locale) => Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 16,
+                      ),
+                      child: Text(
+                        context.read<LocaleController>().localeDisplayName(
+                          context,
+                          locale,
+                        ),
+                      ),
+                    ),
+                    onItemSelected: (locale) {
+                      context.read<LocaleController>().updateLocale(locale);
+                    },
+                  );
                 },
               ),
             ],
