@@ -177,8 +177,8 @@ class MyApp extends StatelessWidget {
             return MaterialApp.router(
               title: 'Flutter Finance',
               debugShowCheckedModeBanner: false,
-              theme: lightTheme,
-              darkTheme: darkTheme,
+              theme: getLightTheme(themeController.tintColor),
+              darkTheme: getDarkTheme(themeController.tintColor),
               themeMode: themeController.themeMode,
               routerConfig: router,
             );

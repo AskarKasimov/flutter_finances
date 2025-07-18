@@ -15,3 +15,9 @@ Color generateColorFromId(int id) {
   ];
   return colors[id % colors.length];
 }
+
+Color lighten(Color color, [double amount = 0.2]) {
+  final hsl = HSLColor.fromColor(color);
+  final lightened = hsl.withLightness((hsl.lightness + amount).clamp(0.0, 1.0));
+  return lightened.toColor();
+}
