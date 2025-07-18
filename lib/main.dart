@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/data/local_data/database/app_database.dart';
+import 'package:flutter_finances/data/local_data/pin_code_storage.dart';
 import 'package:flutter_finances/data/remote/api_client.dart';
 import 'package:flutter_finances/data/remote/services/account_api_service.dart';
 import 'package:flutter_finances/data/remote/services/category_api_service.dart';
@@ -13,12 +14,15 @@ import 'package:flutter_finances/domain/repositories/account_repository.dart';
 import 'package:flutter_finances/domain/repositories/category_repository.dart';
 import 'package:flutter_finances/domain/repositories/transaction_repository.dart';
 import 'package:flutter_finances/domain/usecases/create_transaction_usecase.dart';
+import 'package:flutter_finances/domain/usecases/delete_pin_code_usecase.dart';
 import 'package:flutter_finances/domain/usecases/delete_transaction_usecase.dart';
 import 'package:flutter_finances/domain/usecases/get_account_by_id_usecase.dart';
 import 'package:flutter_finances/domain/usecases/get_all_accounts_usecase.dart';
 import 'package:flutter_finances/domain/usecases/get_all_categories_usecase.dart';
+import 'package:flutter_finances/domain/usecases/get_pin_code_usecase.dart';
 import 'package:flutter_finances/domain/usecases/get_transaction_by_id_usecase.dart';
 import 'package:flutter_finances/domain/usecases/get_transactions_by_period_usecase.dart';
+import 'package:flutter_finances/domain/usecases/save_pin_code_usecase.dart';
 import 'package:flutter_finances/domain/usecases/update_account_usecase.dart';
 import 'package:flutter_finances/domain/usecases/update_transaction_usecase.dart';
 import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
@@ -47,17 +51,28 @@ void main() async {
   final themeController = ThemeController();
   await themeController.loadThemeMode();
 
-  runApp(MyApp(apiClient: apiClient, themeController: themeController));
+  // Инициализация PinCodeStorage
+  final pinCodeStorage = SecurePinCodeStorage();
+
+  runApp(
+    MyApp(
+      apiClient: apiClient,
+      themeController: themeController,
+      pinCodeStorage: pinCodeStorage,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   final ApiClient apiClient;
   final ThemeController themeController;
+  final PinCodeStorage pinCodeStorage;
 
   const MyApp({
     super.key,
     required this.apiClient,
     required this.themeController,
+    required this.pinCodeStorage,
   });
 
   @override
@@ -66,6 +81,15 @@ class MyApp extends StatelessWidget {
 
     return MultiRepositoryProvider(
       providers: [
+        RepositoryProvider<SavePinCodeUseCase>(
+          create: (_) => SavePinCodeUseCase(pinCodeStorage),
+        ),
+        RepositoryProvider<GetPinCodeUseCase>(
+          create: (_) => GetPinCodeUseCase(pinCodeStorage),
+        ),
+        RepositoryProvider<DeletePinCodeUseCase>(
+          create: (_) => DeletePinCodeUseCase(pinCodeStorage),
+        ),
         ChangeNotifierProvider<ThemeController>.value(value: themeController),
         RepositoryProvider<ApiClient>(create: (_) => ApiClient()),
         RepositoryProvider<TransactionApiService>(

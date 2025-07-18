@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_finances/domain/usecases/get_pin_code_usecase.dart';
+import 'package:flutter_finances/domain/usecases/save_pin_code_usecase.dart';
+import 'package:flutter_finances/ui/tabs/settings/pin_code_screen.dart';
 import 'package:flutter_finances/ui/theme/theme_controller.dart';
 import 'package:provider/provider.dart';
 
@@ -67,6 +70,28 @@ class SettingsScreen extends StatelessWidget {
                       );
                     },
                   );
+                },
+              ),
+              ListTile(
+                title: const Text('Пин-код'),
+                onTap: () async {
+                  final result = await Navigator.push<bool>(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => PinCodeScreen(
+                        mode: PinCodeMode.set,
+                        savePinCodeUseCase: context.read<SavePinCodeUseCase>(),
+                        getPinCodeUseCase: context.read<GetPinCodeUseCase>(),
+                      ),
+                    ),
+                  );
+                  if (result == true) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Пин-код успешно установлен'),
+                      ),
+                    );
+                  }
                 },
               ),
             ],
