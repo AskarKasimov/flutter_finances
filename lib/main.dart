@@ -24,7 +24,9 @@ import 'package:flutter_finances/domain/usecases/update_transaction_usecase.dart
 import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
 import 'package:flutter_finances/ui/router.dart';
-import 'package:flutter_finances/ui/theme.dart';
+import 'package:flutter_finances/ui/theme/theme.dart';
+import 'package:flutter_finances/ui/theme/theme_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:worker_manager/worker_manager.dart';
 
 void main() async {
@@ -39,13 +41,24 @@ void main() async {
   // Инициализация API клиента
   final apiClient = ApiClient();
 
-  runApp(MyApp(apiClient: apiClient));
+  // Инициализация ThemeController
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final themeController = ThemeController();
+  await themeController.loadThemeMode();
+
+  runApp(MyApp(apiClient: apiClient, themeController: themeController));
 }
 
 class MyApp extends StatelessWidget {
   final ApiClient apiClient;
+  final ThemeController themeController;
 
-  const MyApp({super.key, required this.apiClient});
+  const MyApp({
+    super.key,
+    required this.apiClient,
+    required this.themeController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +66,7 @@ class MyApp extends StatelessWidget {
 
     return MultiRepositoryProvider(
       providers: [
+        ChangeNotifierProvider<ThemeController>.value(value: themeController),
         RepositoryProvider<ApiClient>(create: (_) => ApiClient()),
         RepositoryProvider<TransactionApiService>(
           create: (context) =>
@@ -158,13 +172,17 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ],
-        child: MaterialApp.router(
-          title: 'Flutter Finance',
-          debugShowCheckedModeBanner: false,
-          themeMode: ThemeMode.system,
-          theme: lightTheme,
-          darkTheme: darkTheme,
-          routerConfig: router,
+        child: Consumer<ThemeController>(
+          builder: (context, themeController, _) {
+            return MaterialApp.router(
+              title: 'Flutter Finance',
+              debugShowCheckedModeBanner: false,
+              theme: lightTheme,
+              darkTheme: darkTheme,
+              themeMode: themeController.themeMode,
+              routerConfig: router,
+            );
+          },
         ),
       ),
     );

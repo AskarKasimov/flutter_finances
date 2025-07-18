@@ -28,15 +28,4 @@ class MockedCategoryRepository implements CategoryRepository {
       throw RepositoryException('Ошибка при получении категорий');
     }
   }
-
-  @override
-  Future<List<Category>> getCategoriesByIsIncome(bool isIncome) async {
-    final filtered = _mockCategories
-        .where((c) => c.isIncome == isIncome)
-        .toList();
-    await Future.delayed(
-      const Duration(milliseconds: 1000),
-    ); // Simulate network delay
-    return filtered;
-  }
 }

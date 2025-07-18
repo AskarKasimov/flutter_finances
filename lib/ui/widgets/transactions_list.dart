@@ -4,6 +4,7 @@ import 'package:flutter_finances/domain/entities/transaction.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
 import 'package:flutter_finances/ui/widgets/sort_mode.dart';
+import 'package:flutter_finances/utils/color_utils.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
 import 'package:flutter_finances/utils/number_utils.dart';
 
@@ -146,9 +147,9 @@ class _TransactionsListState extends State<TransactionsList> {
                                 children: [
                                   CircleAvatar(
                                     radius: 20,
-                                    backgroundColor: Theme.of(
-                                      context,
-                                    ).colorScheme.secondary,
+                                    backgroundColor: generateLightColorFromId(
+                                      category.id,
+                                    ),
                                     child: Text(
                                       category.emoji,
                                       style: const TextStyle(fontSize: 18),

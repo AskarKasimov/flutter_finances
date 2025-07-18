@@ -11,6 +11,7 @@ import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creat
 import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_event.dart';
 import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_state.dart';
 import 'package:flutter_finances/ui/widgets/selection_bottom_sheet.dart';
+import 'package:flutter_finances/utils/color_utils.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
 import 'package:flutter_finances/utils/number_utils.dart';
 
@@ -315,7 +316,7 @@ class _TransactionFormState extends State<TransactionForm> {
       itemBuilder: (ctx, category) => ListTile(
         title: Text(category.name),
         leading: CircleAvatar(
-          backgroundColor: Theme.of(ctx).colorScheme.secondary,
+          backgroundColor: generateLightColorFromId(category.id),
           child: Text(category.emoji),
         ),
       ),
