@@ -29,6 +29,9 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   local_auth: ^2.3.0
   secure_application: ^4.1.0
+  intl: ^0.20.2
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
@@ -44,6 +47,7 @@ dev_dependencies:
   drift_dev: ^2.27.0
 
 flutter:
+  generate: true
   uses-material-design: true
   assets:
     - assets/icons/
