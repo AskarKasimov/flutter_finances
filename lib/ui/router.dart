@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/domain/repositories/category_repository.dart';
 import 'package:flutter_finances/domain/repositories/transaction_repository.dart';
@@ -70,6 +71,7 @@ GoRouter createRouter(BuildContext context) => GoRouter(
           bottomNavigationBar: NavigationBar(
             selectedIndex: shell.currentIndex,
             onDestinationSelected: (index) {
+              HapticFeedback.selectionClick();
               if (index == shell.currentIndex) {
                 shell.goBranch(index, initialLocation: true);
               } else {
