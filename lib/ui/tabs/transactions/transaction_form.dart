@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/domain/entities/account_state.dart';
 import 'package:flutter_finances/domain/entities/category.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
 import 'package:flutter_finances/ui/blocs/account/account_state.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
@@ -41,6 +42,8 @@ class _TransactionFormState extends State<TransactionForm> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return BlocBuilder<TransactionCreationBloc, TransactionCreationState>(
       builder: (context, state) {
         if (state is! TransactionDataState) {
@@ -56,10 +59,10 @@ class _TransactionFormState extends State<TransactionForm> {
 
         return Column(
           children: [
-            // --- СЧЁТ ---
+            // --- ACCOUNT ---
             ListTile(
               title: Text(
-                'Счёт',
+                loc.account,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               trailing: Row(
@@ -68,7 +71,7 @@ class _TransactionFormState extends State<TransactionForm> {
                   Text(
                     state.accountState != null
                         ? state.accountState!.name
-                        : 'Не выбран',
+                        : loc.accountNotSelected,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(width: 16),
@@ -80,16 +83,16 @@ class _TransactionFormState extends State<TransactionForm> {
                 ],
               ),
               onTap: () {
-                _showAccountSelection(context);
+                _showAccountSelection(context, loc);
               },
             ),
 
             Divider(height: 1, color: Theme.of(context).dividerColor),
 
-            // --- КАТЕГОРИЯ ---
+            // --- CATEGORY ---
             ListTile(
               title: Text(
-                'Статья',
+                loc.category,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               trailing: Row(
@@ -98,7 +101,7 @@ class _TransactionFormState extends State<TransactionForm> {
                   Text(
                     state.category != null
                         ? state.category!.name
-                        : 'Не выбрано',
+                        : loc.categoryNotSelected,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(width: 16),
@@ -110,20 +113,22 @@ class _TransactionFormState extends State<TransactionForm> {
                 ],
               ),
               onTap: () {
-                _showCategorySelection(context, widget.isIncome);
+                _showCategorySelection(context, widget.isIncome, loc);
               },
             ),
 
             Divider(height: 1, color: Theme.of(context).dividerColor),
 
-            // --- СУММА ---
+            // --- AMOUNT ---
             ListTile(
               title: Text(
-                'Сумма',
+                loc.amount,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               trailing: Text(
-                state.amount > 0 ? state.amount.toString() : 'Не указано',
+                state.amount > 0
+                    ? state.amount.toString()
+                    : loc.amountNotSpecified,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               onTap: () {
@@ -135,7 +140,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 showDialog(
                   context: context,
                   builder: (dialogContext) => AlertDialog(
-                    title: const Text('Введите сумму'),
+                    title: Text(loc.enterAmount),
                     content: TextField(
                       controller: controller,
                       keyboardType: TextInputType.number,
@@ -148,18 +153,21 @@ class _TransactionFormState extends State<TransactionForm> {
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(dialogContext).pop(),
-                        child: const Text('Отмена'),
+                        child: Text(loc.cancel),
                       ),
                       ElevatedButton(
                         onPressed: () {
                           final amount =
-                              double.tryParse(controller.text) ?? 0.0;
+                              double.tryParse(
+                                controller.text.replaceAll(',', '.'),
+                              ) ??
+                              0.0;
                           context.read<TransactionCreationBloc>().add(
                             TransactionAmountChanged(amount),
                           );
                           Navigator.of(dialogContext).pop();
                         },
-                        child: const Text('OK'),
+                        child: Text(loc.ok),
                       ),
                     ],
                   ),
@@ -169,10 +177,10 @@ class _TransactionFormState extends State<TransactionForm> {
 
             Divider(height: 1, color: Theme.of(context).dividerColor),
 
-            // --- ДАТА ---
+            // --- DATE ---
             ListTile(
               title: Text(
-                'Дата',
+                loc.date,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               trailing: Text(
@@ -203,10 +211,10 @@ class _TransactionFormState extends State<TransactionForm> {
 
             Divider(height: 1, color: Theme.of(context).dividerColor),
 
-            // --- ВРЕМЯ ---
+            // --- TIME ---
             ListTile(
               title: Text(
-                'Время',
+                loc.time,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               trailing: Text(
@@ -235,7 +243,7 @@ class _TransactionFormState extends State<TransactionForm> {
 
             Divider(height: 1, color: Theme.of(context).dividerColor),
 
-            // --- КОММЕНТАРИЙ ---
+            // --- COMMENT ---
             ListTile(
               title: TextFormField(
                 controller: _commentController,
@@ -244,7 +252,7 @@ class _TransactionFormState extends State<TransactionForm> {
                     .add(TransactionCommentChanged(value)),
                 maxLines: 1,
                 decoration: InputDecoration(
-                  hintText: 'Комментарий...',
+                  hintText: loc.commentHint,
                   hintStyle: TextStyle(color: Theme.of(context).hintColor),
                   border: InputBorder.none,
                 ),
@@ -258,10 +266,10 @@ class _TransactionFormState extends State<TransactionForm> {
     );
   }
 
-  void _showAccountSelection(BuildContext context) {
+  void _showAccountSelection(BuildContext context, AppLocalizations loc) {
     showSelectionBottomSheet<AccountState>(
       context: context,
-      title: 'Выберите счёт',
+      title: loc.selectAccountTitle,
       stateSelector: (ctx) {
         final state = ctx.watch<AccountBloc>().state;
         return switch (state) {
@@ -281,7 +289,7 @@ class _TransactionFormState extends State<TransactionForm> {
       itemBuilder: (ctx, account) => ListTile(
         title: Text(account.name),
         subtitle: Text(
-          'Баланс: ${account.moneyDetails.balance} ${account.moneyDetails.currency}',
+          '${loc.balance}: ${account.moneyDetails.balance} ${account.moneyDetails.currency}',
         ),
       ),
       onItemSelected: (account) {
@@ -292,10 +300,14 @@ class _TransactionFormState extends State<TransactionForm> {
     );
   }
 
-  void _showCategorySelection(BuildContext context, bool isIncome) {
+  void _showCategorySelection(
+    BuildContext context,
+    bool isIncome,
+    AppLocalizations loc,
+  ) {
     showSelectionBottomSheet<Category>(
       context: context,
-      title: 'Выберите статью',
+      title: loc.category,
       stateSelector: (ctx) {
         final state = ctx.watch<CategoryBloc>().state;
         return switch (state) {
@@ -303,7 +315,7 @@ class _TransactionFormState extends State<TransactionForm> {
           CategoryError() => (
             items: [],
             isLoading: false,
-            error: 'Ошибка загрузки категорий',
+            error: loc.errorLoadingCategories,
           ),
           CategoryLoaded(:final categories) => (
             items: categories.where((c) => c.isIncome == isIncome).toList(),

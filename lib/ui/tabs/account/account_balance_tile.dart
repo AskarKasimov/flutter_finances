@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
 import 'package:flutter_finances/ui/blocs/account/account_state.dart';
 import 'package:flutter_finances/utils/number_utils.dart';
@@ -10,6 +11,7 @@ class AccountBalanceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return InkWell(
       onTap: () {
         context.go('/account/edit');
@@ -29,7 +31,7 @@ class AccountBalanceTile extends StatelessWidget {
                   child: const Text('💰'),
                 ),
                 const SizedBox(width: 8),
-                const Text('Баланс'),
+                Text(l10n.balance),
               ],
             ),
             BlocBuilder<AccountBloc, AccountBlocState>(

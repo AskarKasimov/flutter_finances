@@ -49,5 +49,7 @@
 		<true/>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
+		<key>NSFaceIDUsageDescription</key>
+        <string>Используется для входа в приложение</string>
 	</dict>
 </plist>

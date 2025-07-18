@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/domain/repositories/category_repository.dart';
 import 'package:flutter_finances/domain/repositories/transaction_repository.dart';
@@ -16,7 +17,8 @@ import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc
 import 'package:flutter_finances/ui/tabs/account/account_edit_name_screen.dart';
 import 'package:flutter_finances/ui/tabs/account/account_screen.dart';
 import 'package:flutter_finances/ui/tabs/items_screen.dart';
-import 'package:flutter_finances/ui/tabs/settings_screen.dart';
+import 'package:flutter_finances/ui/tabs/pin_check_screen.dart';
+import 'package:flutter_finances/ui/tabs/settings/settings_screen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/analysis/transactions_analysis.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transaction_edit_screen.dart';
 import 'package:flutter_finances/ui/tabs/transactions/transactions_history_screen.dart';
@@ -61,8 +63,12 @@ TransactionCreationBloc _makeTransactionCreationBloc({
 }
 
 GoRouter createRouter(BuildContext context) => GoRouter(
-  initialLocation: '/expenses',
+  initialLocation: '/pin-check',
   routes: [
+    GoRoute(
+      path: '/pin-check',
+      builder: (context, state) => const PinCheckScreen(),
+    ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, shell) {
         return Scaffold(
@@ -70,6 +76,7 @@ GoRouter createRouter(BuildContext context) => GoRouter(
           bottomNavigationBar: NavigationBar(
             selectedIndex: shell.currentIndex,
             onDestinationSelected: (index) {
+              HapticFeedback.selectionClick();
               if (index == shell.currentIndex) {
                 shell.goBranch(index, initialLocation: true);
               } else {

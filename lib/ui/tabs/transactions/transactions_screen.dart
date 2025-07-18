@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
 import 'package:flutter_finances/ui/blocs/account/account_state.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
@@ -18,7 +20,7 @@ class TransactionsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(isIncome ? 'Доходы сегодня' : 'Расходы сегодня'),
+        title: Text(isIncome ? AppLocalizations.of(context)!.incomesToday : AppLocalizations.of(context)!.expensesToday),
         centerTitle: true,
         actions: [
           IconButton(
@@ -31,6 +33,7 @@ class TransactionsScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          HapticFeedback.lightImpact();
           showTransactionCreationSheet(context: context, isIncome: isIncome);
         },
         child: const Icon(Icons.add),
@@ -46,12 +49,12 @@ class TransactionsScreen extends StatelessWidget {
 
               if (transactionState is TransactionHistoryError) {
                 return Center(
-                  child: Text('Ошибка: ${transactionState.message}'),
+                  child: Text('${AppLocalizations.of(context)!.errorTitle}: ${transactionState.message}'),
                 );
               }
 
               if (accountState is AccountBlocError) {
-                return Center(child: Text('Ошибка: ${accountState.message}'));
+                return Center(child: Text('${AppLocalizations.of(context)!.errorTitle}: ${accountState.message}'));
               }
 
               if (transactionState is TransactionHistoryLoaded &&
@@ -84,15 +87,15 @@ class TransactionsScreen extends StatelessWidget {
                                   children: [
                                     Text(
                                       isIncome
-                                          ? 'Здесь будут твои доходы за день'
-                                          : 'Здесь будут твои расходы за день',
+                                          ? AppLocalizations.of(context)!.incomesEmptyToday
+                                          : AppLocalizations.of(context)!.expensesEmptyToday,
                                       style: Theme.of(
                                         context,
                                       ).textTheme.bodyMedium,
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      'Добавь нажатием на плюсик :)',
+                                      AppLocalizations.of(context)!.addByPlus,
                                       style: Theme.of(
                                         context,
                                       ).textTheme.bodySmall,

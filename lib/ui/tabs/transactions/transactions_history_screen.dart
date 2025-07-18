@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/gen/assets.gen.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
 import 'package:flutter_finances/ui/blocs/account/account_state.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
@@ -19,7 +20,7 @@ class TransactionsHistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Моя история'),
+        title: Text(AppLocalizations.of(context)!.myHistory),
         centerTitle: true,
         actions: [
           IconButton(
@@ -45,12 +46,12 @@ class TransactionsHistoryScreen extends StatelessWidget {
 
               if (transactionState is TransactionHistoryError) {
                 return Center(
-                  child: Text('Ошибка: ${transactionState.message}'),
+                  child: Text('${AppLocalizations.of(context)!.errorTitle}: ${transactionState.message}'),
                 );
               }
 
               if (accountState is AccountBlocError) {
-                return Center(child: Text('Ошибка: ${accountState.message}'));
+                return Center(child: Text('${AppLocalizations.of(context)!.errorTitle}: ${accountState.message}'));
               }
 
               if (transactionState is TransactionHistoryLoaded &&

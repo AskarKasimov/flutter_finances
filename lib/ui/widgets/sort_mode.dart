@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 
 abstract class SortMode {
-  String get label;
+  String getLabel(BuildContext context);
 
   List<Transaction> sort(List<Transaction> transactions);
 
@@ -15,19 +17,21 @@ abstract class SortMode {
 
 class SortByDateDesc extends SortMode {
   @override
-  String get label => 'Сначала новые';
-
-  @override
   List<Transaction> sort(List<Transaction> transactions) {
     final sorted = [...transactions];
     sorted.sort((a, b) => b.timestamp.compareTo(a.timestamp));
     return sorted;
   }
+
+  @override
+  String getLabel(BuildContext context) =>
+      AppLocalizations.of(context)!.sortByDateDesc;
 }
 
 class SortByDateAsc extends SortMode {
   @override
-  String get label => 'Сначала старые';
+  String getLabel(BuildContext context) =>
+      AppLocalizations.of(context)!.sortByDateAsc;
 
   @override
   List<Transaction> sort(List<Transaction> transactions) {
@@ -39,7 +43,8 @@ class SortByDateAsc extends SortMode {
 
 class SortByAmountDesc extends SortMode {
   @override
-  String get label => 'Сначала большие суммы';
+  String getLabel(BuildContext context) =>
+      AppLocalizations.of(context)!.sortByAmountDesc;
 
   @override
   List<Transaction> sort(List<Transaction> transactions) {
@@ -51,7 +56,8 @@ class SortByAmountDesc extends SortMode {
 
 class SortByAmountAsc extends SortMode {
   @override
-  String get label => 'Сначала меньшие суммы';
+  String getLabel(BuildContext context) =>
+      AppLocalizations.of(context)!.sortByAmountAsc;
 
   @override
   List<Transaction> sort(List<Transaction> transactions) {

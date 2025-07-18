@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 
 typedef ItemBuilder<T> = Widget Function(BuildContext context, T item);
 typedef OnItemSelected<T> = void Function(T item);
@@ -34,9 +35,9 @@ void showSelectionBottomSheet<T>({
                   if (state.isLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state.error case final msg?) {
-                    return Center(child: Text('Ошибка: $msg'));
+                    return Center(child: Text('${AppLocalizations.of(ctx)!.errorTitle}: $msg'));
                   } else if (state.items.isEmpty) {
-                    return const Center(child: Text('Нет доступных данных'));
+                    return Center(child: Text(AppLocalizations.of(ctx)!.noDataFound));
                   }
 
                   return ListView.separated(

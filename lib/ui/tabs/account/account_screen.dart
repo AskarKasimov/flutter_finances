@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/gen/assets.gen.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
 import 'package:flutter_finances/ui/blocs/account/account_event.dart';
 import 'package:flutter_finances/ui/blocs/account/account_state.dart';
@@ -40,9 +41,10 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Мой счет'),
+        title: Text(l10n.myAccount),
         centerTitle: true,
         actions: [
           IconButton(
@@ -77,14 +79,10 @@ class _AccountScreenState extends State<AccountScreen> {
                     );
                   }
                   if (accountState is AccountBlocError) {
-                    return Center(
-                      child: Text('Ошибка: ${accountState.message}'),
-                    );
+                    return Center(child: Text(accountState.message));
                   }
                   if (categoriesState is CategoryError) {
-                    return Center(
-                      child: Text('Ошибка: ${categoriesState.message}'),
-                    );
+                    return Center(child: Text(categoriesState.message));
                   }
                   if (accountState is AccountBlocLoaded &&
                       categoriesState is CategoryLoaded) {
@@ -98,7 +96,7 @@ class _AccountScreenState extends State<AccountScreen> {
                         const AccountCurrencyTile(),
                         Padding(
                           padding: const EdgeInsets.all(32),
-                          child: BalanceSegmentedContorls(
+                          child: BalanceSegmentedControls(
                             selectedPeriod: _selectedPeriod,
                             onChanged: (selected) {
                               setState(() {

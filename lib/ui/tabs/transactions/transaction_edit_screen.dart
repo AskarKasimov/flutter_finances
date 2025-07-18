@@ -6,6 +6,7 @@ import 'package:flutter_finances/domain/usecases/get_all_accounts_usecase.dart';
 import 'package:flutter_finances/domain/usecases/get_all_categories_usecase.dart';
 import 'package:flutter_finances/domain/usecases/get_transaction_by_id_usecase.dart';
 import 'package:flutter_finances/domain/usecases/update_transaction_usecase.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
 import 'package:flutter_finances/ui/blocs/transaction_creation/transaction_creation_bloc.dart';
@@ -47,20 +48,21 @@ class _TransactionEditScreen extends StatelessWidget {
   void _onSubmit(BuildContext context) {
     final bloc = context.read<TransactionCreationBloc>();
     final state = bloc.state as TransactionDataState;
+    final loc = AppLocalizations.of(context)!;
 
     if (state.isValid) {
       bloc.add(UpdateTransactionSubmitted(transactionId: transactionId));
     } else {
-      final error = state.validationError ?? 'Неизвестная ошибка';
+      final error = state.validationError ?? loc.errorUnknown;
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Ошибка'),
+          title: Text(loc.errorTitle),
           content: Text(error),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('ОК'),
+              child: Text(loc.ok),
             ),
           ],
         ),
@@ -76,37 +78,34 @@ class _TransactionEditScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return BlocListener<TransactionCreationBloc, TransactionCreationState>(
       listener: (context, state) {
-        // final historyBloc = context.read<TransactionHistoryBloc>();
         switch (state) {
           case TransactionUpdatedSuccessfully():
-            // historyBloc.add(UpdateTransaction(state.updatedTransaction));
             context.pop();
             break;
           case TransactionDeletedSuccessfully():
-            // historyBloc.add(DeleteTransaction(state.deletedTransactionId));
             context.pop();
             break;
           case TransactionError(:final message):
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
-                title: const Text('Ошибка'),
+                title: Text(loc.errorTitle),
                 content: Text(message),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('ОК'),
+                    child: Text(loc.ok),
                   ),
                 ],
               ),
             );
             break;
           case TransactionDataState():
-            break;
           case TransactionProcessing():
-            break;
           case TransactionCreatedSuccessfully():
             break;
         }
@@ -130,7 +129,7 @@ class _TransactionEditScreen extends StatelessWidget {
 
               return Scaffold(
                 appBar: AppBar(
-                  title: const Text('Редактировать транзакцию'),
+                  title: Text(loc.transactionEditTitle),
                   centerTitle: true,
                   actions: [
                     Builder(
@@ -157,7 +156,7 @@ class _TransactionEditScreen extends StatelessWidget {
                           minimumSize: const Size.fromHeight(48),
                         ),
                         onPressed: () => _onDelete(context),
-                        label: const Text('Удалить'),
+                        label: Text(loc.delete),
                       ),
                     ),
                   ],
