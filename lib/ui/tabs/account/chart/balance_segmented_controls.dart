@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 
 enum StatsPeriod { day, month }
 
-class BalanceSegmentedContorls extends StatelessWidget {
+class BalanceSegmentedControls extends StatelessWidget {
   final StatsPeriod selectedPeriod;
   final void Function(StatsPeriod) onChanged;
 
-  const BalanceSegmentedContorls({
+  const BalanceSegmentedControls({
     super.key,
     required this.selectedPeriod,
     required this.onChanged,
@@ -14,15 +15,14 @@ class BalanceSegmentedContorls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return SegmentedButton<StatsPeriod>(
-      segments: const [
-        ButtonSegment(
-          value: StatsPeriod.day,
-          label: Text('По дням'),
-        ),
+      segments: [
+        ButtonSegment(value: StatsPeriod.day, label: Text(loc.statsPeriodDay)),
         ButtonSegment(
           value: StatsPeriod.month,
-          label: Text('По месяцам'),
+          label: Text(loc.statsPeriodMonth),
         ),
       ],
       selected: {selectedPeriod},

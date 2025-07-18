@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
 import 'package:flutter_finances/ui/widgets/sort_mode.dart';
@@ -53,7 +54,7 @@ class _TransactionsListState extends State<TransactionsList> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Здесь будут твои транзакции',
+                    AppLocalizations.of(context)!.transactionsEmpty,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
@@ -77,7 +78,10 @@ class _TransactionsListState extends State<TransactionsList> {
               child: PopupMenuButton<SortMode>(
                 onSelected: (value) => setState(() => _sortMode = value),
                 itemBuilder: (context) => SortMode.values.map((mode) {
-                  return PopupMenuItem(value: mode, child: Text(mode.label));
+                  return PopupMenuItem(
+                    value: mode,
+                    child: Text(mode.getLabel(context)),
+                  );
                 }).toList(),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -85,7 +89,7 @@ class _TransactionsListState extends State<TransactionsList> {
                     const Icon(Icons.sort, size: 20),
                     const SizedBox(width: 4),
                     Text(
-                      _sortMode.label,
+                      _sortMode.getLabel(context),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const Icon(Icons.arrow_drop_down),
@@ -234,7 +238,11 @@ class _TransactionsListState extends State<TransactionsList> {
               } else if (state is CategoryLoading) {
                 return const Center(child: CircularProgressIndicator());
               } else {
-                return const Center(child: Text('Ошибка загрузки категорий'));
+                return Center(
+                  child: Text(
+                    AppLocalizations.of(context)!.errorLoadingCategories,
+                  ),
+                );
               }
             },
           ),

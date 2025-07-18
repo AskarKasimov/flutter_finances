@@ -71,6 +71,7 @@ void main() async {
   );
 
   final localeController = LocaleController();
+  await localeController.loadLocale();
 
   runApp(
     SecureApplication(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_event.dart';
 import 'package:flutter_finances/utils/date_utils.dart';
@@ -18,10 +19,11 @@ class TransactionsFilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Column(
       children: [
         DateSelector(
-          title: 'Период: начало',
+          title: loc.startPeriod,
           date: startDate,
           isStart: true,
           start: startDate,
@@ -30,7 +32,7 @@ class TransactionsFilterSection extends StatelessWidget {
         ),
         Divider(height: 1, color: Theme.of(context).dividerColor),
         DateSelector(
-          title: 'Период: конец',
+          title: loc.endPeriod,
           date: endDate,
           isStart: false,
           start: startDate,

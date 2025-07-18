@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_event.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_state.dart';
@@ -25,8 +26,9 @@ class _ItemsScreen extends State<ItemsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Мои статьи'), centerTitle: true),
+      appBar: AppBar(title: Text(l10n.myItems), centerTitle: true),
       body: BlocBuilder<CategoryBloc, CategoryState>(
         builder: (context, state) {
           return RefreshIndicator(
@@ -47,12 +49,14 @@ class _ItemsScreen extends State<ItemsScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 18),
                     child: TextField(
                       controller: _searchController,
-                      decoration: const InputDecoration(
-                        hintText: 'Поиск по названию...',
-                        suffixIcon: Icon(Icons.search, size: 24),
+                      decoration: InputDecoration(
+                        hintText: l10n.searchByName,
+                        suffixIcon: const Icon(Icons.search, size: 24),
                         border: InputBorder.none,
                         isDense: true,
-                        contentPadding: EdgeInsets.symmetric(vertical: 16),
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 16,
+                        ),
                       ),
                       onChanged: (value) {
                         setState(() {

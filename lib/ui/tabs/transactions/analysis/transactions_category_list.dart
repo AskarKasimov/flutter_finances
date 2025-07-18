@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_finances/domain/entities/category.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 import 'package:flutter_finances/utils/color_utils.dart';
 import 'package:flutter_finances/utils/number_utils.dart';
 
@@ -177,7 +178,7 @@ class _CategoryTileState extends State<_CategoryTile> {
                         )
                       else
                         Text(
-                          '<нет комментария>',
+                          AppLocalizations.of(context)!.noComment,
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       Text(

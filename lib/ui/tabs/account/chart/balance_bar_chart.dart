@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_finances/domain/entities/category.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_bloc.dart';
 import 'package:flutter_finances/ui/blocs/transactions/transactions_history_state.dart';
 import 'package:flutter_finances/ui/tabs/account/chart/balance_segmented_controls.dart';
@@ -40,7 +41,7 @@ class BalanceBarChart extends StatelessWidget {
             ..sort((a, b) => a.key.compareTo(b.key));
 
           if (sortedEntries.isEmpty) {
-            return const Center(child: Text('Нет данных для отображения'));
+            return Center(child: Text(AppLocalizations.of(context)!.noDataFound));
           }
 
           final screenWidth = MediaQuery.of(context).size.width;

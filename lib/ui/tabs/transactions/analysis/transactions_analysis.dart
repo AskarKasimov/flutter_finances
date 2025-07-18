@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
 import 'package:flutter_finances/ui/blocs/account/account_state.dart';
 import 'package:flutter_finances/ui/blocs/categories/category_bloc.dart';
@@ -17,9 +18,10 @@ class TransactionsAnalysisScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Анализ'),
+        title: Text(l10n.analysis),
         centerTitle: true,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
@@ -50,21 +52,15 @@ class TransactionsAnalysisScreen extends StatelessWidget {
                     }
 
                     if (transactionState is TransactionHistoryError) {
-                      return Center(
-                        child: Text('Ошибка: ${transactionState.message}'),
-                      );
+                      return Center(child: Text(transactionState.message));
                     }
 
                     if (categoryState is CategoryError) {
-                      return Center(
-                        child: Text('Ошибка: ${categoryState.message}'),
-                      );
+                      return Center(child: Text(categoryState.message));
                     }
 
                     if (accountState is AccountBlocError) {
-                      return Center(
-                        child: Text('Ошибка: ${accountState.message}'),
-                      );
+                      return Center(child: Text(accountState.message));
                     }
 
                     if (transactionState is TransactionHistoryLoaded &&
@@ -108,9 +104,7 @@ class TransactionsAnalysisScreen extends StatelessWidget {
                       );
                     }
 
-                    return const Center(
-                      child: Text('Нет данных для отображения'),
-                    );
+                    return Center(child: Text(l10n.noDataFound));
                   },
                 );
               },

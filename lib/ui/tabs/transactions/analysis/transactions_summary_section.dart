@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_finances/domain/entities/transaction.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 import 'package:flutter_finances/utils/number_utils.dart';
 
 class TransactionsSummarySection extends StatelessWidget {
@@ -21,7 +22,7 @@ class TransactionsSummarySection extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text('Сумма'),
+          Text(AppLocalizations.of(context)!.summa),
           Text(
             formatCurrency(value: total, currency: currency),
             style: Theme.of(context).textTheme.bodyMedium,

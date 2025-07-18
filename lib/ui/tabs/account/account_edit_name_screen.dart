@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 import 'package:flutter_finances/ui/blocs/account/account_bloc.dart';
 import 'package:flutter_finances/ui/blocs/account/account_event.dart';
 import 'package:flutter_finances/ui/blocs/account/account_state.dart';
@@ -45,9 +46,10 @@ class _AccountEditNameScreenState extends State<AccountEditNameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Редактировать название'),
+        title: Text(l10n.editAccountName),
         actions: [IconButton(icon: const Icon(Icons.check), onPressed: _save)],
       ),
       body: Padding(
@@ -56,13 +58,13 @@ class _AccountEditNameScreenState extends State<AccountEditNameScreen> {
           key: _formKey,
           child: TextFormField(
             controller: _controller,
-            decoration: const InputDecoration(
-              labelText: 'Название счета',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l10n.accountName,
+              border: const OutlineInputBorder(),
             ),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
-                return 'Введите название';
+                return l10n.enterAccountName;
               }
               return null;
             },

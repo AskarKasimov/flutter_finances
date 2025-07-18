@@ -4,6 +4,7 @@ import 'package:flutter_finances/domain/usecases/get_pin_code_usecase.dart';
 import 'package:flutter_finances/domain/usecases/is_biometric_enabled_usecase.dart';
 import 'package:flutter_finances/domain/usecases/save_pin_code_usecase.dart';
 import 'package:flutter_finances/domain/usecases/set_biometric_enabled_usecase.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 import 'package:flutter_finances/ui/tabs/settings/pin_code_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:local_auth/local_auth.dart';
@@ -41,7 +42,7 @@ class _PinCheckScreenState extends State<PinCheckScreen> {
       if (canUseBiometrics && isSupported) {
         try {
           final didAuth = await auth.authenticate(
-            localizedReason: 'Войдите с помощью биометрии',
+            localizedReason: AppLocalizations.of(context)!.biometricAuthReason,
             options: const AuthenticationOptions(biometricOnly: true),
           );
 

@@ -24,15 +24,21 @@ class LocaleController extends ChangeNotifier {
     }
   }
 
-
   Future<void> loadLocale() async {
     final prefs = await SharedPreferences.getInstance();
     final localeCode = prefs.getString(_localeKey);
+
     if (localeCode != null && localeCode.isNotEmpty) {
       _locale = Locale(localeCode);
     } else {
-      _locale = null; // null значит системная локаль
+      final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
+      const supportedLocales = AppLocalizations.supportedLocales;
+
+      _locale = supportedLocales.contains(systemLocale)
+          ? systemLocale
+          : supportedLocales.first;
     }
+
     notifyListeners();
   }
 

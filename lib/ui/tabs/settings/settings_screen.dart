@@ -57,25 +57,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Настройки'), centerTitle: true),
+      appBar: AppBar(title: Text(l10n.settings), centerTitle: true),
       body: Consumer<ThemeController>(
         builder: (context, themeController, _) {
           return ListView(
             children: [
               SwitchListTile(
-                title: const Text('Использовать системную тему'),
+                title: Text(l10n.useSystemTheme),
                 value: themeController.useSystemTheme,
                 onChanged: (value) {
                   themeController.updateUseSystemTheme(value);
                 },
               ),
               ListTile(
-                title: const Text('Основной цвет (тинт)'),
+                title: Text(l10n.primaryColor),
                 trailing: Container(
                   width: 24,
                   height: 24,
@@ -92,7 +94,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: const Text('Выберите основной цвет'),
+                        title: Text(l10n.primaryColor),
                         content: SingleChildScrollView(
                           child: ColorPicker(
                             pickerColor: pickedColor,
@@ -107,14 +109,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(),
-                            child: const Text('Отмена'),
+                            child: Text(l10n.cancel),
                           ),
                           TextButton(
                             onPressed: () {
                               themeController.updateTintColor(pickedColor);
                               Navigator.of(context).pop();
                             },
-                            child: const Text('Выбрать'),
+                            child: Text(l10n.select),
                           ),
                         ],
                       );
@@ -123,7 +125,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
               ListTile(
-                title: const Text('Пин-код'),
+                title: Text(l10n.pinCode),
                 onTap: () async {
                   final result = await Navigator.push<bool>(
                     context,
@@ -138,7 +140,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   );
                   if (result == true) {
-                    // Перезагрузить флаг наличия PIN
                     final pin = await context.read<GetPinCodeUseCase>()();
                     final biometricEnabled = await context
                         .read<IsBiometricEnabledUseCase>()();
@@ -150,7 +151,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
               ListTile(
-                title: const Text('Биометрия'),
+                title: Text(l10n.biometrics),
                 trailing: Switch(
                   value: _biometricEnabled,
                   onChanged: _toggleBiometric,
@@ -165,7 +166,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
               ListTile(
-                title: const Text('Язык приложения'),
+                title: Text(l10n.appLanguage),
                 trailing: Text(
                   context.read<LocaleController>().localeDisplayName(
                     context,
@@ -176,7 +177,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: () {
                   showSelectionBottomSheet<Locale>(
                     context: context,
-                    title: 'Выберите язык',
+                    title: l10n.selectLanguage,
                     stateSelector: (_) => (
                       items: AppLocalizations.supportedLocales,
                       isLoading: false,

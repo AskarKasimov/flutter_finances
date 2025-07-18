@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_finances/domain/usecases/get_pin_code_usecase.dart';
 import 'package:flutter_finances/domain/usecases/save_pin_code_usecase.dart';
 import 'package:flutter_finances/domain/usecases/set_biometric_enabled_usecase.dart';
+import 'package:flutter_finances/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 enum PinCodeMode { set, enter }
@@ -45,10 +46,11 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
   }
 
   void _onSubmit() async {
+    final loc = AppLocalizations.of(context)!;
     final pin = _pinController.text;
     if (pin.length != 4 || !RegExp(r'^\d{4}$').hasMatch(pin)) {
       setState(() {
-        _error = 'Пин-код должен быть 4 цифры';
+        _error = loc.pinErrorInvalid;
       });
       return;
     }
@@ -61,30 +63,31 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
         context.replace('/expenses');
       } else {
         setState(() {
-          _error = 'Неверный пин-код';
+          _error = loc.pinErrorWrong;
         });
       }
     }
   }
 
   Future<void> _onDeletePin() async {
+    final loc = AppLocalizations.of(context)!;
     await widget.savePinCodeUseCase.call('');
-    await widget.setBiometricEnabledUseCase(
-      false,
-    ); // отключаем биометрию при удалении пин-кода
+    await widget.setBiometricEnabledUseCase(false);
     setState(() {
       _savedPin = null;
       _error = null;
       _pinController.clear();
     });
     Navigator.pop(context, true);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Пин-код удалён, биометрия отключена')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(loc.pinDeleted)));
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     if (_loading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -94,9 +97,7 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.mode == PinCodeMode.set
-              ? 'Установить Пин-код'
-              : 'Введите Пин-код',
+          widget.mode == PinCodeMode.set ? loc.pinSetTitle : loc.pinEnterTitle,
         ),
       ),
       body: Padding(
@@ -109,13 +110,13 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
               keyboardType: TextInputType.number,
               obscureText: true,
               decoration: InputDecoration(
-                labelText: 'Пин-код',
+                labelText: loc.pinFieldLabel,
                 errorText: _error,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              isPinSet ? 'Пин-код установлен' : 'Пин-код не задан',
+              isPinSet ? loc.pinStatusSet : loc.pinStatusNotSet,
               style: TextStyle(
                 color: isPinSet ? Colors.green : Colors.red,
                 fontWeight: FontWeight.bold,
@@ -125,14 +126,14 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
             ElevatedButton(
               onPressed: _onSubmit,
               child: Text(
-                widget.mode == PinCodeMode.set ? 'Сохранить' : 'Войти',
+                widget.mode == PinCodeMode.set ? loc.pinSave : loc.pinLogin,
               ),
             ),
             if (widget.mode == PinCodeMode.set && isPinSet)
               TextButton(
                 onPressed: _onDeletePin,
                 style: TextButton.styleFrom(foregroundColor: Colors.red),
-                child: const Text('Удалить пинкод'),
+                child: Text(loc.pinDelete),
               ),
           ],
         ),
