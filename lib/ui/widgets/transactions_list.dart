@@ -209,7 +209,7 @@ class _TransactionsListState extends State<TransactionsList> {
                                             formatDateTime(item.timestamp),
                                             style: Theme.of(
                                               context,
-                                            ).textTheme.bodyMedium,
+                                            ).textTheme.bodySmall,
                                           ),
                                         ],
                                       )
