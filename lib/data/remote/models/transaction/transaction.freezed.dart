@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TransactionDTO {
 
- int get id; int get accountId; int get categoryId; String get amount; String get transactionDate; String? get comment; String get createdAt; String get updatedAt;
+ int get id; int get accountId; int get categoryId; String get amount; String get transactionDate; String? get comment;
 /// Create a copy of TransactionDTO
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $TransactionDTOCopyWith<TransactionDTO> get copyWith => _$TransactionDTOCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TransactionDTO&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.transactionDate, transactionDate) || other.transactionDate == transactionDate)&&(identical(other.comment, comment) || other.comment == comment)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TransactionDTO&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.transactionDate, transactionDate) || other.transactionDate == transactionDate)&&(identical(other.comment, comment) || other.comment == comment));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,accountId,categoryId,amount,transactionDate,comment,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,accountId,categoryId,amount,transactionDate,comment);
 
 @override
 String toString() {
-  return 'TransactionDTO(id: $id, accountId: $accountId, categoryId: $categoryId, amount: $amount, transactionDate: $transactionDate, comment: $comment, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'TransactionDTO(id: $id, accountId: $accountId, categoryId: $categoryId, amount: $amount, transactionDate: $transactionDate, comment: $comment)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $TransactionDTOCopyWith<$Res>  {
   factory $TransactionDTOCopyWith(TransactionDTO value, $Res Function(TransactionDTO) _then) = _$TransactionDTOCopyWithImpl;
 @useResult
 $Res call({
- int id, int accountId, int categoryId, String amount, String transactionDate, String? comment, String createdAt, String updatedAt
+ int id, int accountId, int categoryId, String amount, String transactionDate, String? comment
 });
 
 
@@ -66,7 +66,7 @@ class _$TransactionDTOCopyWithImpl<$Res>
 
 /// Create a copy of TransactionDTO
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? accountId = null,Object? categoryId = null,Object? amount = null,Object? transactionDate = null,Object? comment = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? accountId = null,Object? categoryId = null,Object? amount = null,Object? transactionDate = null,Object? comment = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,accountId: null == accountId ? _self.accountId : accountId // ignore: cast_nullable_to_non_nullable
@@ -74,9 +74,7 @@ as int,categoryId: null == categoryId ? _self.categoryId : categoryId // ignore:
 as int,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
 as String,transactionDate: null == transactionDate ? _self.transactionDate : transactionDate // ignore: cast_nullable_to_non_nullable
 as String,comment: freezed == comment ? _self.comment : comment // ignore: cast_nullable_to_non_nullable
-as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as String,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as String,
+as String?,
   ));
 }
 
@@ -87,7 +85,7 @@ as String,
 @JsonSerializable()
 
 class _TransactionDTO implements TransactionDTO {
-  const _TransactionDTO({required this.id, required this.accountId, required this.categoryId, required this.amount, required this.transactionDate, required this.comment, required this.createdAt, required this.updatedAt});
+  const _TransactionDTO({required this.id, required this.accountId, required this.categoryId, required this.amount, required this.transactionDate, required this.comment});
   factory _TransactionDTO.fromJson(Map<String, dynamic> json) => _$TransactionDTOFromJson(json);
 
 @override final  int id;
@@ -96,8 +94,6 @@ class _TransactionDTO implements TransactionDTO {
 @override final  String amount;
 @override final  String transactionDate;
 @override final  String? comment;
-@override final  String createdAt;
-@override final  String updatedAt;
 
 /// Create a copy of TransactionDTO
 /// with the given fields replaced by the non-null parameter values.
@@ -112,16 +108,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TransactionDTO&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.transactionDate, transactionDate) || other.transactionDate == transactionDate)&&(identical(other.comment, comment) || other.comment == comment)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TransactionDTO&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.transactionDate, transactionDate) || other.transactionDate == transactionDate)&&(identical(other.comment, comment) || other.comment == comment));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,accountId,categoryId,amount,transactionDate,comment,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,accountId,categoryId,amount,transactionDate,comment);
 
 @override
 String toString() {
-  return 'TransactionDTO(id: $id, accountId: $accountId, categoryId: $categoryId, amount: $amount, transactionDate: $transactionDate, comment: $comment, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'TransactionDTO(id: $id, accountId: $accountId, categoryId: $categoryId, amount: $amount, transactionDate: $transactionDate, comment: $comment)';
 }
 
 
@@ -132,7 +128,7 @@ abstract mixin class _$TransactionDTOCopyWith<$Res> implements $TransactionDTOCo
   factory _$TransactionDTOCopyWith(_TransactionDTO value, $Res Function(_TransactionDTO) _then) = __$TransactionDTOCopyWithImpl;
 @override @useResult
 $Res call({
- int id, int accountId, int categoryId, String amount, String transactionDate, String? comment, String createdAt, String updatedAt
+ int id, int accountId, int categoryId, String amount, String transactionDate, String? comment
 });
 
 
@@ -149,7 +145,7 @@ class __$TransactionDTOCopyWithImpl<$Res>
 
 /// Create a copy of TransactionDTO
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? accountId = null,Object? categoryId = null,Object? amount = null,Object? transactionDate = null,Object? comment = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? accountId = null,Object? categoryId = null,Object? amount = null,Object? transactionDate = null,Object? comment = freezed,}) {
   return _then(_TransactionDTO(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,accountId: null == accountId ? _self.accountId : accountId // ignore: cast_nullable_to_non_nullable
@@ -157,9 +153,7 @@ as int,categoryId: null == categoryId ? _self.categoryId : categoryId // ignore:
 as int,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
 as String,transactionDate: null == transactionDate ? _self.transactionDate : transactionDate // ignore: cast_nullable_to_non_nullable
 as String,comment: freezed == comment ? _self.comment : comment // ignore: cast_nullable_to_non_nullable
-as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as String,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as String,
+as String?,
   ));
 }
 
