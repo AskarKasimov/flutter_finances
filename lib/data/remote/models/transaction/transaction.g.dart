@@ -14,8 +14,6 @@ _TransactionDTO _$TransactionDTOFromJson(Map<String, dynamic> json) =>
       amount: json['amount'] as String,
       transactionDate: json['transactionDate'] as String,
       comment: json['comment'] as String?,
-      createdAt: json['createdAt'] as String,
-      updatedAt: json['updatedAt'] as String,
     );
 
 Map<String, dynamic> _$TransactionDTOToJson(_TransactionDTO instance) =>
@@ -26,6 +24,4 @@ Map<String, dynamic> _$TransactionDTOToJson(_TransactionDTO instance) =>
       'amount': instance.amount,
       'transactionDate': instance.transactionDate,
       'comment': instance.comment,
-      'createdAt': instance.createdAt,
-      'updatedAt': instance.updatedAt,
     };

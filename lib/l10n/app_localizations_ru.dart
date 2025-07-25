@@ -238,4 +238,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get biometricAuthReason => 'Войдите с помощью биометрии';
+
+  @override
+  String get total => 'Всего';
 }

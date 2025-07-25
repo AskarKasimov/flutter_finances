@@ -107,7 +107,10 @@ class _TransactionsListState extends State<TransactionsList> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Всего'),
+              Text(
+                "${AppLocalizations.of(context)!.total}:",
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
               Text(
                 formatCurrency(value: totalSum, currency: widget.currency),
                 style: Theme.of(context).textTheme.bodyMedium,
@@ -156,7 +159,9 @@ class _TransactionsListState extends State<TransactionsList> {
                                     ),
                                     child: Text(
                                       category.emoji,
-                                      style: const TextStyle(fontSize: 18),
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyLarge,
                                     ),
                                   ),
                                   const SizedBox(width: 16),
@@ -171,6 +176,9 @@ class _TransactionsListState extends State<TransactionsList> {
                                               Text(
                                                 category.name,
                                                 overflow: TextOverflow.ellipsis,
+                                                style: Theme.of(
+                                                  context,
+                                                ).textTheme.bodyMedium,
                                               ),
                                               Text(
                                                 item.comment!,
@@ -184,6 +192,9 @@ class _TransactionsListState extends State<TransactionsList> {
                                         : Text(
                                             category.name,
                                             overflow: TextOverflow.ellipsis,
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.bodyMedium,
                                           ),
                                   ),
                                 ],

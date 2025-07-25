@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_finances/utils/color_utils.dart';
 
 ThemeData getLightTheme(Color primaryColor) => ThemeData(
+  fontFamily: 'Roboto',
   brightness: Brightness.light,
   splashColor: const Color(0x3300D68F),
   highlightColor: const Color(0x1A00D68F),
@@ -22,6 +23,7 @@ ThemeData getLightTheme(Color primaryColor) => ThemeData(
     error: const Color(0xFFE46962),
   ),
   textTheme: const TextTheme(
+    bodyLarge: TextStyle(color: Color(0xFF1D1B20), fontSize: 18),
     bodyMedium: TextStyle(color: Color(0xFF1D1B20), fontSize: 16),
     bodySmall: TextStyle(color: Color(0xFF1D1B20), fontSize: 13),
   ),
@@ -34,6 +36,7 @@ ThemeData getLightTheme(Color primaryColor) => ThemeData(
 );
 
 ThemeData getDarkTheme(Color primaryColor) => ThemeData(
+  fontFamily: 'Roboto',
   brightness: Brightness.dark,
   splashColor: const Color(0x33FFFFFF),
   highlightColor: const Color(0x1AFFFFFF),
@@ -70,6 +73,7 @@ ThemeData getDarkTheme(Color primaryColor) => ThemeData(
     error: const Color(0xFFE46962),
   ),
   textTheme: const TextTheme(
+    bodyLarge: TextStyle(color: Colors.white, fontSize: 18),
     bodyMedium: TextStyle(color: Colors.white, fontSize: 16),
     bodySmall: TextStyle(color: Colors.white70, fontSize: 13),
   ),

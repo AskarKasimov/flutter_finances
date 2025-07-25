@@ -12,8 +12,6 @@ abstract class TransactionDTO with _$TransactionDTO {
     required String amount,
     required String transactionDate,
     required String? comment,
-    required String createdAt,
-    required String updatedAt,
   }) = _TransactionDTO;
 
   factory TransactionDTO.fromJson(Map<String, dynamic> json) =>

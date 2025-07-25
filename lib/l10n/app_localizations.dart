@@ -556,6 +556,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Authenticate to access your finances'**
   String get biometricAuthReason;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

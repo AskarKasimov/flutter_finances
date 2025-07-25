@@ -238,4 +238,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get biometricAuthReason => 'Authenticate to access your finances';
+
+  @override
+  String get total => 'Total';
 }
