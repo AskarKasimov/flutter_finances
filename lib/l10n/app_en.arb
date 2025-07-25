@@ -76,5 +76,6 @@
   "sortByAmountDesc": "Largest amounts first",
   "sortByAmountAsc": "Smallest amounts first",
   "transactionsEmpty": "Your transactions will appear here",
-  "biometricAuthReason": "Authenticate to access your finances"
+  "biometricAuthReason": "Authenticate to access your finances",
+  "total": "Total"
 }

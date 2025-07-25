@@ -76,5 +76,6 @@
   "sortByAmountDesc": "Сначала большие суммы",
   "sortByAmountAsc": "Сначала меньшие суммы",
   "transactionsEmpty": "Здесь будут твои транзакции",
-  "biometricAuthReason": "Войдите с помощью биометрии"
+  "biometricAuthReason": "Войдите с помощью биометрии",
+  "total": "Всего"
 }
